@@ -22,6 +22,6 @@ if (!$con) {
 if (isset($_POST["usuario"]) && isset($_POST["pass"])) {
     // Almacena el usuario en la sesión
     $_SESSION['usuario'] = $_POST["usuario"];
-    echo validar_usuario($con, $_POST["usuario"], $_POST["pass"]);
+    validar_usuario($con, $_POST["usuario"], $_POST["pass"]);
 }
 ?>

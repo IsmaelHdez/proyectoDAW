@@ -29,7 +29,13 @@ function validar_usuario($con, $usuario, $pass){
         
         // Redirige al usuario según su tipo
         if ($tipo == 0) { 
-            return "Estas conectado";
+            header("Location: admin.php");
+        }elseif($tipo == 1){
+            header("Location: nutricionista.php");
+        }elseif($tipo == 2){
+            header("Location: paciente.php");
+        } else{
+            header("Location: index.php");
         }
     }
 }
@@ -38,6 +44,11 @@ function validar_usuario($con, $usuario, $pass){
 function obtener_num_filas($resultado){
     // Devuelve el número de filas
     return mysqli_num_rows($resultado);
+}
+
+function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo){
+    mysqli_query($con, "INSERT INTO usuario (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$pass', '$nombre', '$apellido', '$email', '$tipo');");
+    header("Location: nutricionista.php");
 }
 
 ?>
