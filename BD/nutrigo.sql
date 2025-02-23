@@ -30,4 +30,4 @@ plato int,
 foreign key (usuario) references usuario(id_usuario),
 foreign key (plato) references receta(id_receta));
 
- insert into usuario(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail", 0);
+ insert into usuario(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail", 3);
