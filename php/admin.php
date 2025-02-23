@@ -4,7 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if(isset($_SESSION["tipo"]) != 0){
+if($_SESSION["tipo"] != 3){
     header("Location: index.php");
 }
+
+echo $_SESSION["tipo"];
 ?>

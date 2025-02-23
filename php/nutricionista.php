@@ -4,7 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if(isset($_SESSION["tipo"]) != 1){
+if($_SESSION["tipo"] != 1){
     header("Location: index.php");
 }
+
+$_SESSION["tipo"]
 ?>
