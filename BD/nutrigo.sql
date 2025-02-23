@@ -1,5 +1,5 @@
-create database cocinathor;
-use cocinathor;
+create database nutrigo;
+use nutrigo;
 
 create table usuario(
 id_usuario int primary key auto_increment,
