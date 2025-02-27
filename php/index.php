@@ -12,6 +12,11 @@ if (isset($_SESSION['usuario'])) {
 require("conexion.php");
 require("../html/index.html"); // Verifica que la ruta sea correcta
 
+if (isset($_GET['error'])) {
+    echo "<p style='color: red; font-weight: bold;'>" . htmlspecialchars($_GET['error']) . "</p>";
+}
+
+
 // Conecta a la base de datos
 $con = conexion();
 if (!$con) {
@@ -22,7 +27,7 @@ if (!$con) {
 if (isset($_POST["usuario"]) && isset($_POST["pass"])) {
     // Almacena el usuario en la sesión
     $_SESSION['usuario'] = $_POST["usuario"];
-    echo validar_usuario($con, $_POST["usuario"], $_POST["pass"]);
+    validar_usuario($con, $_POST["usuario"], $_POST["pass"]);
 }
 
 ?>
