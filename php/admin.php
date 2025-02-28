@@ -200,6 +200,39 @@ function asociar_receta($con,$receta,$paciente){
         }
         echo "<p>Se ha eliminado el paciente $usuario con nombre completo: $nombre $apellido y email: $email.</p>";
     }
+
+//funcion para crear cita
+function crear_cita($con, $paciente, $nutricionista, $fecha, $hora) {
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $hora = mysqli_real_escape_string($con, $hora);
+    $paciente = mysqli_real_escape_string($con, $paciente);
+    $nutricionista = mysqli_real_escape_string($con, $nutricionista);
+    
+    $consulta_nutricionista = mysqli_query($con , "select id_nutricionista from nutricionista where usuario = '$nutricionista'");
+    $fila = mysqli_fetch_assoc($consulta_nutricionista);
+        if (!$fila) {
+            echo "<p>No se encontró ningún nutricionista con el usuario: $nutricionista.</p>";
+            return;
+        }
+        $id_nutricionista = $fila['id_nutricionista'];
+
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+        if (!$fila) {
+            echo "<p>No se encontró ningún paciente con el usuario: $paciente.</p>";
+            return;
+        }
+        $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
+            values ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
+
+     if (!$resultado) {
+        echo "Error al crear la cita: " . mysqli_error($con);
+        return;
+    }
+    echo "<p>Se ha creado una cita el $fecha a la $hora, para el nutricionista $nutricionista y el paciente $paciente.</p>";
+}
 //***************************************************************************************************/
 //tabla con los nutricionistas
 $con = conexion();
@@ -603,5 +636,45 @@ echo '<div id="borrar_paciente">
       }
   }
   
+//Poner , modificar y cancelar citas
+echo '<div id="cita">
+  <form action="admin.php" method="POST">
+    <h3>Creación de citas :</h3>
+    <label for="paciente_cita">Asigne el paciente:</label>
+    <select name="paciente_cita" id="paciente_cita">';
+        $resultado = listar_pacientes($con);
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $paciente = $fila['usuario'];
+                echo "<option value='$paciente'>$paciente</option>";
+            }
+        } 
+    echo '</select><br/>
+    <label for="nutricionista_cita">Elija el nutricionista :</label>
+    <select name="nutricionista_cita" id="nutricionista_cita">';
+        $resultado = listar_nutricionista($con);
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $nutricionista = $fila['usuario'];
+                echo "<option value='$nutricionista'>$nutricionista</option>";
+            }
+        } 
+    echo '</select><br/>';
+    echo '<label for="hora_cita" name="hora_cita">Hora de la cita (hh:mm):</label>
+         <input type="time" name="hora_cita"><br/>
+         <label for="date" name="fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
+         <input type="date" name="fecha_cita"><br/>
+         <input type="submit" name="crear_cita" value="Crear cita">';
 
+        if(isset($_POST['crear_cita'])){
+          if(!empty('paciente_cita') && !empty('nutricionista_cita') && !empty('hora_cita') && !empty('fecha_cita')){
+              $paciente = $_POST['paciente_cita'];
+              $nutricionista = $_POST['nutricionista_cita'];
+              $fecha = $_POST['fecha_cita'];
+              $hora = $_POST['hora_cita'];
+              crear_cita($con , $paciente , $nutricionista , $fecha , $hora);
+          }else{
+            echo 'Debe rellenar todos los datos.';
+          }
+        }
 ?>
