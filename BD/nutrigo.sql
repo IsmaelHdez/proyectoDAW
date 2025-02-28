@@ -48,7 +48,8 @@ paciente int,
 nutricionista int,
 foreign key (paciente) references paciente(id_paciente),
 foreign key (nutricionista) references receta(id_receta));
- insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail", 3);
+
+ insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail.com", 3);
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("caro", "caro1234", "Casimiro", "Aroca Henares", "arocahenares@gmail.com", 1);
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("pepe", "pepe1234", "Jose", "Sanchez Lopez", "sanchezlopez@gmail.com", 1);
  

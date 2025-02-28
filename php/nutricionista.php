@@ -8,5 +8,4 @@ if($_SESSION["tipo"] != 1){
     header("Location: index.php");
 }
 
-$_SESSION["tipo"]
 ?>
