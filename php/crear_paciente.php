@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require("../html/crear_nutricionista.html");
+require("../html/crear_paciente.html");
 require("conexion.php");
 
 if (isset($_GET['error'])) {
@@ -18,11 +18,11 @@ if(isset($_POST["nombre"]) && isset($_POST["apellido"]) && isset($_POST["user"])
     $usuario = $_POST["user"];
     $pass = $_POST["pass"];
     $email = $_POST["email"];
-    $_SESSION["tipo"] = 1;
+    $_SESSION["tipo"] = 2;
     $tipo = $_SESSION["tipo"];
 
     $con = conexion();
-    echo crear_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email, $tipo);
+    echo crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email, $tipo);
 
 }
 

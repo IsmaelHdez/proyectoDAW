@@ -33,6 +33,16 @@ function obtener_pacientes($con){
     return $resultado;
 }
 
+//funcion que busca nutricionista por apellido
+function buscar_paciente($con, $apellido) {
+    if (empty($apellido)) {
+        return false; 
+    }
+    $apellido = mysqli_real_escape_string($con, $apellido);
+    $resultado = mysqli_query($con, "select usuario, nombre, apellido, email, id_nutricionista from paciente where tipo = 2 AND apellido LIKE '$apellido%'");
+    return $resultado;
+}
+
 //función que obtiene lista de recetas
 function listar_recetas($con){
     $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta");

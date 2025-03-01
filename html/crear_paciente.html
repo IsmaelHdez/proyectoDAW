@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../CSS/crear_usuario.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="formulario_paciente">
+        <form action="../php/crear_paciente.php" method="POST">
+            <label for="">Nombre: </label>
+            <input type="text" name="nombre" id="nombre" required><br/>
+            <label for="">Apellido: </label>
+            <input type="text" name="apellido" id="apellido" required><br/>
+            <label for="">Usuario: </label>
+            <input type="text" name="user" id="user" required><br/>
+            <label for="">Contraseña: </label>
+            <input type="password" name="pass" id="pass" required><br/>
+            <label for="">Email: </label>
+            <input type="text" name="email" id="email" required><br/>
+            <input type="submit" name="registrar" id="registrar" value="Registrar">
+        </form>
+    </div>
+</body>
+</html>
