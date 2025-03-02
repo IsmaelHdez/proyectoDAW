@@ -10,230 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
     header("Location: index.php");
 }*/
 
-//************************************************************************************************* */
-//función que obtiene lista de nutricionistas
-function obtener_nutricionistas($con){
-    $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from nutricionista where tipo = 1");
-    return $resultado;
-}
-
-//funcion que busca nutricionista por apellido
-function buscar_nutricionista($con, $apellido) {
-    if (empty($apellido)) {
-        return false; 
-    }
-    $apellido = mysqli_real_escape_string($con, $apellido);
-    $resultado = mysqli_query($con, "select usuario, nombre, apellido, email from nutricionista where tipo = 1 AND apellido LIKE '$apellido%'");
-    return $resultado;
-}
-
-//función que obtiene lista de pacientes
-function obtener_pacientes($con){
-    $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from paciente");
-    return $resultado;
-}
-
-//función que obtiene lista de recetas
-function listar_recetas($con){
-    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta");
-    return $resultado;
-}
-
-//función que obtiene recetas por calorias
-function buscar_calorias($con, $opcion){
-    if($opcion == 1){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 200;");
-        return $resultado;
-    }elseif($opcion == 2){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 350;");
-        return $resultado;
-    }elseif($opcion == 3){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 450;");
-        return $resultado;
-    }elseif($opcion == 4){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias > 500;");
-    return $resultado;
-    }
-}
-
-//función para buscar pacientes
-function listar_pacientes($con){
-  $resultado = mysqli_query($con,"select usuario from paciente");
-  return $resultado;
-}
-
-//función para buscar nutricionista
-function listar_nutricionista($con){
-    $resultado = mysqli_query($con,"select usuario from nutricionista where tipo = 1");
-    return $resultado;
-  }
-
-//funcion para modificar el paciente y asignarlo al nutricionista
-function asociar_paciente($con,$paciente,$nutricionista){
-    $fila = mysqli_query($con, "select id_nutricionista from nutricionista where usuario = '$nutricionista'");
-        if ($fila && mysqli_num_rows($fila) > 0) {
-            $resultado = mysqli_fetch_assoc($fila);
-            $id =(int) $resultado['id_nutricionista'];
-            $busqueda = "update paciente set id_nutricionista = '$id' where usuario = '$paciente'";
-        if (mysqli_query($con, $busqueda)) {
-            echo "Paciente asociado correctamente.";
-        } else {
-            echo "Error al asociar paciente: " . mysqli_error($con);
-        }
-    }
-   }
-
- //función que busca receta por nombre
-   function buscar_nombre_receta($con, $nombre) {
-    if (empty($nombre)) {
-        return false; 
-    }
-    $nombre = mysqli_real_escape_string($con, $nombre);
-    $resultado = mysqli_query($con, "select nombre, ingredientes, calorias from receta where nombre LIKE '$nombre%'");
-    return $resultado;
-}   
-
-//funcion que asocia una receta a un paciente
-function asociar_receta($con,$receta,$paciente){
-    $fila_paciente = mysqli_query($con, "select id_paciente from paciente where usuario = '$paciente'");
-        if ($fila_paciente && mysqli_num_rows($fila_paciente) > 0) {
-            $resultado_paciente = mysqli_fetch_assoc($fila_paciente);
-            $id_paciente =(int) $resultado_paciente['id_paciente'];
-        }
-    $fila_receta = mysqli_query($con, "select id_receta from receta where nombre = '$receta'");
-    if ($fila_receta && mysqli_num_rows($fila_receta) > 0) {
-        $resultado_receta = mysqli_fetch_assoc($fila_receta);
-        $id_receta =(int) $resultado_receta['id_receta'];
-    }
-    $query = "insert into lista (paciente,plato) values ('$id_paciente','$id_receta')";
-    if (mysqli_query($con, $query)) {
-        echo "Receta asociada correctamente.";
-    } else {
-        echo "Error al asociar la receta: " . mysqli_error($con);
-    }
-   }
-
-//funcion para crear nutricionista
-   function crear_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into nutricionista (usuario, pass, nombre, apellido, email, tipo) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', 1)");
-    if (!$resultado) {
-        echo "Error al crear usuario: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha creado el usuario $usuario con nombre completo : $nombre $apellido y email : $email .</p>";
-    }
-   
-//funcion para modificar nutricionista
-   function modificar_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "update nutricionista set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
-    if (!$resultado) {
-        echo "Error al modificar usuario: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha modificado el usuario $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
-    }
-//funcion para crear paciente
-   function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',1)");
-    if (!$resultado) {
-        echo "Error al crear paciente: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha creado el paciente $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
-    }
- 
-    //funcion para modificar paciente
-   function modificar_paciente($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "update paciente set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
-    if (!$resultado) {
-        echo "Error al modificar paciente: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha modificado el paciente $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
-    }
-
-    //funcion para eliminar nutricionista
-    function eliminar_nutricionista($con, $usuario) {
-        $datos = mysqli_query($con, "select usuario, nombre, apellido, email from nutricionista where usuario = '$usuario'");
-        $fila = mysqli_fetch_assoc($datos);
-    
-        if (!$fila) {
-            echo "<p>No se encontró ningún nutricionista con el usuario: $usuario.</p>";
-            return;
-        }
-        $usuario = $fila['usuario'];
-        $nombre = $fila['nombre'];
-        $apellido = $fila['apellido'];
-        $email = $fila['email'];
-    
-        $resultado = mysqli_query($con, "delete from nutricionista where usuario = '$usuario'");
-        
-        if (!$resultado) {
-            echo "Error al eliminar nutricionista: " . mysqli_error($con);
-            return;
-        }
-        echo "<p>Se ha eliminado el nutricionista $usuario con nombre completo: $nombre $apellido y email: $email.</p>";
-    }
-//funcion para eliminar paciente
-    function eliminar_paciente($con, $usuario) {
-        $datos = mysqli_query($con, "select usuario, nombre, apellido, email from paciente where usuario = '$usuario'");
-        $fila = mysqli_fetch_assoc($datos);
-    
-        if (!$fila) {
-            echo "<p>No se encontró ningún paciente con el usuario: $usuario.</p>";
-            return;
-        }
-        $usuario = $fila['usuario'];
-        $nombre = $fila['nombre'];
-        $apellido = $fila['apellido'];
-        $email = $fila['email'];
-    
-        $resultado = mysqli_query($con, "delete from paciente where usuario = '$usuario'");
-        
-        if (!$resultado) {
-            echo "Error al eliminar paciente: " . mysqli_error($con);
-            return;
-        }
-        echo "<p>Se ha eliminado el paciente $usuario con nombre completo: $nombre $apellido y email: $email.</p>";
-    }
-
-//funcion para crear cita
-function crear_cita($con, $paciente, $nutricionista, $fecha, $hora) {
-    $fecha = mysqli_real_escape_string($con, $fecha);
-    $hora = mysqli_real_escape_string($con, $hora);
-    $paciente = mysqli_real_escape_string($con, $paciente);
-    $nutricionista = mysqli_real_escape_string($con, $nutricionista);
-    
-    $consulta_nutricionista = mysqli_query($con , "select id_nutricionista from nutricionista where usuario = '$nutricionista'");
-    $fila = mysqli_fetch_assoc($consulta_nutricionista);
-        if (!$fila) {
-            echo "<p>No se encontró ningún nutricionista con el usuario: $nutricionista.</p>";
-            return;
-        }
-        $id_nutricionista = $fila['id_nutricionista'];
-
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-        if (!$fila) {
-            echo "<p>No se encontró ningún paciente con el usuario: $paciente.</p>";
-            return;
-        }
-        $id_paciente = $fila['id_paciente'];
-
-    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
-            values ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
-
-     if (!$resultado) {
-        echo "Error al crear la cita: " . mysqli_error($con);
-        return;
-    }
-    echo "<p>Se ha creado una cita el $fecha a la $hora, para el nutricionista $nutricionista y el paciente $paciente.</p>";
-}
-//***************************************************************************************************/
 //tabla con los nutricionistas
 $con = conexion();
 echo "<h2>Listado de clientes/nutricionistas</h2>";
@@ -254,7 +30,7 @@ $resultado = obtener_nutricionistas($con);
 
 //Buscar nutricionistas
    echo '<div id="buscador_nutricionista">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#buscador_nutricionista" method="POST">
             <h3>Buscador de nutricionistas por apellidos</h3>
             <h4>Introduzca el apellido completo o la inicial</h4>
             <input type="text" name="nutricionista_apellidp" id="nutricionista_apellido" required><br/>
@@ -283,7 +59,7 @@ $resultado = obtener_nutricionistas($con);
     }
 //crear nutricionista
 echo '<div id="crear_nutricionista">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#crear_nutricionista" method="POST">
             <h3>Creación de nutricionistas</h3>
             <label for="usuario_nutricionista">Usuario :</label>
             <input type="text" name="usuario_nutricionista" id="usuario_nutricionista" required><br/>
@@ -313,7 +89,7 @@ echo '<div id="crear_nutricionista">
 
 //Modificar nutricionista
 echo '<div id="modificar_nutricionista">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#modificar_nutricionista" method="POST">
             <h3>Modificación de nutricionistas</h3>
             <label for="text" name="busq_nutricionista" id="busq_nutricionista">Introduzca el usuario a modificar</label>
             <input type="text" name="busq_nutricionista" id="busq_nutricionista" required><br/>
@@ -349,7 +125,7 @@ echo '<div id="modificar_nutricionista">
 
 //Eliminar nutricionista
 echo '<div id="borrar_nutricionista">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#borrar_nutricionista" method="POST">
             <h3>Eliminación de nutricionistas</h3>
             <label for="text" name="borrar_nutricionista" id="borrar_nutricionista">Introduzca el usuario a eliminar</label>
             <input type="text" name="borrar_nutricionista" id="borrar_nutricionista" required><br/>
@@ -382,7 +158,7 @@ echo '<div id="borrar_nutricionista">
 
 //Buscador pacientes
     echo '<div id="buscador_paciente">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#buscador_paciente" method="POST">
             <h3>Buscador de paciente por apellido</h3>
             <h4>Introduzca el apellido completo o la inicial</h4>
             <input type="text" name="apellido_paciente" id="apellido_paciente" required><br/>
@@ -413,7 +189,7 @@ echo '<div id="borrar_nutricionista">
 
 //crear paciente
 echo '<div id="crear_paciente">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#crear_paciente" method="POST">
             <h3>Creación de pacientes</h3>
             <label for="usuario_paciente">Usuario :</label>
             <input type="text" name="usuario_paciente" id="usuario_paciente" required><br/>
@@ -442,7 +218,7 @@ echo '<div id="crear_paciente">
     }
 //Modificar paciente
 echo '<div id="modificar_paciente">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#modificar_paciente" method="POST">
             <h3>Modificación de pacientes</h3>
             <label for="text" name="busq_paciente" id="busq_paciente">Introduzca el paciente a modificar</label>
             <input type="text" name="busq_paciente" id="busq_paciente" required><br/>
@@ -477,7 +253,7 @@ echo '<div id="modificar_paciente">
     }
 //Eliminar paciente
 echo '<div id="borrar_paciente">
-        <form action="admin.php" method="POST">
+        <form action="admin.php#borrar_paciente" method="POST">
             <h3>Eliminación de pacientes</h3>
             <label for="text" name="borrar_paciente" id="borrar_paciente">Introduzca el usuario a eliminar</label>
             <input type="text" name="borrar_paciente" id="borrar_paciente" required><br/>
@@ -509,7 +285,7 @@ echo '<div id="borrar_paciente">
 
 //Buscador receta
   echo '<div id="buscador_receta">
-      <form action="admin.php" method="POST">
+      <form action="admin.php#buscador_receta" method="POST">
           <h3>Buscador de receta por calorias</h3>
           <label for="calorias">Filtrar por calorías:</label>
         <select name="calorias" id="calorias">
@@ -541,7 +317,7 @@ echo '<div id="borrar_paciente">
   
   //asociar paciente a nutricionista
   echo '<div id="asociar_nutricionista">
-  <form action="admin.php" method="POST">
+  <form action="admin.php#asociar_nutricionista" method="POST">
     <h3>Asigne un paciente a un nutricionista.</h3>
     <label for="paciente">Asigne el paciente:</label>
     <select name="paciente" id="paciente">';
@@ -555,7 +331,6 @@ echo '<div id="borrar_paciente">
     echo '</select>
     <label for="nutricionista">y el nutricionista a el que le es asignado:</label>
     <select name="nutricionista" id="nutricionista">';
-
         $resultado = listar_nutricionista($con);
         if ($resultado && mysqli_num_rows($resultado) > 0) {
             while ($fila = mysqli_fetch_assoc($resultado)) {
@@ -582,7 +357,7 @@ echo '<div id="borrar_paciente">
 
   //asociar paciente a receta
   echo '<div id="asociar_receta">
-    <form action="" method="POST">
+    <form action="admin.php#asociar_receta" method="POST">
       <h3>Asigne recetas a un paciente</h3>
       <label for="receta">Busque la receta por nombre o inicial</label>
       <input type="text" name="receta_nombre" id="receta_nombre" required>
@@ -635,10 +410,49 @@ echo '<div id="borrar_paciente">
           echo "<p>Error: Asegúrese de seleccionar un paciente y una receta.</p>";
       }
   }
-  
-//Poner , modificar y cancelar citas
-echo '<div id="cita">
-  <form action="admin.php" method="POST">
+ 
+//tabla de citas por nutricionistas
+echo '<div id="tabla_citas">
+  <h2>Listado de citas por nutricionista</h2>
+  <form action="admin.php#tabla_citas" method="POST">
+   <label for="nutricionista_tabla_cita">Elija un nutricionista para ver sus citas :</label>
+    <select name="nutricionista_tabla_cita" id="nutricionista_tabla_cita">';
+      $resultado = obtener_tabla_citas($con);
+      var_dump($resultado);
+      if ($resultado && mysqli_num_rows($resultado) > 0) {
+        while ($fila = mysqli_fetch_assoc($resultado)) {
+            $nutricionista_cita = $fila['usuario'];
+            echo "<option value='$nutricionista_cita'>$nutricionista_cita</option>";
+        } 
+        }else{
+            echo '<option value="" >No hay nutricionistas!</option>';
+        }
+        echo '</select><br/>
+        <input type="submit" name="submit" value="Ver citas">
+    </form>';
+    if (isset($_POST['nutricionista_tabla_cita']) && !empty($_POST['nutricionista_tabla_cita'])) {
+        $nutricionista_seleccionado = $_POST['nutricionista_tabla_cita'];
+        $citas = obtener_citas_por_nutricionista($con, $nutricionista_seleccionado);
+        
+        if ($citas && mysqli_num_rows($citas) > 0) {
+            echo "<h3>Citas de $nutricionista_seleccionado</h3>";
+            echo "<table border='1'>
+                    <tr><th>Paciente</th><th>Fecha</th><th>Hora</th>
+                    </tr>";
+            while ($fila = mysqli_fetch_assoc($citas)) {
+                echo "<tr><td>{$fila['usuario']}</td><td>{$fila['fecha']}</td><td>{$fila['hora']}</td>
+                      </tr>";
+            }
+            echo "</table>";
+        } else {
+            echo "<p>No hay citas para este nutricionista.</p>";
+        }
+    }
+    echo "</div>";
+
+//crear citas
+echo '<div id="crear_cita">
+  <form action="admin.php#crear_cita" method="POST">
     <h3>Creación de citas :</h3>
     <label for="paciente_cita">Asigne el paciente:</label>
     <select name="paciente_cita" id="paciente_cita">';
@@ -677,4 +491,46 @@ echo '<div id="cita">
             echo 'Debe rellenar todos los datos.';
           }
         }
+//Borrar citas
+echo '<div id="borrar_cita">
+  <form action="admin.php#borrar_cita" method="POST">
+    <h3>Cancelación de citas :</h3>
+    <label for="nutricionista_cita_borrar">Elija el nutricionista:</label>
+    <select name="nutricionista_cita_borrar" id="nutricionista_cita_borrar">';
+        $resultado = listar_nutricionista($con);
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $nutricionista = $fila['usuario'];
+                echo "<option value='$nutricionista'>$nutricionista</option>";
+            }
+        } 
+    echo '</select><br/>
+    <label for="paciente_cita_borrar">Elija el paciente :</label>
+    <select name="paciente_cita_borrar" id="paciente_cita_borrar">';
+        $resultado = listar_pacientes($con);
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $paciente = $fila['usuario'];
+                echo "<option value='$paciente'>$paciente</option>";
+            }
+        } 
+    echo '</select><br/>';
+    echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:mm):</label>
+         <input type="time" name="borrar_hora_cita"><br/>
+         <label for="date" name="borrar_fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
+         <input type="date" name="borrar_fecha_cita"><br/>
+         <input type="submit" name="borrar_cita" value="Borrar cita">';
+
+        if(isset($_POST['borrar_cita'])){
+          if(!empty($_POST['paciente_cita_borrar']) && !empty($_POST['nutricionista_cita_borrar']) && !empty($_POST['borrar_hora_cita']) && !empty($_POST['borrar_fecha_cita'])){
+              $paciente = $_POST['paciente_cita_borrar'];
+              $nutricionista = $_POST['nutricionista_cita_borrar'];
+              $fecha = $_POST['borrar_fecha_cita'];
+              $hora = $_POST['borrar_hora_cita'];
+              borrar_cita($con , $paciente , $nutricionista , $fecha , $hora);
+          }else{
+            echo 'Debe rellenar todos los datos.';
+          }
+        }
+
 ?>
