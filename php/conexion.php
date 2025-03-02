@@ -70,6 +70,7 @@ function crear_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email, 
     
 }
 /*************************FUNCIONES DE ADMIN.PHP********************************************** */
+
 //función que obtiene lista de nutricionistas
 function obtener_nutricionistas($con){
     $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from nutricionista where tipo = 1");
@@ -78,11 +79,9 @@ function obtener_nutricionistas($con){
 
 //funcion que busca nutricionista por apellido
 function buscar_nutricionista($con, $apellido) {
-    if (empty($apellido)) {
-        return false; 
-    }
+    unset($_SESSION['mensaje_nutricionista']);
     $apellido = mysqli_real_escape_string($con, $apellido);
-    $resultado = mysqli_query($con, "select usuario, nombre, apellido, email from nutricionista where tipo = 1 AND apellido LIKE '$apellido%'");
+    $resultado = mysqli_query($con, "select distinct usuario, nombre, apellido, email from nutricionista where tipo = 1 AND apellido LIKE '$apellido%'");
     return $resultado;
 }
 
@@ -173,50 +172,30 @@ function asociar_receta($con,$receta,$paciente){
    }
 
 //funcion para crear nutricionista
-   function crear_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
+   function crear_nutricionista_admin($con, $nombre, $apellido, $usuario, $pass, $email){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
     $resultado = mysqli_query($con, "insert into nutricionista (usuario, pass, nombre, apellido, email, tipo) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', 1)");
     if (!$resultado) {
-        echo "Error al crear usuario: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha creado el usuario $usuario con nombre completo : $nombre $apellido y email : $email .</p>";
+        unset($_SESSION['mensaje_nutricionista']);
+        $_SESSION['mensaje_nutricionista'] = "Error al crear usuario: " . mysqli_error($con);
+       }
+       $_SESSION['mensaje_nutricionista'] = "<h2>Se ha creado el nutricionista $usuario </h2><h2> con nombre completo : $nombre $apellido </h2><h2> y email : $email.</h2>";    
     }
    
 //funcion para modificar nutricionista
    function modificar_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    unset($_SESSION['mensaje_nutricionista']);
     $resultado = mysqli_query($con, "update nutricionista set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
     if (!$resultado) {
-        echo "Error al modificar usuario: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha modificado el usuario $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
-    }
-//funcion para crear paciente
-   function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',1)");
-    if (!$resultado) {
-        echo "Error al crear paciente: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha creado el paciente $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
-    }
- 
-    //funcion para modificar paciente
-   function modificar_paciente($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "update paciente set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
-    if (!$resultado) {
-        echo "Error al modificar paciente: " . mysqli_error($con);
-    }
-    
-    echo "<p>Se ha modificado el paciente $usuario con nombre completo : $nombre $apellido y email : $email.</p>";
+        $_SESSION['mensaje_nutricionista'] = "Error al modificar usuario: " . mysqli_error($con);
+      }
+    $_SESSION['mensaje_nutricionista'] = "<h2>Se ha modificado el nutricionista $usuario </h2><h2> con nombre completo : $nombre $apellido </h2><h2> y email : $email.</h2>";    
     }
 
-    //funcion para eliminar nutricionista
+//funcion para eliminar nutricionista
     function eliminar_nutricionista($con, $usuario) {
+        unset($_SESSION['mensaje_nutricionista']);
         $datos = mysqli_query($con, "select usuario, nombre, apellido, email from nutricionista where usuario = '$usuario'");
         $fila = mysqli_fetch_assoc($datos);
     
@@ -228,15 +207,47 @@ function asociar_receta($con,$receta,$paciente){
         $nombre = $fila['nombre'];
         $apellido = $fila['apellido'];
         $email = $fila['email'];
-    
-        $resultado = mysqli_query($con, "delete from nutricionista where usuario = '$usuario'");
+        $resultado1 = mysqli_query($con,"delete from citas where nutricionista = (select id_nutricionista from nutricionista where usuario = '$usuario')");
+        $resultado2 = mysqli_query($con, "delete from nutricionista where usuario = '$usuario'");
         
-        if (!$resultado) {
-            echo "Error al eliminar nutricionista: " . mysqli_error($con);
+        if (!$resultado2) {
+            $_SESSION['mensaje_nutricionista'] = "Error al eliminar nutricionista: " . mysqli_error($con);
             return;
         }
-        echo "<p>Se ha eliminado el nutricionista $usuario con nombre completo: $nombre $apellido y email: $email.</p>";
+        $_SESSION['mensaje_nutricionista'] = "<h2>Se ha eliminado el nutricionista $usuario </h2><h2> con nombre completo : $nombre $apellido </h2><h2> y email : $email.</h2>";
     }
+
+//funcion que busca paciente por apellido
+function buscar_paciente($con, $apellido) {
+    unset($_SESSION['mensaje_paciente']);
+    $apellido = mysqli_real_escape_string($con, $apellido);
+    $resultado = mysqli_query($con, "select distinct usuario, nombre, apellido, email from paciente where apellido LIKE '$apellido%'");
+    return $resultado;
+}
+
+//funcion para crear paciente
+   function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',1)");
+    if (!$resultado) {
+        unset($_SESSION['mensaje_paciente']);
+        echo "Error al crear paciente: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_paciente'] = "<h2>Se ha creado el paciente $usuario </h2><h2> con nombre completo : $nombre $apellido </h2><h2> y email : $email.</h2>";
+    }
+ 
+    //funcion para modificar paciente
+   function modificar_paciente($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $resultado = mysqli_query($con, "update paciente set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
+    if (!$resultado) {
+        echo "Error al modificar paciente: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_paciente'] = "<h2>Se ha modificado el paciente $usuario </h2><h2> con nombre completo : $nombre $apellido </h2><h2> y email : $email.</h2>";
+    }
+
 //funcion para eliminar paciente
     function eliminar_paciente($con, $usuario) {
         $datos = mysqli_query($con, "select usuario, nombre, apellido, email from paciente where usuario = '$usuario'");
@@ -305,6 +316,7 @@ function obtener_citas_por_nutricionista($con, $nutricionista) {
     return mysqli_query($con, $query);
 }
 
+//funcion para borrar una cita
 function borrar_cita($con, $paciente, $nutricionista, $fecha, $hora) {
     $fecha = mysqli_real_escape_string($con, $fecha);
     $hora = mysqli_real_escape_string($con, $hora);
