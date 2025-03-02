@@ -22,6 +22,7 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
      // Redirige según el tipo de usuario
     if (resultado.success) {
+        crearCookie("Usuario", usuario, 1);
         window.location.href = resultado.redirect;
     } else {
         // Mostrar el mensaje de error
@@ -29,3 +30,11 @@ document.getElementById("formulario").addEventListener("submit", async function(
         mensajeError.style.display = "block"; 
     }
 });
+
+function crearCookie(nombre, valor, dias_duracion) {
+    var fecha = new Date();
+    fecha.setDate(fecha.getDate() + dias_duracion);
+
+    // Establecer la fecha de expiración en formato UTC
+    document.cookie = `${nombre}=${valor}; expires=${fecha.toUTCString()}; path=/`;
+}

@@ -15,7 +15,7 @@ function conexion(){
 
     return $con;
 }
-
+// No tocar esta funcion consultarlo con Ismael antes :)
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
     $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario';");
@@ -69,6 +69,9 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo)
         echo json_encode(["success" => false, "message" => "Usuario o correo ya registrado"]);
     }
 }
+
+
+
 /*************************FUNCIONES DE ADMIN.PHP********************************************** */
 //función que obtiene lista de nutricionistas
 function obtener_nutricionistas($con){
