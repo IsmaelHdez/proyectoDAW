@@ -17,6 +17,7 @@ pass varchar(255),
 nombre varchar(50),
 apellido varchar(50),
 email varchar(60),
+tipo int,
 id_nutricionista int,
 foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
 
@@ -47,9 +48,9 @@ hora time not null,
 paciente int,
 nutricionista int,
 foreign key (paciente) references paciente(id_paciente),
-foreign key (nutricionista) references receta(id_receta));
+foreign key (nutricionista) references nutricionista(id_nutricionista));
 
- insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail.com", 3);
+ insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin", "admin1234", "admin", "admin", "admin@gmail", 3);
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("caro", "caro1234", "Casimiro", "Aroca Henares", "arocahenares@gmail.com", 1);
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("pepe", "pepe1234", "Jose", "Sanchez Lopez", "sanchezlopez@gmail.com", 1);
  
@@ -62,8 +63,10 @@ foreign key (nutricionista) references receta(id_receta));
  insert into receta(nombre, ingredientes, calorias) values ("Arroz con leche", "Postre de arroz cocinado con leche , azucar y canela", 250);
  
  select usuario , nombre , apellido , email , id_nutricionista from nutricionista ;
- select * from receta;
+ select n.usuario from nutricionista n join citas c on n.id_nutricionista = c.nutricionista; 
+ select * from citas;
  select usuario , nombre , apellido , email from nutricionista where tipo = 1 like "aro";
  select usuario , nombre , apellido , email , id_nutricionista from paciente;
  select * from nutricionista;
+ drop table citas;
  drop database nutrigo;
