@@ -62,6 +62,7 @@ foreign key (nutricionista) references nutricionista(id_nutricionista));
  insert into receta(nombre, ingredientes, calorias) values ("Arroz con leche", "Postre de arroz cocinado con leche , azucar y canela", 250);
  
  select usuario , nombre , apellido , email , id_nutricionista from nutricionista ;
+ select n.usuario from nutricionista n join citas c on n.id_nutricionista = c.nutricionista; 
  select * from citas;
  select usuario , nombre , apellido , email from nutricionista where tipo = 1 like "aro";
  select usuario , nombre , apellido , email , id_nutricionista from paciente;
