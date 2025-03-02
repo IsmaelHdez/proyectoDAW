@@ -26,48 +26,48 @@ function validar_usuario($con, $usuario, $pass){
         $tipo = $row['tipo'];
         $pass_hash = $row['pass']; 
         
-        // Se guarda el tipo de usuario en la sesión
-        $_SESSION['tipo'] = $tipo; 
-        
-        // Verificar la contraseña usando password_verify()
         if (password_verify($pass, $pass_hash)) {
-            // Redirige al usuario según su tipo
-            if ($tipo == 3) {
-                header("Location: admin.php");
-            } elseif ($tipo == 1) {
-                header("Location: nutricionista.php");
-            } elseif ($tipo == 2) {
-                header("Location: paciente.php");
-            } else {
-                header("Location: index.php");
-            }
+            $_SESSION['tipo'] = $tipo;
+            $redirect = ($tipo == 3) ? "admin.php" :
+                        (($tipo == 1) ? "nutricionista.php" :
+                        (($tipo == 2) ? "paciente.php" : "index.php"));
+
+            echo json_encode(["success" => true, "redirect" => $redirect]);
         } else {
-            // Si la contraseña es incorrecta
-            header("Location: index.php?error=Usuario y contraseña incorrecto");
+            echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrecto"]);
         }
     } else {
-        // Si no se encuentra el usuario
-        header("Location: index.php?error=Usuario y contraseña incorrecto");
+        echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrecto"]);
     }
 }
 
+// Procesa la solicitud JSON desde JavaScript
+$data = json_decode(file_get_contents("php://input"), true);
+if ($data) {
+    $con = conexion();
+    if (isset($data['nombre_crear']) && isset($data['apellido_crear']) && isset($data['usuario_crear']) && isset($data['pass_crear']) && isset($data['email_crear'])) {
+        crear_usuario($con, $data['nombre_crear'], $data['apellido_crear'], $data['usuario_crear'], $data['pass_crear'], $data['email_crear'], 1);
+    } 
 
-// Función para obtener el número de filas
-function obtener_num_filas($resultado){
-    // Devuelve el número de filas
-    return mysqli_num_rows($resultado);
+    if (isset($data['usuario']) && isset($data['pass'])) {
+        validar_usuario($con, $data['usuario'], $data['pass']);
+    }
+    
+    
 }
 
 function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo){
-    $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email';");
-    if (mysqli_num_rows($resultado) > 0){
-        header("Location: crear_nutricionista.php?error=Ya existe un usuario con este email");
-    } else{
+    $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email' and usuario = '$usuario';");
+
+    if (mysqli_num_rows($resultado) == 0){
         $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
         mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
-        header("Location: nutricionista.php");
+        $_SESSION["tipo"] = $tipo;
+        $redirect1 = "nutricionista.php";
+        echo json_encode(["success" => true, "redirect" => $redirect1]);
+    } else{
+        echo json_encode(["success" => false, "message" => "Usuario o correo ya registrado"]);
     }
-    
 }
 
 ?>
