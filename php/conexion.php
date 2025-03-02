@@ -18,7 +18,7 @@ function conexion(){
 
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
-    $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario' UNION SELECT pass, tipo FROM paciente WHERE usuario = '$usuario';");
+    $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario';");
     
     if (mysqli_num_rows($resultado) > 0) { 
         $row = mysqli_fetch_assoc($resultado);
@@ -57,10 +57,9 @@ if ($data) {
 }
 
 function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo){
-    $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email';");
-    if (mysqli_num_rows($resultado) > 0){
-        header("Location: crear_nutricionista.php?error=Ya existe un usuario con este email");
-    } else{
+    $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email' and usuario = '$usuario';");
+
+    if (mysqli_num_rows($resultado) == 0){
         $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
         mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
         $_SESSION["tipo"] = $tipo;
