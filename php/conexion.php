@@ -76,7 +76,6 @@ function obtener_nutricionistas($con){
     return $resultado;
 }
 
-<<<<<<< HEAD
 //funcion que busca nutricionista por apellido
 function buscar_nutricionista($con, $apellido) {
     if (empty($apellido)) {
@@ -339,18 +338,4 @@ if (!$resultado) {
 }
 
 /****************************************************************************************************/
-=======
-function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email, $tipo){
-    $resultado = mysqli_query($con, "SELECT * FROM paciente WHERE email = '$email';");
-    if (mysqli_num_rows($resultado) > 0){
-        header("Location: crear_paciente.php?error=Ya existe un paciente con este email");
-    } else{
-        $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-        mysqli_query($con, "INSERT INTO paciente (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
-        header("Location: paciente.php");
-    }
-    
-}
-
->>>>>>> 3b7240f0500b498df49fee8d954ba81a8eb71b52
 ?>
