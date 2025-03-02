@@ -20,7 +20,7 @@ h1 {
 }
 
 /* Estilos para el contenedor del formulario */
-#formulario_nutricionista {
+#formulario {
     background-color: #ffffff;
     border-radius: 10px;
     padding: 30px;
@@ -30,7 +30,7 @@ h1 {
 }
 
 /* Estilos para el encabezado del formulario */
-#formulario_nutricionista h1 {
+#formulario h1 {
     font-size: 1.8em;
     color: #4CAF50;
     margin-bottom: 20px;
