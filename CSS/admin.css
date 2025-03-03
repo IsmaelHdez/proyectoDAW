@@ -99,6 +99,12 @@ table {
     text-align: center;
 }
 
+h5{
+font-size: 20px;
+width: 60%;
+color: white;
+}
+
 th, td {
     padding: 12px;
     border: 1px solid #ddd;
