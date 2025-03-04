@@ -18,7 +18,7 @@ function conexion(){
 // No tocar esta funcion consultarlo con Ismael antes :)
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
-    $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario';");
+    $resultado = mysqli_query($con, "SELECT pass, 'nutricionista' AS tipo FROM nutricionista WHERE usuario = '$usuario' UNION SELECT pass, 'paciente' AS tipo FROM paciente WHERE usuario ='$usuario';");
     
     if (mysqli_num_rows($resultado) > 0) { 
         $row = mysqli_fetch_assoc($resultado);
@@ -353,6 +353,56 @@ if (!$resultado) {
     echo "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el nutricionista $nutricionista y el paciente $paciente.</h5>";
     }
 }
+
+/*************************FUNCIONES DE PACIENTE.PHP********************************************** */
+//función para ver ficha de paciente
+function obtener_datos_paciente ($con){
+    $usuario = $_SESSION['usuario'];
+    $resultado = mysqli_query ($con, "select id_paciente, usuario, nombre, apellido, email, id_nutricionista FROM paciente WHERE usuario = '$usuario'");
+    if ($row = mysqli_fetch_assoc($resultado)) {
+        return $row;
+    } else {
+        return null;
+    }
+
+
+}
+
+
+//función para modificar datos personales
+
+
+
+//función para introducir medidas corporales
+
+
+
+//función para modificar medidas corporales (sin modificar la fecha de introducción de las mismas)
+
+
+
+//función para comparar medidas con objetivos
+
+
+
+//función para mostrar menú semanal
+
+
+
+//función para poner, modificar y cancelar citas
+
+
+
+// Función para 
+
+
+
+
+
+
+
+
+
 
 /****************************************************************************************************/
 ?>

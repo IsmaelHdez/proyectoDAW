@@ -4,23 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/crear_usuario.css">
-    <title>Document</title>
+    <script src="../JS/validacion_crear_usuario.js" defer></script>
+    <title>Crear Paciente</title>
 </head>
 <body>
-    <div id="formulario_paciente">
-        <form action="../php/crear_paciente.php" method="POST">
-            <label for="">Nombre: </label>
+    <div id="formulario">
+        <form id="formulario_paciente" method="POST">
+            <label for="nombre">Nombre: </label>
             <input type="text" name="nombre" id="nombre" required><br/>
-            <label for="">Apellido: </label>
+            <label for="apellido">Apellido: </label>
             <input type="text" name="apellido" id="apellido" required><br/>
-            <label for="">Usuario: </label>
-            <input type="text" name="user" id="user" required><br/>
-            <label for="">Contraseña: </label>
+            <label for="usuario">Usuario: </label>
+            <input type="text" name="user" id="usuario" required><br/>
+            <label for="pass">Contraseña: </label>
             <input type="password" name="pass" id="pass" required><br/>
-            <label for="">Email: </label>
+            <label for="pass2">Repite la contraseña: </label>
+            <input type="password" name="pass2" id="pass2" required><br/>
+            <label for="email">Email: </label>
             <input type="text" name="email" id="email" required><br/>
             <input type="submit" name="registrar" id="registrar" value="Registrar">
         </form>
+        <!-- Mensaje de error debajo del formulario -->
+        <div id="mensaje_error" style="color: red; display: none;"></div>
     </div>
+
+    
 </body>
 </html>
