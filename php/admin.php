@@ -4,7 +4,6 @@ $con = conexion();
 
 // Verifica si no se ha iniciado una sesión; si no, la inicia
 if (session_status() === PHP_SESSION_NONE) {
-    session_destroy();
     session_start();
 }
 
@@ -129,6 +128,7 @@ echo '<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../CSS/admin.css">
+<script src="../JS/validacion_admin.js" defer></script>
 <title>Document</title>
 </head>
         <div id="div_nutricionista">
@@ -198,6 +198,7 @@ echo '<div id="crear_nutricionista">
             <input type="email" name="email_nutricionista" id="email_nutricionista" required><br/>
             <input type="submit" name="crear_nutricionista" value="Crear nutricionista">
         </form>
+        <div id="mensaje_error_crear_nutricionista" style="color: red; display: none;"></div>
         </div>';
 
 
@@ -229,6 +230,7 @@ echo '<div id="modificar_nutricionista">
           <input type="email" name="email_nutricionista_mod" id="email_nutricionista_mod" required><br/>
           <input type="submit" name="nutricionista_mod" value="Modificar nutricionista">
       </form>
+      <div id="mensaje_error_mod_nutricionista" style="color: red; display: none;"></div>
       </div>';
    
    
@@ -319,6 +321,7 @@ echo '<div id="crear_paciente">
             <input type="email" name="email_paciente" id="email_paciente" required><br/>
             <input type="submit" name="crear_paciente">
         </form>
+        <div id="mensaje_error_crear_paciente" style="color: red; display: none;"></div>
         </div>';
 
 //Modificar paciente
@@ -348,6 +351,7 @@ echo '<div id="crear_paciente">
             <input type="email" name="email_paciente_mod" id="email_paciente_mod" required><br/>
             <input type="submit" name="paciente_mod" value="Modificar paciente">
         </form>
+        <div id="mensaje_error_mod_paciente" style="color: red; display: none;"></div>
         </div>';
 
 //Eliminar paciente
