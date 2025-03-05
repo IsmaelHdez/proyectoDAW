@@ -18,8 +18,8 @@ function conexion(){
 // No tocar esta funcion consultarlo con Ismael antes :)
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
-    $resultado = mysqli_query($con, "SELECT pass, 'nutricionista' AS tipo FROM nutricionista WHERE usuario = '$usuario' UNION SELECT pass, 'paciente' AS tipo FROM paciente WHERE usuario ='$usuario';");
-    
+    //$resultado = mysqli_query($con, "SELECT pass, 'nutricionista' AS tipo FROM nutricionista WHERE usuario = '$usuario' UNION SELECT pass, 'paciente' AS tipo FROM paciente WHERE usuario ='$usuario';");
+    $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario' UNION ALL SELECT pass, tipo FROM paciente WHERE usuario = '$usuario';");
     if (mysqli_num_rows($resultado) > 0) { 
         $row = mysqli_fetch_assoc($resultado);
         // Se extrae el tipo del usuario
@@ -37,7 +37,7 @@ function validar_usuario($con, $usuario, $pass){
             echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrecto"]);
         }
     } else {
-        echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrecto"]);
+        echo json_encode(["success" => false, "message" => "Usuarip no encontrado"]);
     }
 }
 
