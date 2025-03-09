@@ -19,15 +19,18 @@ function conexion(){
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
     //$resultado = mysqli_query($con, "SELECT pass, 'nutricionista' AS tipo FROM nutricionista WHERE usuario = '$usuario' UNION SELECT pass, 'paciente' AS tipo FROM paciente WHERE usuario ='$usuario';");
-    $resultado = mysqli_query($con, "SELECT pass, tipo FROM nutricionista WHERE usuario = '$usuario' UNION ALL SELECT pass, tipo FROM paciente WHERE usuario = '$usuario';");
+    $resultado = mysqli_query($con, "SELECT usuario, pass, tipo FROM nutricionista WHERE usuario = '$usuario' UNION ALL SELECT usuario,pass, tipo FROM paciente WHERE usuario = '$usuario';");
     if (mysqli_num_rows($resultado) > 0) { 
         $row = mysqli_fetch_assoc($resultado);
         // Se extrae el tipo del usuario
         $tipo = $row['tipo'];
-        $pass_hash = $row['pass']; 
+        $pass_hash = $row['pass'];
+        $usuario = $row['usuario']; 
         
+
         if (password_verify($pass, $pass_hash)) {
             $_SESSION['tipo'] = $tipo;
+            $_SESSION['usuario'] = $usuario;
             $redirect = ($tipo == 3) ? "admin.php" :
                         (($tipo == 1) ? "nutricionista.php" :
                         (($tipo == 2) ? "paciente.php" : "index.php"));
@@ -37,8 +40,32 @@ function validar_usuario($con, $usuario, $pass){
             echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrecto"]);
         }
     } else {
-        echo json_encode(["success" => false, "message" => "Usuarip no encontrado"]);
+        echo json_encode(["success" => false, "message" => "Usuario no encontrado"]);
     }
+}
+
+function validar_token($token, $usuario, $tipo){
+    $con = conexion();
+    mysqli_query($con, "UPDATE nutricionista SET sesion = '$token' WHERE usuario = '$usuario';");
+    $resultado = mysqli_query($con, "SELECT usuario, tipo FROM nutricionista WHERE sesion = '$token';");
+    if (mysqli_num_rows($resultado) > 0) {         
+            if ($tipo == 3) {
+                header("Location: ../php/admin.php");
+            }
+
+            if ($tipo == 1) {
+                header("Location: ../php/nutricionista.php");
+            }
+
+            if ($tipo == 2) {
+                header("Location: ../php/paciente.php");
+            }            
+    } 
+}
+
+function borrar_sesion(){
+    setcookie("token", "", time() - 3600, "/");
+    session_destroy();
 }
 
 // Procesa la solicitud JSON desde JavaScript
@@ -53,6 +80,10 @@ if ($data) {
         validar_usuario($con, $data['usuario'], $data['pass']);
     }
     
+    if (isset($data['action']) && $data['action'] === "cerrar_sesion") {
+        borrar_sesion();
+        echo json_encode(["success" => true]);
+    }
     
 }
 

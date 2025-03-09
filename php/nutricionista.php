@@ -8,4 +8,7 @@ if($_SESSION["tipo"] != 1){
     header("Location: index.php");
 }
 
+require("../html/nutricionista.html");
+
+
 ?>
