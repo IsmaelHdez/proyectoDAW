@@ -266,7 +266,7 @@ echo "</div>";
 
   <div id="boton_logout">   
     <button id="cerrarSesion">Cerrar sesión</button>
-  </div>
+   </div>
 
 </body>
 </html>
