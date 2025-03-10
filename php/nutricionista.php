@@ -264,8 +264,9 @@ echo '<div id="crear_receta">
 echo "</div>"; 
 ?> 
 
-<div id="boton_logout">   
+  <div id="boton_logout">   
     <button id="cerrarSesion">Cerrar sesión</button>
-</div>    
+  </div>
+
 </body>
 </html>
