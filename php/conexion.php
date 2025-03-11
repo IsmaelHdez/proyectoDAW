@@ -46,8 +46,9 @@ function validar_usuario($con, $usuario, $pass){
 
 function validar_token($token, $usuario, $tipo){
     $con = conexion();
-    mysqli_query($con, "UPDATE nutricionista SET sesion = '$token' WHERE usuario = '$usuario';");
-    $resultado = mysqli_query($con, "SELECT usuario, tipo FROM nutricionista WHERE sesion = '$token';");
+    mysqli_query($con, "UPDATE nutricionista SET sesion = '$token' WHERE usuario = '$usuario' AND tipo = 1 OR tipo = 3;");
+    mysqli_query($con, "UPDATE paciente SET sesion = '$token' WHERE usuario = '$usuario' AND tipo = 2;");
+    $resultado = mysqli_query($con, "SELECT usuario, tipo FROM nutricionista WHERE sesion = '$token' UNION ALL SELECT usuario, tipo FROM paciente WHERE sesion = '$token';");
     if (mysqli_num_rows($resultado) > 0) {         
             if ($tipo == 3) {
                 header("Location: ../php/admin.php");

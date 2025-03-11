@@ -19,6 +19,7 @@ nombre varchar(50),
 apellido varchar(50),
 email varchar(60),
 tipo int,
+sesion varchar(255),
 id_nutricionista int,
 foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
 
