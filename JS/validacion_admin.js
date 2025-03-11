@@ -1,5 +1,5 @@
-    // Función para validar nombres o apellidos
-    function validar_Nombre(nombre) {
+       // Función para validar nombres o apellidos
+       function validar_Nombre(nombre) {
         const regex = /^[a-zA-Z\s]+$/;
         return regex.test(nombre);
     }
@@ -17,8 +17,10 @@
         }
 
 //Validación de crear nutricionista 
-document.getElementById("crear_nutricionista").addEventListener("submit", async function(event) {
-    event.preventDefault();
+document.getElementById("formulario_crear_nutricionista").addEventListener("submit", validar_crear_nutricionista,false); 
+
+function validar_crear_nutricionista(event){
+   event.preventDefault();
 
     let usuario = document.getElementById("usuario_nutricionista").value.trim();
     let pass = document.getElementById("pass_nutricionista").value.trim();
@@ -64,10 +66,13 @@ document.getElementById("crear_nutricionista").addEventListener("submit", async 
         mensajeError.style.display = "block";
         return;
     }
-});
+    document.getElementById("crear_nutricionista").submit();
+};
 
-//Validación de crear nutricionista 
-document.getElementById("modificar_nutricionista").addEventListener("submit", async function(event) {
+//Validación de modificar nutricionista 
+document.getElementById("formulario_mod_nutricionista").addEventListener("submit", validar_mod_nutricionista,false); 
+
+function validar_mod_nutricionista(event){
     event.preventDefault();
 
     let usuario = document.getElementById("usuario_nutricionista_mod").value.trim();
@@ -114,10 +119,13 @@ document.getElementById("modificar_nutricionista").addEventListener("submit", as
         mensajeError.style.display = "block";
         return;
     }
-});
+    document.getElementById("nutricionista_mod").submit();
+};
 
 //Validación de crear paciente 
-document.getElementById("crear_paciente").addEventListener("submit", async function(event) {
+document.getElementById("formulario_crear_paciente").addEventListener("submit", validar_crear_paciente,false); 
+    
+function validar_crear_paciente(event){
     event.preventDefault();
 
     let usuario = document.getElementById("usuario_paciente").value.trim();
@@ -164,11 +172,14 @@ document.getElementById("crear_paciente").addEventListener("submit", async funct
         mensajeError.style.display = "block";
         return;
     }
-});
+    document.getElementById("crear_paciente").submit();
+};
 
 //Validación de modificar paciente 
-document.getElementById("modificar_paciente").addEventListener("submit", async function(event) {
-    event.preventDefault();
+document.getElementById("formulario_mod_paciente").addEventListener("submit", validar_mod_paciente,false);
+
+    function validar_mod_paciente(event){
+        event.preventDefault();
 
     let usuario = document.getElementById("usuario_paciente_mod").value.trim();
     let pass = document.getElementById("pass_paciente_mod").value.trim();
@@ -214,4 +225,5 @@ document.getElementById("modificar_paciente").addEventListener("submit", async f
         mensajeError.style.display = "block";
         return;
     }
-});
+    document.getElementById("paciente_mod").submit();
+};

@@ -122,7 +122,8 @@ if(isset($_POST['borrar_cita'])){
   }
 }
 //tabla con los nutricionistas
-echo '<!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -132,7 +133,8 @@ echo '<!DOCTYPE html>
 <title>Document</title>
 </head>
         <div id="div_nutricionista">
-        <body><h2>Listado de clientes/nutricionistas</h2>';
+        <body><h2>Listado de clientes/nutricionistas</h2>
+<?php
     $resultado = obtener_nutricionistas($con);
     if(mysqli_num_rows($resultado)==0){
         echo '<h5 class="mensaje">No se encuentran usuarios.</h5>';
@@ -184,27 +186,32 @@ if (isset($_POST['buscar_nutricionista'])) {
 
 //crear nutricionista
 echo '<div id="crear_nutricionista">
-        <form action="admin.php#crear_nutricionista" method="POST">
+    <form id="formulario_crear_nutricionista" action="admin.php#crear_nutricionista" method="POST">
         <h2>Creación de nutricionistas</h2>
-            <label for="usuario_nutricionista">Usuario :</label>
-            <input type="text" name="usuario_nutricionista" id="usuario_nutricionista" required><br/>
-            <label for="pass_nutricionista">Contraseña :</label>
-            <input type="password" name="pass_nutricionista" id="pass_nutricionista" required><br/>
-            <label for="nombre_nutricionista">Nombre :</label>
-            <input type="text" name="nombre_nutricionista" id="nombre_nutricionista" required><br/>
-            <label for="apellido_nutricionista">Apellido :</label>
-            <input type="text" name="apellido_nutricionista" id="apellido_nutricionista" required><br/>
-            <label for="email_nutricionista">Email :</label>
-            <input type="email" name="email_nutricionista" id="email_nutricionista" required><br/>
-            <input type="submit" name="crear_nutricionista" value="Crear nutricionista">
-        </form>
-        <div id="mensaje_error_crear_nutricionista" style="color: red; display: none;"></div>
+        <label for="usuario_nutricionista">Usuario :</label>
+        <input type="text" name="usuario_nutricionista" id="usuario_nutricionista" required><br/>
+        
+        <label for="pass_nutricionista">Contraseña :</label>
+        <input type="password" name="pass_nutricionista" id="pass_nutricionista" required><br/>
+        
+        <label for="nombre_nutricionista">Nombre :</label>
+        <input type="text" name="nombre_nutricionista" id="nombre_nutricionista" required><br/>
+        
+        <label for="apellido_nutricionista">Apellido :</label>
+        <input type="text" name="apellido_nutricionista" id="apellido_nutricionista" required><br/>
+        
+        <label for="email_nutricionista">Email :</label>
+        <input type="email" name="email_nutricionista" id="email_nutricionista" required><br/>
+        
+        <input type="submit" name="crear_nutricionista" value="Crear nutricionista">
+    </form>
+    <div id="mensaje_error_crear_nutricionista" style="color: red; display: none;"></div>
         </div>';
 
 
 //Modificar nutricionista
 echo '<div id="modificar_nutricionista">
-   <form action="admin.php#div_nutricionista" method="POST">
+   <form id="formulario_mod_nutricionista" action="admin.php#div_nutricionista" method="POST">
    <h2>Modificación de nutricionistas</h2>
        </select><br/>
        <label for="busq_nutricionista">Elija el nutricionista :</label>
@@ -235,7 +242,7 @@ echo '<div id="modificar_nutricionista">
    
    
 //Eliminar nutricionista
-echo '<div id="borrar_nutricionista">
+echo '<div id="borrar_nutri">
       <form action="admin.php#div_nutricionista" method="POST">
       <h2>Eliminación de nutricionistas</h2>
       </select><br/>
@@ -279,7 +286,7 @@ echo '<div id="borrar_nutricionista">
     <form action="admin.php#buscador_paciente" method="POST">
     <h2>Buscador de paciente por apellido</h2>
     <h3>Introduzca el apellido completo o la inicial</h3>
-    <input type="text" name="apellido_paciente_buscar" id="apellido_paciente" required><br/>
+    <input type="text" name="apellido_paciente_buscar" id="apellido_paciente_buscar" required><br/>
     <input type="submit" name="buscar_paciente">
     </form>
     </div>';
@@ -307,7 +314,7 @@ echo '<div id="borrar_nutricionista">
 
 //crear paciente
 echo '<div id="crear_paciente">
-        <form action="admin.php#div_pacientes" method="POST">
+        <form id="formulario_crear_paciente" action="admin.php#div_pacientes" method="POST">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
             <input type="text" name="usuario_paciente" id="usuario_paciente" required><br/>
@@ -319,14 +326,14 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente" id="apellido_paciente" required><br/>
             <label for="email_paciente">Email :</label>
             <input type="email" name="email_paciente" id="email_paciente" required><br/>
-            <input type="submit" name="crear_paciente">
+            <input type="submit" name="crear_paciente" value="Crear paciente">
         </form>
         <div id="mensaje_error_crear_paciente" style="color: red; display: none;"></div>
         </div>';
 
 //Modificar paciente
   echo '<div id="modificar_paciente">
-        <form action="admin.php#div_pacientes" method="POST">
+        <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST">
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="busq_paciente" id="busq_paciente">';
@@ -355,7 +362,7 @@ echo '<div id="crear_paciente">
         </div>';
 
 //Eliminar paciente
-echo '<div id="borrar_paciente">
+echo '<div id="borrar_paci">
         <form action="admin.php#div_pacientes" method="POST">
             <h3>Eliminación de pacientes</h3>
             <label for="borrar_paciente">Elija un paciente para asignar la receta anterior:</label>
