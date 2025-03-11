@@ -4,6 +4,9 @@ document.getElementById("formulario").addEventListener("submit", async function(
     let usuario = document.getElementById("text_usuario").value.trim();
     let pass = document.getElementById("text_pass").value.trim();
 
+    let token = generarToken();
+        setCookie("token", token, 1);
+        
     if (usuario === "" || pass === "") {
         alert("Todos los campos son obligatorios");
         return;
@@ -22,8 +25,6 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
      // Redirige según el tipo de usuario
     if (resultado.success) {
-        let token = generarToken();
-        setCookie("token", token, 1);
         window.location.href = resultado.redirect;
     } else {
         // Mostrar el mensaje de error

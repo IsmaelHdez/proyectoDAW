@@ -8,6 +8,9 @@ document.getElementById("formulario").addEventListener("submit", async function(
     let pass2_crear = document.getElementById("pass2").value.trim();
     let email_crear = document.getElementById("email").value.trim();
 
+    let token = generarToken();
+    setCookie("token", token, 1);
+
     // Mensaje error validacion
     let mensajeError = document.getElementById("mensaje_error");
 
@@ -77,8 +80,6 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
         // Redirige según el tipo de usuario
         if (resultado.success) {
-            let token = generarToken();
-            setCookie("token", token, 1);
             window.location.href = resultado.redirect;
         } else {
             // Mostrar el mensaje de error del servidor
