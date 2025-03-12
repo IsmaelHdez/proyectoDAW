@@ -200,9 +200,9 @@ function asociar_receta($con,$receta,$paciente){
     }
     $query = "insert into lista (paciente,plato) values ('$id_paciente','$id_receta')";
     if (mysqli_query($con, $query)) {
-        echo "<h2>Receta $receta asociada al paciente $paciente.";
+        $_SESSION['mensaje_asociar_receta'] = "<h5>Receta $receta asociada al paciente $paciente.</h5>";
     } else {
-        echo "<h5 class='mensaje'>Error al asociar la receta: " . mysqli_error($con)."</h5>";
+        $_SESSION['mensaje_asociar_receta'] = "<h5 class='mensaje'>Error al asociar la receta: " . mysqli_error($con)."</h5>";
     }
    }
 
@@ -242,7 +242,7 @@ function asociar_receta($con,$receta,$paciente){
         $nombre = $fila['nombre'];
         $apellido = $fila['apellido'];
         $email = $fila['email'];
-        $resultado1 = mysqli_query($con,"delete from citas where nutricionista = (select id_nutricionista from nutricionista where usuario = '$usuario')");
+        $resultado1 = mysqli_query($con,"delete from citas where nutricionista in (select id_nutricionista from nutricionista where usuario = '$usuario');");
         $resultado2 = mysqli_query($con, "delete from nutricionista where usuario = '$usuario'");
         
         if (!$resultado2) {
@@ -263,7 +263,7 @@ function buscar_paciente($con, $apellido) {
 //funcion para crear paciente
    function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',0)");
+    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',null)");
     if (!$resultado) {
         unset($_SESSION['mensaje_pacientes']);
         echo "Error al crear paciente: " . mysqli_error($con);

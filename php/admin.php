@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
     header("Location: index.php");
     }*/
     
-    
+
     //formulario para crear nutricionista
 if (isset($_POST['crear_nutricionista'])) {
     if (!empty($_POST['usuario_nutricionista']) && !empty($_POST['pass_nutricionista']) && !empty($_POST['nombre_nutricionista']) && !empty($_POST['apellido_nutricionista']) && !empty($_POST['email_nutricionista'])) {
@@ -365,7 +365,7 @@ echo '<div id="crear_paciente">
 echo '<div id="borrar_paci">
         <form action="admin.php#div_pacientes" method="POST">
             <h3>Eliminación de pacientes</h3>
-            <label for="borrar_paciente">Elija un paciente para asignar la receta anterior:</label>
+            <label for="borrar_paciente">Elija un paciente para eliminar:</label>
             <select name="borrar_paciente" id="borrar_paciente">';
               $resultado = listar_pacientes($con);
               if ($resultado && mysqli_num_rows($resultado) > 0) {
@@ -457,54 +457,40 @@ if (isset($_POST['buscar_receta'])) {
     echo '</select>
     <br/>
     <input type="submit" name="paciente_a_nutricionista" value="Asociar">
-  </form>
-</div>';
+</form>';
+if(isset($_SESSION['mensaje_asociar'])){
+        echo $_SESSION['mensaje_asociar'];
+    }
+echo '</div>';
 
   //asociar receta a paciente
   echo '<div id="asociar_receta">
     <form action="admin.php#asociar_receta" method="POST">
       <h2>Asigne recetas a un paciente</h2>
-      <label for="receta">Busque la receta por nombre o inicial</label>
-      <input type="text" name="receta_nombre" id="receta_nombre" required>
-      <input type="submit" name="buscar_receta" value="Buscar">
-    </form>';
-    
-//formulario para buscar el nombre de la receta 
-if(isset($_POST['buscar_receta'])){
-    if (!empty($_POST['receta_nombre'])) {
-        $busqueda = mysqli_real_escape_string($con, trim($_POST['receta_nombre']));
-        $resultado = buscar_nombre_receta($con, $busqueda);
-        
+      <label for="nombre_receta">Seleccione la receta</label>
+      <select name="nombre_receta" id="receta">';
+        $resultado = listar_recetas($con);
         if ($resultado && mysqli_num_rows($resultado) > 0) {
             while ($fila = mysqli_fetch_assoc($resultado)) {
-                $nombre_receta = $fila['nombre'];
-                echo "<h2><b>Nombre de la receta: </b>" . htmlspecialchars($nombre_receta) . "</h2>";
+                $receta = $fila['nombre'];
+                echo "<option value='$receta'>$receta</option>";
             }
-        } else {
-            echo "<h5 class='mensaje'>No se han encontrado recetas con '$busqueda'</h2>";
-        }
-    }
-}
-
-
-echo '<form action="" method="POST">
-<label for="paciente_nombre">Elija un paciente para asignar la receta anterior:</label>
-<select name="paciente_nombre" id="paciente_nombre">';
-
-$resultado = listar_pacientes($con);
-if ($resultado && mysqli_num_rows($resultado) > 0) {
-    while ($fila = mysqli_fetch_assoc($resultado)) {
-        $paciente = $fila['usuario'];
-        echo "<option value='$paciente'>$paciente</option>";
-    }
-}
-
-echo '</select>
-<input type="hidden" name="nombre_receta" value="' . ($nombre_receta ?? '') . '">
-<br/>
-<input type="submit" name="paciente_a_receta" value="Asociar">
+        } 
+    echo '</select>
+          <label for="paciente_nombre">Elija un paciente para asignar la receta anterior:</label>
+            <select name="paciente_nombre" id="paciente_nombre">';
+                  $resultado = listar_pacientes($con);
+                    if ($resultado && mysqli_num_rows($resultado) > 0) {
+                     while ($fila = mysqli_fetch_assoc($resultado)) {
+                       $paciente = $fila['usuario'];
+                       echo "<option value='$paciente'>$paciente</option>";
+                }
+             }
+    echo '</select>
+         <input type="submit" name="paciente_a_receta" value="Asociar">
 </form>';
-
+var_dump($_POST['nombre_receta']);
+var_dump($_POST['paciente_nombre']);
 //formulario para asignar la receta a un paciente
 if(isset($_POST['paciente_a_receta'])){
     if(!empty($_POST['nombre_receta']) && !empty($_POST['paciente_nombre'])){
@@ -514,6 +500,9 @@ if(isset($_POST['paciente_a_receta'])){
     } else {
         echo '<h5 class="mensaje">Error: Asegúrese de seleccionar un paciente y una receta.</h5>';
     }
+}
+if(isset($_SESSION['mensaje_asociar_receta'])){
+    echo $_SESSION['mensaje_asociar_receta'];
 }
   echo '</div>';
   
