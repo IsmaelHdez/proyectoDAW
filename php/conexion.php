@@ -387,54 +387,142 @@ if (!$resultado) {
 }
 
 /*************************FUNCIONES DE PACIENTE.PHP********************************************** */
-//función para ver ficha de paciente
-function obtener_datos_paciente ($con){
-    $usuario = $_SESSION['usuario'];
-    $resultado = mysqli_query ($con, "select id_paciente, usuario, nombre, apellido, email, id_nutricionista FROM paciente WHERE usuario = '$usuario'");
-    if ($row = mysqli_fetch_assoc($resultado)) {
-        return $row;
+// Función para obtener datos del paciente
+function ver_datos_paciente($con, $usuario) {
+    $resultado = mysqli_query($con, "SELECT p.usuario, p.nombre, p.apellido, p.email, p.id_nutricionista, n.nombre AS nombre_nutricionista
+        FROM paciente p
+        LEFT JOIN nutricionista n ON p.id_nutricionista = n.id_nutricionista
+        WHERE p.usuario = '$usuario'");
+    return mysqli_fetch_assoc($resultado);
+}
+
+// Función para modificar datos del paciente
+function modificar_datos_paciente($con, $nombre, $apellido, $email, $usuario, $pass = null) {
+    unset($_SESSION['mensaje_modificar']);
+
+    if ($pass) {
+        $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+        $query = "UPDATE paciente SET nombre = '$nombre', apellido = '$apellido', email = '$email', pass = '$hash_pass' WHERE usuario = '$usuario'";
     } else {
-        return null;
+        $query = "UPDATE paciente SET nombre = '$nombre', apellido = '$apellido', email = '$email' WHERE usuario = '$usuario'";
     }
 
-
+    if (mysqli_query($con, $query)) {
+        $_SESSION['mensaje_modificar'] = "Tus datos se han modificado correctamente.";
+    } else {
+        $_SESSION['mensaje_modificar'] = "Tus datos no se han podido modificar.";
+    }
 }
 
 
-//función para modificar datos personales
+// Función para introducir medidas corporales
+Function introducir_medidas($con, $usuario, $altura, $peso, $grasa, $musculo) {
+    unset($_SESSION['mensaje_medidas']);
+    $query = mysqli_query($con, "INSERT INTO medidas_paciente (id_paciente, fecha_registro, altura, peso, grasa_corporal, musculo) 
+        SELECT id_paciente, CURDATE(), '$altura', '$peso', '$grasa', '$musculo' FROM paciente WHERE usuario = '$usuario'");
+
+    if (mysqli_query($con, $query)) {
+            $_SESSION['mensaje_modificar'] = "Tus datos se han introducido correctamente.";
+        } else {
+            $_SESSION['mensaje_modificar'] = "Tus datos no se han podido introducir.";
+        }
+}
 
 
 
-//función para introducir medidas corporales
+// Función para obtener medidas corporales
+function obtener_medidas_paciente($con, $usuario) {
+    $query = mysqli_query ($con, "SELECT m.id_progreso, m.fecha_registro, m.altura, m.peso, m.grasa_corporal, m.musculo, m.imc
+        FROM medidas_paciente m
+        JOIN paciente p ON m.id_paciente = p.id_paciente
+        WHERE p.usuario = '$usuario'
+        ORDER BY m.fecha_registro DESC
+    ");
+    $medidas = [];
+
+    while ($fila = mysqli_fetch_assoc($query)) {
+        $medidas[] = $fila;
+    }
+
+    return $medidas;
+}
+
+
+// Función para modificar medidas corporales
+function modificar_medidas($con, $usuario, $altura, $peso, $grasa, $musculo) {
+    mysqli_query($con, "UPDATE medidas_paciente SET altura = '$altura', peso = '$peso', grasa_corporal = '$grasa', musculo = '$musculo' 
+        WHERE id_paciente = (SELECT id_paciente FROM paciente WHERE usuario = '$usuario') ORDER BY fecha_registro DESC LIMIT 1");
+}
+
+// Función para comparar medidas con los objetivos
+function comparar_medidas_objetivos($con, $usuario) {
+    $resultado = mysqli_query($con, "SELECT m.altura, m.peso, m.grasa_corporal, m.musculo, o.objetivo_peso, o.objetivo_grasa_corporal, o.objetivo_musculo 
+        FROM medidas_paciente m JOIN objetivos_paciente o ON m.id_paciente = o.id_paciente 
+        WHERE m.id_paciente = (SELECT id_paciente FROM paciente WHERE usuario = '$usuario') ORDER BY m.fecha_registro DESC LIMIT 1");
+    return mysqli_fetch_assoc($resultado);
+}
+
+// Función para mostrar el menú semanal
+function mostrar_menu_semanal($con, $usuario) {
+    $query = "SELECT ms.dia_semana, ms.comida, r.nombre AS plato, r.ingredientes, r.calorias
+        FROM menu_semanal ms JOIN receta r ON ms.id_receta = r.id_receta JOIN paciente p ON ms.id_paciente = p.id_paciente
+        WHERE p.usuario = '$usuario'";
+
+    $result = $con->query($query);
+    $menu_semanal = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $menu_semanal[] = $row;
+    }
+
+    return $menu_semanal;
+}
+
+
+// Funciones para gestionar citas desde el paciente
+function mostrar_citas_paciente($con, $usuario) {
+    $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
+    $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
+    
+    $citas_query = mysqli_query($con, "SELECT fecha, hora FROM citas WHERE paciente = '$id_paciente'");
+    
+    $citas = [];
+    while ($fila = mysqli_fetch_assoc($citas_query)) {
+        $citas[] = $fila;
+    }
+
+    return $citas;
+}
+
+
+function crear_cita_paciente($con, $usuario, $fecha, $hora) {
+    unset($_SESSION['mensaje_cita']);
+    $id_paciente_query = mysqli_query($con, "SELECT id_paciente, id_nutricionista FROM paciente WHERE usuario = '$usuario'");
+    $datos_paciente = mysqli_fetch_assoc($id_paciente_query);
+    if (!$datos_paciente || !$datos_paciente['id_nutricionista']) {
+        $_SESSION['mensaje_cita'] = "No se encontró un nutricionista asignado.";
+        return;
+    }
+    $id_paciente = $datos_paciente['id_paciente'];
+    $id_nutricionista = $datos_paciente['id_nutricionista'];
+    mysqli_query($con, "INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
+}
+
+function modificar_cita_paciente($con, $usuario, $fecha, $hora) {
+    $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
+    $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
+    mysqli_query($con, "UPDATE citas SET fecha = '$fecha', hora = '$hora' WHERE paciente = '$id_paciente'");
+}
+
+function borrar_cita_paciente($con, $usuario, $fecha, $hora) {
+    $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
+    $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
+    mysqli_query($con, "DELETE FROM citas WHERE paciente = '$id_paciente' AND fecha = '$fecha' AND hora = '$hora'");
+}
 
 
 
-//función para modificar medidas corporales (sin modificar la fecha de introducción de las mismas)
 
-
-
-//función para comparar medidas con objetivos
-
-
-
-//función para mostrar menú semanal
-
-
-
-//función para poner, modificar y cancelar citas
-
-
-
-// Función para 
-
-
-
-
-
-
-
-
-
-
-/****************************************************************************************************/
+/**************************************************************************************************************************/
 ?>
+
