@@ -7,7 +7,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require("conexion.php");
 $con = conexion();
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
-var_dump($_SESSION['id_nutricionista']);
 
 /*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
 //función para ver ficha de paciente
@@ -30,7 +29,7 @@ function listar_recetas_usuario($con){
 }
 
 //funcion para crear receta
-function crear_receta($con, $nombre_receta, $ingredientes_receta, $calorias_receta){
+function crear_receta_nutricionista($con, $nombre_receta, $ingredientes_receta, $calorias_receta){
     $id_nutri = $_SESSION['id_nutricionista'];
     $resultado = mysqli_query($con, "insert into receta (nombre, ingredientes, calorias,id_nutricionista) values ('$nombre_receta','$ingredientes_receta', '$calorias_receta', '$id_nutri');");
     if (!$resultado) {
@@ -40,6 +39,60 @@ function crear_receta($con, $nombre_receta, $ingredientes_receta, $calorias_rece
     
     $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Se ha creado la receta </h5><h5> con nombre : $nombre_receta .</h5>";
     }
+
+//función que obtiene lista de pacientes por nutricionista
+function obtener_pacientes_nutricionista($con){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from paciente where id_nutricionista ='$id' ");
+    return $resultado;
+}
+
+ //funcion para crear paciente para el nutricionista
+ function crear_paciente_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
+    $id = $_SESSION['id_nutricionista'];
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email','$id')");
+    if (!$resultado) {
+        unset($_SESSION['mensaje_pacientes']);
+        echo "Error al crear paciente: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    }
+ 
+//función que obtiene lista de recetas por nutricionista
+function listar_recetas_nutricionista($con){
+$id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select nombre from receta where id_nutricionista = '$id';");
+    return $resultado;
+}
+
+//función para modificar receta buscada por nutricionista
+function modificar_receta($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq){
+    $id = $_SESSION['id_nutricionista'];
+    $nombre = mysqli_real_escape_string($con, $nombre_receta);
+    $ingredientes = mysqli_real_escape_string($con, $ingredientes_receta);
+    $calorias = mysqli_real_escape_string($con, $calorias_receta);
+    $nombre_busq = mysqli_real_escape_string($con, $nombre_busq);
+    $actualizacion = mysqli_query($con, "update receta set nombre = '$nombre' , calorias = '$calorias' , ingredientes = '$ingredientes' where id_nutricionista = '$id' and nombre = '$nombre_busq';");
+    if (!$actualizacion) {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al modificar la receta: " . mysqli_error($con)."</h5>";
+    } else {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido actualizada .</h5>";
+    }
+  }
+
+  function eliminar_receta_nutricionista($con , $nombre){
+    $id = $_SESSION['id_nutricionista'];
+    $nombre = mysqli_real_escape_string($con , $nombre);
+    $borrado = mysqli_query($con , "delete from receta where nombre = '$nombre' and id_nutricionista = '$id';");
+    if (!$borrado) {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al borrar la receta: " . mysqli_error($con)."</h5>";
+    } else {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido eliminada .</h5>";
+    }
+  }
+  
 /************************************************************************************************ */
 /*if($_SESSION["tipo"] != 1){
     header("Location: index.php");
@@ -66,7 +119,7 @@ if (isset($_POST['crear_paciente'])) {
         $nombre_paciente = $_POST['nombre_paciente'];
         $apellido_paciente = $_POST['apellido_paciente'];
         $email_paciente = $_POST['email_paciente'];
-        $resultado = crear_paciente($con, $nombre_paciente , $apellido_paciente , $usuario_paciente , $pass_paciente ,  $email_paciente);
+        $resultado = crear_paciente_nutricionista($con, $nombre_paciente , $apellido_paciente , $usuario_paciente , $pass_paciente ,  $email_paciente);
         header('Location:nutricionista.php#div_pacientes');
         exit;
     } 
@@ -105,12 +158,37 @@ if (isset($_POST['eliminar_paciente'])) {
             $nombre_receta = $_POST['nombre_receta'];
             $ingredientes_receta = $_POST['ingredientes_receta'];
             $calorias_receta = $_POST['calorias_receta'];
-            $resultado = crear_receta($con, $nombre_receta, $ingredientes_receta , $calorias_receta );
+            $resultado = crear_receta_nutricionista($con, $nombre_receta, $ingredientes_receta , $calorias_receta );
             header('Location:nutricionista.php#div_recetas');
             exit;
     
         } 
     }
+
+  //formulario para modificar receta
+  if (isset($_POST['crear_receta_mod'])) {
+    if (!empty($_POST['nombre_receta_mod']) && !empty($_POST['ingredientes_receta_mod']) && !empty($_POST['calorias_receta_mod'])) {
+        $nombre_receta = $_POST['nombre_receta_mod'];
+        $ingredientes_receta = $_POST['ingredientes_receta_mod'];
+        $calorias_receta = $_POST['calorias_receta_mod'];
+        $nombre_busq = $_POST['busq_receta'];
+        $resultado = modificar_receta($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq);
+        header('Location:nutricionista.php#div_recetas');
+        exit;
+
+    } 
+}  
+
+//formulario para eliminar receta
+if (isset($_POST['eliminar_receta'])) {
+    if (!empty($_POST['borrar_receta'])) {
+        $nombre = $_POST['borrar_receta'];
+        $resultado = eliminar_receta_nutricionista($con, $nombre);
+        header('Location:nutricionista.php#div_recetas');
+        exit;
+    } 
+}
+
     //Tabla con los pacientes
     echo '<div id="div_pacientes">
     <h2>Listado de pacientes</h2>';
@@ -261,7 +339,53 @@ echo '<div id="crear_receta">
         </form>
         <div id="mensaje_error_crear_receta" style="color: red; display: none;"></div>
         </div>';
-echo "</div>"; 
+
+//Modificar receta
+echo '<div id="modificar_receta">
+<form id="formulario_mod_receta" action="nutricionista.php#div_recetas" method="POST">
+    <h2>Modificación de recetas</h2>
+    <label for="busq_receta">Elija una receta a modificar:</label>
+    <select name="busq_receta" id="busq_receta">';
+      $resultado = listar_recetas_nutricionista($con);
+      if ($resultado && mysqli_num_rows($resultado) > 0) {
+         while ($fila = mysqli_fetch_assoc($resultado)) {
+         $receta = $fila['nombre'];
+         echo "<option value='$receta'>$receta</option>";
+        }
+    }
+echo '</select>
+    <h4>Modifique los datos de la receta : </h4>
+    <label for="nombre_receta_mod">Nombre :</label>
+    <input type="text" name="nombre_receta_mod" id="nombre_receta_mod" required><br/>
+    <label for="calorias_receta_mod">Calorias por racion(450 grs):</label>
+    <input type="text" name="calorias_receta_mod" id="calorias_receta_mod" required><br/>
+    <label for="ingredientes_receta_mod">Ingredientes :</label><br/>
+    <textarea rows="8" cols="50" name="ingredientes_receta_mod" 
+    placeholder="Escribe aquí tu receta...." required></textarea>
+    <input type="submit" name="crear_receta_mod" value="Modificar receta">
+</form>
+</div>
+<div id="mensaje_error_mod_receta" style="color: red; display: none;"></div>';
+
+//Eliminar receta
+echo '<div id="borrar_receta">
+        <form action="nutricionista.php#div_recetas" method="POST">
+            <h3>Eliminación de recetas</h3>
+            <label for="borrar_receta">Elija una receta a eliminar:</label>
+            <select name="borrar_receta" id="borrar_receta">';
+              $resultado = listar_recetas_nutricionista($con);
+              if ($resultado && mysqli_num_rows($resultado) > 0) {
+                 while ($fila = mysqli_fetch_assoc($resultado)) {
+                 $receta = $fila['nombre'];
+                 echo "<option value='$receta'>$receta</option>";
+                }
+            }
+      echo '</select>
+            <input type="submit" name="eliminar_receta" value="Eliminar receta">
+        </form>
+        </div>
+</div>';
+
 ?> 
 
   <div id="boton_logout">   
