@@ -21,6 +21,16 @@ function obtener_datos_nutricionista ($con){
     }
 }
 
+//funcion que busca paciente por apellido
+function buscar_paciente_nutricionista($con, $apellido) {
+    unset($_SESSION['mensaje_paciente']);
+    $apellido = mysqli_real_escape_string($con, $apellido);
+    $resultado = mysqli_query($con, "select distinct p.usuario, p.nombre, p.apellido, p.email ,m.altura , m.peso ,
+    m.grasa_corporal , m.musculo , m.fecha_registro , m.imc from paciente p 
+    join medidas_paciente m on p.id_paciente = m.id_paciente where p.apellido like '$apellido%'");
+    return $resultado;
+}
+
 //función que obtiene lista de recetas
 function listar_recetas_usuario($con){
     $id_nutri = $_SESSION['id_nutricionista'];
@@ -60,13 +70,6 @@ function obtener_pacientes_nutricionista($con){
     $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
     }
  
-//función que obtiene lista de recetas por nutricionista
-function listar_recetas_nutricionista($con){
-$id = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con,"select nombre from receta where id_nutricionista = '$id';");
-    return $resultado;
-}
-
 //función para modificar receta buscada por nutricionista
 function modificar_receta($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq){
     $id = $_SESSION['id_nutricionista'];
@@ -281,7 +284,7 @@ if(isset($_POST['borrar_cita'])){
 //Tabla con los pacientes
     echo '<div id="div_pacientes">
     <h2>Listado de pacientes</h2>';
-    $resultado = obtener_pacientes($con);
+    $resultado = obtener_pacientes_nutricionista($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
     }else{
@@ -299,7 +302,7 @@ if(isset($_POST['borrar_cita'])){
     //Buscador pacientes
     echo '<div id="buscador_paciente">
     <form action="nutricionista.php#buscador_paciente" method="POST">
-    <h2>Buscador de paciente por apellido</h2>
+    <h2>Buscador de información sobre el paciente</h2>
     <h3>Introduzca el apellido completo o la inicial</h3>
     <input type="text" name="apellido_paciente_buscar" id="apellido_paciente" required><br/>
     <input type="submit" name="buscar_paciente">
@@ -308,14 +311,24 @@ if(isset($_POST['borrar_cita'])){
     if (isset($_POST['buscar_paciente'])) {
         if (!empty($_POST['apellido_paciente_buscar'])) {
             $busqueda = mysqli_real_escape_string($con, trim($_POST['apellido_paciente_buscar']));
-            $resultado = buscar_paciente($con, $busqueda);
-            
+            $resultado = buscar_paciente_nutricionista($con, $busqueda);
             if ($resultado && mysqli_num_rows($resultado) > 0) {
                 while ($fila = mysqli_fetch_assoc($resultado)) {
-                    echo "<p><b>Apellido: </b>" . htmlspecialchars($fila['apellido']) . "</p>";
-                    echo "<p><b>Nombre: </b>" . htmlspecialchars($fila['nombre']) . "</p>";
-                    echo "<p><b>Email: </b>" . htmlspecialchars($fila['email']) . "</p>";
-                    echo "<p><b>Usuario: </b>" . htmlspecialchars($fila['usuario']) . "</p>";
+                    echo "<h2>Información del Paciente ".htmlspecialchars($fila['usuario'])."</h2>
+                    <table>
+                    <tr><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>
+                    <tr><td>" . htmlspecialchars($fila['usuario']) . "</th>
+                        <td>" . htmlspecialchars($fila['nombre']) ." ".htmlspecialchars($fila['apellido']) ."</th>
+                        <td>" . htmlspecialchars($fila['email']) . "</th></tr>
+                    <tr><th>Fecha Registro</th><th>Altura (cm)</th><th>Peso (kg)</th></tr>
+                    <tr><td>" . htmlspecialchars($fila['fecha_registro']) . "</th>
+                        <td>" . htmlspecialchars($fila['altura']) . "</th>
+                        <td>" . htmlspecialchars($fila['peso']) . "</th></tr>
+                    <tr><th>Grasa Corporal (%)</th><th>Músculo (%)</th><th>IMC</th></tr>
+                    <tr><td>" . htmlspecialchars($fila['grasa_corporal']) . "</th>
+                        <td>" . htmlspecialchars($fila['musculo']) . "</th>
+                        <td>" . htmlspecialchars($fila['imc']) . "</th></tr> 
+                        </table>";
                 }
             } else {
                 echo "<h5 class='mensaje'>No se encontraron resultados para '$busqueda'.</h5>";
@@ -352,7 +365,7 @@ echo '<div id="crear_paciente">
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="busq_paciente" id="busq_paciente">';
-              $resultado = listar_pacientes($con);
+              $resultado = listar_pacientes_nutricionista($con);
               if ($resultado && mysqli_num_rows($resultado) > 0) {
                  while ($fila = mysqli_fetch_assoc($resultado)) {
                  $paciente = $fila['usuario'];
@@ -382,7 +395,7 @@ echo '<div id="borrar_paciente">
             <h3>Eliminación de pacientes</h3>
             <label for="borrar_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="borrar_paciente" id="borrar_paciente">';
-              $resultado = listar_pacientes($con);
+              $resultado = listar_pacientes_nutricionista($con);
               if ($resultado && mysqli_num_rows($resultado) > 0) {
                  while ($fila = mysqli_fetch_assoc($resultado)) {
                  $paciente = $fila['usuario'];
