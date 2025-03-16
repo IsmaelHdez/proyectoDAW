@@ -33,7 +33,7 @@ function validar_usuario($con, $usuario, $pass){
             $_SESSION['usuario'] = $usuario;
             $redirect = ($tipo == 3) ? "admin.php" :
                         (($tipo == 1) ? "nutricionista.php" :
-                        (($tipo == 2) ? "paciente.php" : "index.php"));
+                        (($tipo == 2) ? "paciente.php" : "login.php"));
 
             echo json_encode(["success" => true, "redirect" => $redirect]);
         } else {
