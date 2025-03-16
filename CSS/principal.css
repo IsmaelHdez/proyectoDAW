@@ -1,0 +1,81 @@
+.principal img {
+    position: relative;
+    top: 5px; /* Desplaza la imagen hacia abajo 50px */
+    width: 100%;
+    height: 50vh;
+    object-fit: cover;
+}
+
+
+/* Contenedor para las noticias, para que estén en una sola línea */
+.noticias {
+    display: flex;
+    justify-content: space-between; /* Espacio entre las noticias */
+    gap: 20px; /* Espacio entre las noticias */
+    flex-wrap: nowrap; /* No permite que las noticias se envuelvan a una nueva línea */
+    padding: 20px;
+}
+
+/* Cada noticia tendrá el mismo estilo y tamaño */
+.noticias div {
+    flex: 1; /* Hace que todas las noticias ocupen un espacio proporcionalmente igual */
+    max-width: 22%; /* Limita el tamaño máximo de cada noticia */
+    border: 2px solid black; /* Borde negro alrededor de cada noticia */
+    padding: 10px;
+    box-sizing: border-box; /* Asegura que el padding no se salga del contenedor */
+}
+
+/* Estilo para las imágenes dentro de las noticias */
+.noticias img {
+    width: 100%;
+    height: 200px; /* Establece un alto fijo para todas las imágenes */
+    object-fit: cover; /* Recorta las imágenes para que cubran el área sin deformarse */
+    display: block;
+}
+
+.titulo_noticias {
+    background-color: #fff; /* Fondo blanco */
+    height: 220px; /* Altura ajustada del contenedor */
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    padding: 30px; /* Espaciado interno para más espacio alrededor */
+    
+}
+
+.secciones h3 {
+    color: #308488; /* Color gris oscuro para el texto */
+    font-family: Georgia, 'Times New Roman', Times, serif; /* Fuente moderna y estilizada */
+    font-size: 3.5rem; /* Tamaño de texto aún más grande */
+    font-weight: 600; /* Peso moderado para el texto */
+    text-align: center;
+    letter-spacing: 1.5px; /* Espaciado entre letras para mayor claridad */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    margin: 0; /* Elimina márgenes para un control preciso */
+}
+
+.titulo_nutricionistas{
+    background-color: #fff; /* Fondo blanco */
+    height: 220px; /* Altura ajustada del contenedor */
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    padding: 30px; /* Espaciado interno para más espacio alrededor */
+}
+
+.sepracion {
+    width: 100%;      /* Asegura que el contenedor ocupe todo el ancho */
+    display: flex;    /* Usamos Flexbox para centrar el contenido */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;    /* Centra verticalmente */
+    overflow: hidden;  /* Evita que el contenedor tenga desbordamiento si la imagen se mueve */
+    margin-top: 30px; /* Espaciado interno para más espacio alrededor */
+}
+
+.sepracion img {
+    width: 100%;       /* La imagen ocupa todo el ancho disponible */
+    height: 65vh;      /* Ajusta la altura como desees */
+    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    transform: translateY(-20%); /* Mueve la imagen hacia arriba un 20% */
+    transition: transform 0.5s ease; /* Agrega una transición suave al movimiento */
+}
