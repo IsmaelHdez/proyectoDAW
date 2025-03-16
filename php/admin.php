@@ -489,8 +489,6 @@ echo '</div>';
     echo '</select>
          <input type="submit" name="paciente_a_receta" value="Asociar">
 </form>';
-var_dump($_POST['nombre_receta']);
-var_dump($_POST['paciente_nombre']);
 //formulario para asignar la receta a un paciente
 if(isset($_POST['paciente_a_receta'])){
     if(!empty($_POST['nombre_receta']) && !empty($_POST['paciente_nombre'])){

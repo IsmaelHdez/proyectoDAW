@@ -92,7 +92,70 @@ function modificar_receta($con, $nombre_receta, $ingredientes_receta , $calorias
         $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido eliminada .</h5>";
     }
   }
-  
+
+ //funcion para obtener las citas del nutricionista
+function obtener_tabla_citas_nutricionista($con ){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con , "select distinct c.fecha , c.hora , p.usuario , p.nombre , p.apellido, p.email
+     from citas c join paciente p on c.paciente = p.id_paciente where c.nutricionista = '$id';");
+       return $resultado;
+} 
+
+//función para buscar pacientes
+function listar_pacientes_nutricionista($con){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select usuario from paciente where id_nutricionista = '$id'");
+    return $resultado;
+  }
+
+//funcion para crear cita
+function crear_cita_nutricionista($con, $paciente, $fecha, $hora) {
+    $id = $_SESSION['id_nutricionista'];
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $hora = mysqli_real_escape_string($con, $hora);
+    $paciente = mysqli_real_escape_string($con, $paciente);
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+        if (!$fila) {
+            $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
+            return;
+        }
+        $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
+            values ('$fecha', '$hora', '$id_paciente', '$id')");
+
+     if (!$resultado) {
+        $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al crear la cita: " . mysqli_error($con)."</h5>";
+        return;
+    }
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha creado una cita el $fecha </h5><h5>a la $hora, con el paciente $paciente.</h5>";
+}
+
+//funcion para borrar una cita
+function borrar_cita_nutricionista($con, $paciente, $fecha, $hora) {
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $hora = mysqli_real_escape_string($con, $hora);
+    $paciente = mysqli_real_escape_string($con, $paciente);
+    $id = $_SESSION['id_nutricionista'];
+
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+        if (!$fila) {
+            echo "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
+            return;
+        }
+        $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con, "DELETE FROM citas WHERE fecha = '$fecha' AND hora = '$hora' AND paciente = '$id_paciente'");
+if (!$resultado) {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al borrar la cita: " . mysqli_error($con)."</h5>";
+} elseif (mysqli_affected_rows($con) === 0) {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ninguna cita con esos datos.</h5>";
+} else {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el paciente $paciente.</h5>";
+    }
+}
 /************************************************************************************************ */
 /*if($_SESSION["tipo"] != 1){
     header("Location: index.php");
@@ -189,7 +252,33 @@ if (isset($_POST['eliminar_receta'])) {
     } 
 }
 
-    //Tabla con los pacientes
+//formulario para crear una cita
+if(isset($_POST['crear_cita'])){
+    if(!empty('paciente_cita') && !empty('hora_cita') && !empty('fecha_cita')){
+        $paciente = $_POST['paciente_cita'];
+        $fecha = $_POST['fecha_cita'];
+        $hora = $_POST['hora_cita'];
+        crear_cita_nutricionista($con , $paciente , $fecha , $hora);
+        header('Location:nutricionista.php#div_citas');
+        exit;
+      }else{
+        $_SESSION['mensaje_cita'] = '<h5 class="mensaje">Debe rellenar todos los datos.</h5>';
+      }
+    }
+
+//formulario para borrar una cita
+if(isset($_POST['borrar_cita'])){
+    if(!empty($_POST['paciente_cita_borrar']) && !empty($_POST['borrar_hora_cita']) && !empty($_POST['borrar_fecha_cita'])){
+        $paciente = $_POST['paciente_cita_borrar'];
+        $fecha = $_POST['borrar_fecha_cita'];
+        $hora = $_POST['borrar_hora_cita'];
+        borrar_cita_nutricionista($con , $paciente , $fecha , $hora);
+    }else{
+        $_SESSION['mensaje_cita'] ='<h5 class="mensaje">Debe rellenar todos los datos.</h5>';
+    }
+  }
+
+//Tabla con los pacientes
     echo '<div id="div_pacientes">
     <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes($con);
@@ -386,6 +475,71 @@ echo '<div id="borrar_receta">
         </div>
 </div>';
 
+//tabla de citas por nutricionistas
+echo '<div id="div_citas">
+<h2>Tu listado de citas</h2>';
+$resultado = obtener_tabla_citas_nutricionista($con);
+if(mysqli_num_rows($resultado)==0){
+echo "<h5>No tienes citas disponibles.</h5>";
+}else{
+echo "<table>
+<tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>";
+while($fila = mysqli_fetch_array($resultado)){
+   extract($fila);
+   echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
+}
+echo "</table>";
+}
+if(isset($_SESSION['mensaje_cita'])){
+    echo $_SESSION['mensaje_cita'];
+}
+
+//crear citas
+echo '<div id="crear_cita">
+<form action="nutricionista.php#div_citas" method="POST">
+<h2>Creación de citas :</h2>
+<label for="paciente_cita">Asigne el paciente:</label>
+<select name="paciente_cita" id="paciente_cita">';
+    $resultado = listar_pacientes_nutricionista($con);
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        while ($fila = mysqli_fetch_assoc($resultado)) {
+            $paciente = $fila['usuario'];
+            echo "<option value='$paciente'>$paciente</option>";
+        }
+    } 
+echo '<label for="hora_cita" name="hora_cita">Hora de la cita (hh:mm):</label>
+     <input type="time" name="hora_cita"><br/>
+     <label for="date" name="fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
+     <input type="date" name="fecha_cita"><br/>
+     <input type="submit" name="crear_cita" value="Crear cita">
+     </form>
+     </div>';
+
+
+
+//Borrar citas
+echo '<div id="borrar_cita">
+<form action="nutricionista.php#borrar_cita" method="POST">
+<h2>Cancelación de citas :</h2>
+<label for="paciente_cita_borrar">Elija el paciente :</label>
+<select name="paciente_cita_borrar" id="paciente_cita_borrar">';
+    $resultado = listar_pacientes_nutricionista($con);
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        while ($fila = mysqli_fetch_assoc($resultado)) {
+            $paciente = $fila['usuario'];
+            echo "<option value='$paciente'>$paciente</option>";
+        }
+    } 
+echo '</select><br/>';
+echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:mm):</label>
+     <input type="time" name="borrar_hora_cita"><br/>
+     <label for="date" name="borrar_fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
+     <input type="date" name="borrar_fecha_cita"><br/>
+     <input type="submit" name="borrar_cita" value="Borrar cita">';
+
+    echo '</form>
+           </div>
+          </div>';
 ?> 
 
   <div id="boton_logout">   
