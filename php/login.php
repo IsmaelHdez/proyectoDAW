@@ -4,7 +4,9 @@ session_start();
 
 // Incluye archivos necesarios
 require("conexion.php");
-require("../html/login.html"); // Verifica que la ruta sea correcta
+require("../html/header.html");
+require("../html/login.html"); 
+require("../html/footer.html");
 
 if (isset($_COOKIE['token']) && isset($_SESSION['usuario'])) {
     $token = $_COOKIE['token'];

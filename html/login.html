@@ -8,12 +8,9 @@
     <title>Login</title>
 </head>
 <body>
-    <header>
-        <h1>Cocinator</h1>
-    </header>
-    <main>
-        <div id="formulario_login">
-            <h1>Acceder a cuenta usuario</h1>
+    <div id="formulario_login">
+        <h1>Acceder a cuenta usuario</h1>
+        <div id="formulario">
             <form method="POST" id="formulario">
                 <label for="">Usuario: </label>
                 <input type="text" name="usuario" id="text_usuario" required><br/>
@@ -21,12 +18,9 @@
                 <input type="password" name="pass" id="text_pass" required><br/>
                 <input type="submit" name="ingresar" id="ingresar" value="Ingresar">
             </form>
-            <div id="mensaje_error" style="color: red; display: none;">Usuario o contraseña incorrectos</div>
-            <a href="../php/crear_nutricionista.php">Crear nuevo usuario...</a>
         </div>
-    </main>
-    <footer>
-        <h5>Creado por grupo 8 Linkia</h5>
-    </footer>
+        <div id="mensaje_error" style="color: red; display: none;">Usuario o contraseña incorrectos</div>
+        <a href="../php/crear_nutricionista.php">Crear nuevo usuario...</a>
+    </div>
 </body>
 </html>
