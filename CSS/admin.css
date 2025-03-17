@@ -24,7 +24,7 @@ form {
 }
 
 /* Estilos para los formularios dentro de divs específicos */
-#div_recetas  form{
+#div_nutricionista, #div_pacientes, #div_recetas, #div_citas ,#div_calendario  form{
     width: 60%; 
 }
 
@@ -126,7 +126,7 @@ tbody tr:hover {
 }
 
 /* Agrupar los divs específicos en un mismo estilo */
-#div_nutricionista, #div_pacientes, #div_recetas, #div_citas {
+#div_nutricionista, #div_pacientes, #div_recetas, #div_citas ,#div_calendario {
     background-color: #45a0496f;
     border: 2px solid #4CAF50;
     border-radius: 10px;
