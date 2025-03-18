@@ -616,28 +616,43 @@ function modificar_datos_paciente($con, $nombre, $apellido, $email, $usuario, $p
 
 
 // Función para introducir medidas corporales
-Function introducir_medidas($con, $usuario, $altura, $peso, $grasa, $musculo) {
+function introducir_medidas($con, $usuario, $fecha, $altura, $peso, $grasa, $musculo) {
     unset($_SESSION['mensaje_medidas']);
-    $query = mysqli_query($con, "INSERT INTO medidas_paciente (id_paciente, fecha_registro, altura, peso, grasa_corporal, musculo) 
-        SELECT id_paciente, CURDATE(), '$altura', '$peso', '$grasa', '$musculo' FROM paciente WHERE usuario = '$usuario'");
+
+    // Escapar variables
+    $usuario = mysqli_real_escape_string($con, $usuario);
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $altura = mysqli_real_escape_string($con, $altura);
+    $peso = mysqli_real_escape_string($con, $peso);
+    $grasa = mysqli_real_escape_string($con, $grasa);
+    $musculo = mysqli_real_escape_string($con, $musculo);
+
+    // Verificar si se ejecuta dos veces
+    echo "Insertando: Usuario: $usuario, Fecha: $fecha, Peso: $peso, Grasa: $grasa, Músculo: $musculo <br>";
+
+    $query = "INSERT INTO medidas_paciente (id_paciente, fecha_registro, altura, peso, grasa_corporal, musculo) 
+              SELECT id_paciente, '$fecha', '$altura', '$peso', '$grasa', '$musculo' 
+              FROM paciente WHERE usuario = '$usuario'";
 
     if (mysqli_query($con, $query)) {
-            $_SESSION['mensaje_modificar'] = "Tus datos se han introducido correctamente.";
-        } else {
-            $_SESSION['mensaje_modificar'] = "Tus datos no se han podido introducir.";
-        }
+        $_SESSION['mensaje_modificar'] = "Tus datos se han introducido correctamente.";
+    } else {
+        $_SESSION['mensaje_modificar'] = "Error al insertar: " . mysqli_error($con);
+    }
 }
+
+
 
 
 
 // Función para obtener medidas corporales
 function obtener_medidas_paciente($con, $usuario) {
-    $query = mysqli_query ($con, "SELECT m.id_progreso, m.fecha_registro, m.altura, m.peso, m.grasa_corporal, m.musculo, m.imc
-        FROM medidas_paciente m
-        JOIN paciente p ON m.id_paciente = p.id_paciente
-        WHERE p.usuario = '$usuario'
-        ORDER BY m.fecha_registro DESC
+    $query = mysqli_query ($con, "SELECT id_progreso, fecha_registro, altura, peso, grasa_corporal, musculo, imc
+        FROM medidas_paciente
+        WHERE id_paciente = (SELECT id_paciente FROM paciente WHERE usuario = '$usuario')
+        ORDER BY fecha_registro DESC
     ");
+    
     $medidas = [];
 
     while ($fila = mysqli_fetch_assoc($query)) {

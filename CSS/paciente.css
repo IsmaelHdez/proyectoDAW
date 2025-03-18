@@ -9,12 +9,12 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%; /* Cambiado a 100% para que el body ocupe toda la pantalla */
-    margin: 0;
 }
 
 /* Estilos para los contenedores de formularios en general */
 form {
     width: 90%; 
+    max-width: 600px;
     padding: 20px;
     background-color: #45a0497d;
     border-radius: 10px;
@@ -24,7 +24,8 @@ form {
 
 /* Estilos para los formularios dentro de divs específicos */
 #div_recetas  form{
-    width: 60%; 
+    width: 60%;
+    max-width: 600px;
 }
 
 /* Estilos para el título principal */
@@ -143,20 +144,46 @@ tbody tr:hover {
     width: 50%;
     border-radius: 5px;
 }
+
 #formulario_modificar_ficha label {
     font-weight: bold;
 }
+
 #formulario_modificar_ficha input {
-    display: block;
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    display: block;
 }
+
 
 #mediciones_paciente {
     display: none;
+}
+
+#formulario_añadir_medicion {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    width: 50%;
+    border-radius: 5px;
+}
+
+#formulario_añadir_medidion label {
+    font-weight: bold;
+}
+
+#formulario_añadir_medicion input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
 }
 
 #menu_semanal {
