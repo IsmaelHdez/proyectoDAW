@@ -7,9 +7,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/*if($_SESSION["tipo"] != 3){
+if($_SESSION["tipo"] != 3){
     header("Location: index.php");
-    }*/
+    }
     
 
     //formulario para crear nutricionista
@@ -129,6 +129,7 @@ if(isset($_POST['borrar_cita'])){
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../CSS/admin.css">
+<script src="../js/logout.js" defer></script>
 <script src="../JS/validacion_admin.js" defer></script>
 <title>Document</title>
 </head>
@@ -513,7 +514,6 @@ if(isset($_SESSION['mensaje_asociar_receta'])){
     <label for="nutricionista_tabla_cita">Elija un nutricionista para ver sus citas :</label>
     <select name="nutricionista_tabla_cita" id="nutricionista_tabla_cita">';
       $resultado = obtener_tabla_citas($con);
-      var_dump($resultado);
       if ($resultado && mysqli_num_rows($resultado) > 0) {
         while ($fila = mysqli_fetch_assoc($resultado)) {
             $nutricionista_cita = $fila['usuario'];
@@ -619,7 +619,11 @@ echo '<div id="borrar_cita">
          <input type="submit" name="borrar_cita" value="Borrar cita">';
 
         echo '</div>
-               </body>
+              </div>
+              </div>
+        <div id="boton_logout">   
+        <button id="cerrarSesion">Cerrar sesión</button>
+            </body>
                 </html>';
  
 ?>
