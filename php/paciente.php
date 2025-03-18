@@ -31,6 +31,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar"])){
 // ----------------------------------------  REFERENTE A MEDIDAS PACIENTE  -------------------------------------------------------//
 $medidas_paciente = obtener_medidas_paciente($con, $usuario);
 
+// Manejo de añadir medición de paciente
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["añadir_medida"])) {
+    $nueva_fecha = $_POST['fecha'];
+    $nueva_altura = $_POST['altura'];
+    $nuevo_peso = $_POST['peso'];
+    $nueva_grasa = $_POST['grasa_corporal'];
+    $nuevo_musculo = $_POST['musculo'];
+    
+    introducir_medidas($con, $usuario, $nueva_fecha, $nueva_altura, $nuevo_peso, $nueva_grasa, $nuevo_musculo);
+
+    header("Location: paciente.php");
+    exit();
+}
+
+
+
+
 // ----------------------------------------  REFERENTE A MENÚ SEMANAL -------------------------------------------------------//
 $menu_semanal = mostrar_menu_semanal($con, $usuario);
 $comidas = ['Desayuno', 'Almuerzo', 'Cena'];
@@ -90,7 +107,7 @@ $citas = mostrar_citas_paciente($con, $usuario);
                 
                 <div id="formulario_modificar_ficha">
                     <h3>Modificar Datos</h3>
-                    <form method="post">
+                    <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
                         <label>Nombre:</label>
                         <input type="text" name="nombre" value="<?php echo htmlspecialchars($datos_paciente['nombre']); ?>" required>
                         <label>Apellido:</label>
@@ -119,7 +136,8 @@ $citas = mostrar_citas_paciente($con, $usuario);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($medidas_paciente as $medida) {
+                        <?php          
+                            foreach ($medidas_paciente as $medida) {
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($medida['fecha_registro']) . "</td>";
                             echo "<td>" . htmlspecialchars($medida['altura']) . "</td>";
@@ -135,7 +153,24 @@ $citas = mostrar_citas_paciente($con, $usuario);
                         }?>
                     </tbody>
                 </table>      
-                <button onclick="añadirMedicion()" style="text-align: right; margin-top: 10px;">Añadir</button>
+                <button onclick="añadirMedicion()">Añadir</button>
+
+                <div id="formulario_añadir_medicion">
+                    <h3>Añadir Medicion</h3>
+                    <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" id="fecha" name="fecha" required><br>
+                        <label for="altura">Altura (cm):</label>
+                        <input type="number" id="altura" name="altura" step="0.01" required><br>
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" name="peso" step="0.01" required><br>
+                        <label for="grasa">Grasa Corporal (%):</label>
+                        <input type="number" id="grasa" name="grasa_corporal" step="0.01" required><br>                    
+                        <label for="musculo">Músculo (%):</label>
+                        <input type="number" id="musculo" name="musculo" step="0.01" required><br>
+                    <button type="submit" name="añadir_medida">Guardar</button>
+                    </form>
+                </div>
             </div>
 
             <div id="menu_semanal" class="seccion">
