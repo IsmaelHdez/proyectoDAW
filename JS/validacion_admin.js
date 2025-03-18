@@ -11,9 +11,8 @@ function validar_Correo(correo) {
     }
     
 // Función para validar textos con menos de 3 caracteres
-function validar_Entrada(correo) {
-            const emailRegex = /^[^\s@]{3,}$/;
-            return emailRegex.test(correo);
+function validar_Entrada(texto) {
+        return texto.length >= 3;
         }
 
 //función para validar formulario de crear nutricionista    
@@ -114,7 +113,7 @@ function validar_mod_nutricionista(){
         mensajeError.style.display = "block";
         return false;
     }
-    
+    return true; 
 };
 
 //función para validar formulario de crear paciente
@@ -165,6 +164,7 @@ function validar_crear_paciente(){
         mensajeError.style.display = "block";
         return false;
     }
+    return true;
 };
 
 //función para validar formulario de mod paciente
@@ -214,6 +214,7 @@ function validar_mod_paciente(){
         mensajeError.style.display = "block";
         return false;
     }
+    return true;
 };
 //Validación de crear nutricionista 
 document.getElementById("formulario_crear_nutricionista").addEventListener("submit", function(event) {
@@ -221,6 +222,7 @@ document.getElementById("formulario_crear_nutricionista").addEventListener("subm
         event.preventDefault(); // Detiene el envío del formulario si la validación falla
     }
 });
+
 //Validación de mod nutricionista 
 document.getElementById("formulario_mod_nutricionista").addEventListener("submit", function(event) {
     if (!validar_mod_nutricionista()) {
