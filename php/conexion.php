@@ -106,8 +106,8 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo)
 /*************************GESTIÓN DE IMÁGENES********************************************** */
 
 function subir_imagen_cloudinary($imagen_tmp) {
-    $cloud_name = "dup8qzlzv"; 
-    $api_key = "257596798154478"; 
+    $cloud_name = "dup8qzlzv";
+    $api_key = "257596798154478";
     $upload_url = "https://api.cloudinary.com/v1_1/$cloud_name/image/upload";
 
     $data = [
@@ -125,48 +125,55 @@ function subir_imagen_cloudinary($imagen_tmp) {
     curl_close($ch);
 
     $result = json_decode($response, true);
-
+    
     return isset($result["secure_url"]) ? $result["secure_url"] : null;
 }
 
+
 function eliminar_imagen_cloudinary($url_actual) {
-    if (!$url_actual) return false;  // Si no hay imagen, no hacer nada
+    if (!$url_actual) {
+        return false;
+    }
 
     $cloud_name = "dup8qzlzv"; 
     $api_key = "257596798154478"; 
     $api_secret = "ejH0vRb5LxDDF8tck6F_toX0XLs";
 
-    $public_id = pathinfo(parse_url($url_actual, PHP_URL_PATH), PATHINFO_FILENAME);
-    $delete_url = "https://api.cloudinary.com/v1_1/$cloud_name/image/destroy";
+   // Extraer el `public_id` de la URL de la imagen
+   $parsed_url = parse_url($url_actual);
+   $path_parts = explode("/", $parsed_url["path"]);
+   $public_id_with_extension = end($path_parts);
+   $public_id = pathinfo($public_id_with_extension, PATHINFO_FILENAME); // Quitar extensión
 
-    $delete_data = [
-        "public_id" => $public_id,
-        "api_key" => $api_key,
-        "api_secret" => $api_secret
-    ];
+   $delete_url = "https://api.cloudinary.com/v1_1/$cloud_name/image/destroy";
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $delete_url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($delete_data));
-    
-    $response = curl_exec($ch);
-    curl_close($ch);
+   // Generar firma para autenticación
+   $timestamp = time();
+   $string_to_sign = "public_id=$public_id&timestamp=$timestamp$api_secret";
+   $signature = sha1($string_to_sign);
 
-    $result = json_decode($response, true);
-    return isset($result["result"]) && $result["result"] === "ok";
+   // Datos para la solicitud de eliminación
+   $data = [
+       "public_id" => $public_id,
+       "api_key" => $api_key,
+       "timestamp" => $timestamp,
+       "signature" => $signature
+   ];
+
+   $ch = curl_init();
+   curl_setopt($ch, CURLOPT_URL, $delete_url);
+   curl_setopt($ch, CURLOPT_POST, true);
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+   $response = curl_exec($ch);
+   curl_close($ch);
+
+   $result = json_decode($response, true);
+
+   return isset($result["result"]) && $result["result"] === "ok";
 }
 
-function sustituir_imagen_cloudinary($nueva_imagen_tmp, $url_actual) {
-    // Primero eliminoo la imagen anterior si existe
-    if (!empty($url_actual)) {
-        eliminar_imagen_cloudinary($url_actual);
-    }
-    
-    // Subo la nueva imagen y devuelvo la anterior
-    return subir_imagen_cloudinary($nueva_imagen_tmp);
-}
 
 
 /*************************FUNCIONES DE ADMIN.PHP********************************************** */
@@ -654,27 +661,27 @@ if (!$resultado) {
 /*************************FUNCIONES DE PACIENTE.PHP********************************************** */
 // Función para obtener datos del paciente
 function ver_datos_paciente($con, $usuario) {
-    $resultado = mysqli_query($con, "SELECT p.usuario, p.nombre, p.apellido, p.email, p.foto, p.id_nutricionista, n.nombre AS nombre_nutricionista
-        FROM paciente p
-        LEFT JOIN nutricionista n ON p.id_nutricionista = n.id_nutricionista
-        WHERE p.usuario = '$usuario'");
+    $query = "SELECT p.usuario, p.nombre, p.apellido, p.email, p.foto, p.id_nutricionista, n.nombre AS nombre_nutricionista
+              FROM paciente p
+              LEFT JOIN nutricionista n ON p.id_nutricionista = n.id_nutricionista
+              WHERE p.usuario = '$usuario'";
+
+    $resultado = mysqli_query($con, $query);
     return mysqli_fetch_assoc($resultado);
 }
+
 
 // Función para modificar datos del paciente
 function modificar_datos_paciente($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null) {
     unset($_SESSION['mensaje_modificar']);
 
-    // Construcción de la consulta con los campos que se actualizarán
     $query = "UPDATE paciente SET nombre = '$nombre', apellido = '$apellido', email = '$email'";
 
-    // Si se proporciona una nueva contraseña, la añadimos a la consulta
     if ($pass) {
         $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
         $query .= ", pass = '$hash_pass'";
     }
 
-    // Si se proporciona una nueva foto, la añadimos a la consulta
     if ($foto) {
         $query .= ", foto = '$foto'";
     }
@@ -687,6 +694,7 @@ function modificar_datos_paciente($con, $nombre, $apellido, $email, $usuario, $p
         $_SESSION['mensaje_modificar'] = "Tus datos no se han podido modificar.";
     }
 }
+
 
 
 
