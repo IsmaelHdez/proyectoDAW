@@ -1,9 +1,10 @@
 #footer {
     background-color: #2a7a7f;
     color: white;
-    padding: 30px 20px;
+    padding: 40px 20px;
     margin-top: 50px;
     font-size: 18px;
+    text-align: center;
 }
 
 .footer-content {
@@ -33,7 +34,8 @@
 .footer-bottom {
     text-align: center;
     margin-top: 20px;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .footer-bottom p {

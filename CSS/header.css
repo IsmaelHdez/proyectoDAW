@@ -5,17 +5,24 @@
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     position: relative;
 }
 
-#encabezado img {
-    height: 120%;
-    width: auto;
-    position: absolute;
-    left: 20px;
+#encabezado a {
+    display: flex;
+    align-items: center;
 }
+
+#logo {
+    height: 120px;
+    width: auto;
+    position: relative;
+    left: 0;
+    margin-left: 10px;
+}
+
 
 .enlaces {
     display: flex;
@@ -60,9 +67,4 @@ button:hover {
     border: 2px solid #42b3bb;
     transform: translateY(-3px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
-
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
