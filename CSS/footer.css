@@ -1,5 +1,5 @@
 #footer {
-    background-color: rgb(66, 179, 187);
+    background-color: #2a7a7f;
     color: white;
     padding: 30px 20px;
     margin-top: 50px;
@@ -26,8 +26,8 @@
     transition: color 0.3s ease-in-out;
 }
 
-.footer-contact p {
-    margin: 5px 0;
+.footer-links a:hover, .footer-social a:hover {
+    color: #42b3bb;
 }
 
 .footer-bottom {
