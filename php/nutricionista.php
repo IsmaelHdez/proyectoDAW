@@ -8,210 +8,9 @@ require("conexion.php");
 $con = conexion();
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
 
-/*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
-//función para ver ficha de paciente
-function obtener_datos_nutricionista ($con){
-    $usuario = $_SESSION['usuario'];
-    //$resultado = mysqli_query ($con, "select id_nutricionista FROM nutricionista WHERE usuario = '$usuario'");
-    $resultado = mysqli_query ($con, "select id_nutricionista FROM nutricionista WHERE usuario = 'caro'");
-    if ($row = mysqli_fetch_assoc($resultado)) {
-        return $row['id_nutricionista'];
-    } else {
-        return null;
-    }
-}
-
-//funcion que busca paciente por apellido
-function buscar_paciente_nutricionista($con, $apellido) {
-    unset($_SESSION['mensaje_paciente']);
-    $apellido = mysqli_real_escape_string($con, $apellido);
-    $resultado = mysqli_query($con, "select distinct p.usuario, p.nombre, p.apellido, p.email ,m.altura , m.peso ,
-    m.grasa_corporal , m.musculo , m.fecha_registro , m.imc from paciente p 
-    join medidas_paciente m on p.id_paciente = m.id_paciente where p.apellido like '$apellido%'");
-    return $resultado;
-}
-
-//función que obtiene lista de recetas
-function listar_recetas_usuario($con){
-    $id_nutri = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where id_nutricionista = '$id_nutri';");
-    return $resultado;
-}
-
-//funcion para crear receta
-function crear_receta_nutricionista($con, $nombre_receta, $ingredientes_receta, $calorias_receta){
-    $id_nutri = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con, "insert into receta (nombre, ingredientes, calorias,id_nutricionista) values ('$nombre_receta','$ingredientes_receta', '$calorias_receta', '$id_nutri');");
-    if (!$resultado) {
-        unset($_SESSION['mensaje_receta']);
-        echo "Error al crear la receta: " . mysqli_error($con);
-    }
-    
-    $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Se ha creado la receta </h5><h5> con nombre : $nombre_receta .</h5>";
-    }
-
-  //función que obtiene lista de recetas por nutricionista
-function listar_recetas_nutricionista($con){
-    $id = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where id_nutricionista = '$id';");
-    return $resultado;
-}
-
-//función que obtiene la tabla con el calendario de recetas
-function obtener_calendario($con , $paciente){
-    $_SESSION['calendario'] = $paciente;
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-    $id_paciente = $fila['id_paciente'];
-    $resultado = mysqli_query($con,"SELECT m.dia_semana, m.comida, r.nombre AS receta_nombre 
-            FROM menu_semanal m
-            JOIN receta r ON m.id_receta = r.id_receta
-            WHERE m.id_paciente = '$id_paciente' 
-            ORDER BY FIELD(dia_semana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'),
-                     FIELD(comida, 'Desayuno', 'Almuerzo', 'Cena');");
-    $menu = [];
-    while ($fila = $resultado->fetch_assoc()) {
-        $menu[$fila['dia_semana']][$fila['comida']] = $fila['receta_nombre'];
-    }
-    return $menu;          
-}
-
-//función que añade receta al calendario
-function crear_receta_calendario($con , $paciente , $dia , $receta , $comida){
-    $id_nutricionista = $_SESSION['id_nutricionista'];
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-    $id_paciente = $fila['id_paciente'];
-    $consulta_receta = mysqli_query($con , "select id_receta from receta where nombre = '$receta' and id_nutricionista = '$id_nutricionista'");
-    $fila = mysqli_fetch_assoc($consulta_receta);
-    $id_receta = $fila['id_receta'];
-    $resultado = mysqli_query($con, "insert into menu_semanal (id_paciente, id_nutricionista, id_receta, dia_semana, comida) 
-    values ('$id_paciente', '$id_nutricionista', '$id_receta', '$dia', '$comida')
-    ON DUPLICATE KEY UPDATE 
-    id_nutricionista = VALUES(id_nutricionista),
-    id_receta = VALUES(id_receta);");
-    if (!$resultado) {
-        unset($_SESSION['mensaje_calendario']);
-        echo "Error al crear paciente: " . mysqli_error($con);
-    }
-    
-    $_SESSION['mensaje_calendario'] = "<h5 class='mensaje'>Se ha asignado la receta $receta</h5><h5> para el $dia al $comida, </h5><h5> al paciente $paciente.</h5>";
-}
-
-//función que obtiene lista de pacientes por nutricionista
-function obtener_pacientes_nutricionista($con){
-    $id = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from paciente where id_nutricionista ='$id' ");
-    return $resultado;
-}
-
- //funcion para crear paciente para el nutricionista
- function crear_paciente_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
-    $id = $_SESSION['id_nutricionista'];
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email','$id')");
-    if (!$resultado) {
-        unset($_SESSION['mensaje_pacientes']);
-        echo "Error al crear paciente: " . mysqli_error($con);
-    }
-    
-    $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
-    }
- 
-//función para modificar receta buscada por nutricionista
-function modificar_receta_nutricionista($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq){
-    $id = $_SESSION['id_nutricionista'];
-    $nombre = mysqli_real_escape_string($con, $nombre_receta);
-    $ingredientes = mysqli_real_escape_string($con, $ingredientes_receta);
-    $calorias = mysqli_real_escape_string($con, $calorias_receta);
-    $nombre_busq = mysqli_real_escape_string($con, $nombre_busq);
-    $actualizacion = mysqli_query($con, "update receta set nombre = '$nombre' , calorias = '$calorias' , ingredientes = '$ingredientes' where id_nutricionista = '$id' and nombre = '$nombre_busq';");
-    if (!$actualizacion) {
-        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al modificar la receta: " . mysqli_error($con)."</h5>";
-    } else {
-        $_SESSION['menu'] = obtener_calendario($con, $paciente);
-        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido actualizada .</h5>";
-    }
-  }
-
-  function eliminar_receta_nutricionista($con , $nombre){
-    $id = $_SESSION['id_nutricionista'];
-    $nombre = mysqli_real_escape_string($con , $nombre);
-    $borrado = mysqli_query($con , "delete from receta where nombre = '$nombre' and id_nutricionista = '$id';");
-    if (!$borrado) {
-        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al borrar la receta: " . mysqli_error($con)."</h5>";
-    } else {
-        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido eliminada .</h5>";
-    }
-  }
-
- //funcion para obtener las citas del nutricionista
-function obtener_tabla_citas_nutricionista($con ){
-    $id = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con , "select distinct c.fecha , c.hora , p.usuario , p.nombre , p.apellido, p.email
-     from citas c join paciente p on c.paciente = p.id_paciente where c.nutricionista = '$id';");
-       return $resultado;
-} 
-
-//función para buscar pacientes
-function listar_pacientes_nutricionista($con){
-    $id = $_SESSION['id_nutricionista'];
-    $resultado = mysqli_query($con,"select usuario from paciente where id_nutricionista = '$id'");
-    return $resultado;
-  }
-
-//funcion para crear cita
-function crear_cita_nutricionista($con, $paciente, $fecha, $hora) {
-    $id = $_SESSION['id_nutricionista'];
-    $fecha = mysqli_real_escape_string($con, $fecha);
-    $hora = mysqli_real_escape_string($con, $hora);
-    $paciente = mysqli_real_escape_string($con, $paciente);
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-        if (!$fila) {
-            $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
-            return;
-        }
-        $id_paciente = $fila['id_paciente'];
-
-    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
-            values ('$fecha', '$hora', '$id_paciente', '$id')");
-
-     if (!$resultado) {
-        $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al crear la cita: " . mysqli_error($con)."</h5>";
-        return;
-    }
-    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha creado una cita el $fecha </h5><h5>a la $hora, con el paciente $paciente.</h5>";
-}
-
-//funcion para borrar una cita
-function borrar_cita_nutricionista($con, $paciente, $fecha, $hora) {
-    $fecha = mysqli_real_escape_string($con, $fecha);
-    $hora = mysqli_real_escape_string($con, $hora);
-    $paciente = mysqli_real_escape_string($con, $paciente);
-    $id = $_SESSION['id_nutricionista'];
-
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-        if (!$fila) {
-            echo "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
-            return;
-        }
-        $id_paciente = $fila['id_paciente'];
-
-    $resultado = mysqli_query($con, "delete from citas WHERE fecha = '$fecha' and hora = '$hora' and paciente = '$id_paciente'");
-if (!$resultado) {
-    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al borrar la cita: " . mysqli_error($con)."</h5>";
-} elseif (mysqli_affected_rows($con) === 0) {
-    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ninguna cita con esos datos.</h5>";
-} else {
-    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el paciente $paciente.</h5>";
-    }
-}
-/************************************************************************************************ */
-/*if($_SESSION["tipo"] != 1){
+if($_SESSION["tipo"] != 1){
     header("Location: index.php");
-}*/
+}
 
 ?>
 <!DOCTYPE html>
@@ -220,6 +19,7 @@ if (!$resultado) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/logout.js" defer></script>
+    <script src="../JS/validacion_nutricionista.js" defer></script>
     <link rel="stylesheet" href="../CSS/admin.css">
     <title>Document</title>
 </head>
@@ -251,7 +51,7 @@ if (isset($_POST['paciente_mod'])) {
         $nombre_paciente_mod = $_POST['nombre_paciente_mod'];
         $apellido_paciente_mod = $_POST['apellido_paciente_mod'];
         $email_paciente_mod = $_POST['email_paciente_mod'];
-        $resultado = modificar_paciente_nutricionista($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $busq_paciente);
+        $resultado = modificar_paciente($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $busq_paciente);
         header('Location:nutricionista.php#div_pacientes');
         exit;
     } 
@@ -377,7 +177,7 @@ if(isset($_POST['ver_calendario'])){
     <form action="nutricionista.php#buscador_paciente" method="POST">
     <h2>Buscador de información sobre el paciente</h2>
     <h3>Introduzca el apellido completo o la inicial</h3>
-    <input type="text" name="apellido_paciente_buscar" id="apellido_paciente" required><br/>
+    <input type="text" name="apellido_paciente_buscar" id="apellido_paciente_buscar" required><br/>
     <input type="submit" name="buscar_paciente">
     </form>
     </div>';
@@ -415,7 +215,7 @@ if(isset($_POST['ver_calendario'])){
 
 //crear paciente
 echo '<div id="crear_paciente">
-        <form action="nutricionista.php#div_pacientes" method="POST">
+        <form id="formulario_crear_paciente" action="nutricionista.php#div_pacientes" method="POST">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
             <input type="text" name="usuario_paciente" id="usuario_paciente" required><br/>
@@ -434,7 +234,7 @@ echo '<div id="crear_paciente">
 
 //Modificar paciente
   echo '<div id="modificar_paciente">
-        <form action="nutricionista.php#div_pacientes" method="POST">
+        <form id="formulario_mod_paciente" action="nutricionista.php#div_pacientes" method="POST">
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="busq_paciente" id="busq_paciente">';
@@ -501,7 +301,7 @@ if(isset($_SESSION['mensaje_receta'])){
 }
 //crear receta
 echo '<div id="crear_receta">
-        <form action="nutricionista.php#div_recetas" method="POST">
+        <form id="formulario_crear_receta" action="nutricionista.php#div_recetas" method="POST">
             <h2>Creación de recetas</h2>
             <label for="nombre_receta">Nombre :</label>
             <input type="text" name="nombre_receta" id="nombre_receta" required><br/>
@@ -509,7 +309,7 @@ echo '<div id="crear_receta">
             <input type="text" name="calorias_receta" id="calorias_receta" required><br/>
             <label for="ingredientes_receta">Ingredientes :</label><br/>
             <textarea rows="8" cols="50" name="ingredientes_receta" 
-            placeholder="Escribe aquí tu receta...." required></textarea>
+            placeholder="Escribe aquí tu receta...." id="ingredientes_receta" required></textarea>
             <input type="submit" name="crear_receta" value="Crear receta">
         </form>
         <div id="mensaje_error_crear_receta" style="color: red; display: none;"></div>
@@ -536,11 +336,11 @@ echo '</select>
     <input type="text" name="calorias_receta_mod" id="calorias_receta_mod" required><br/>
     <label for="ingredientes_receta_mod">Ingredientes :</label><br/>
     <textarea rows="8" cols="50" name="ingredientes_receta_mod" 
-    placeholder="Escribe aquí tu receta...." required></textarea>
+    placeholder="Escribe aquí tu receta...." id="ingredientes_receta_mod" required></textarea>
     <input type="submit" name="crear_receta_mod" value="Modificar receta">
 </form>
-</div>
-<div id="mensaje_error_mod_receta" style="color: red; display: none;"></div>';
+<div id="mensaje_error_mod_receta" style="color: red; display: none;"></div>
+</div>';
 
 //Eliminar receta
 echo '<div id="borrar_receta">
@@ -577,8 +377,9 @@ echo '<div id="borrar_receta">
  echo   '<input type="submit" name="ver_calendario" value="Ver calendario">
          </form>';
             $menu = $_SESSION['menu'] ?? [];  
-        echo '<table>
-             <h2>Calendario de '.$_SESSION['calendario'].'</h2>
+        echo '<table>';
+        if(!empty($_SESSION['calendario'])){
+        echo   '<h2>Calendario de '.$_SESSION['calendario'].'</h2>
         <tr>
             <th>Comida</th>
             <th>Lunes</th>
@@ -599,8 +400,9 @@ echo '<div id="borrar_receta">
             }
             echo "</tr>";
         }
-    echo "</table>
-    </form>";
+    echo "</table>";
+        }
+    echo "</form>";
     
     if(isset($_SESSION['mensaje_calendario'])){
        echo $_SESSION['mensaje_calendario'];
@@ -647,9 +449,9 @@ echo '<div id="asignar_calendario">
             <option value="Cena">Cena</option>
             </select>';
 echo   '<input type="submit" name="asignar_calendario" value="Asignar receta">';    
-    echo "</form>
+    echo '</form>
           </div>
-          </div>";
+          </div>';
 
 //tabla de citas por nutricionistas
 echo '<div id="div_citas">
@@ -715,7 +517,7 @@ echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:
 
     echo '</form>
            </div>
-          </div>';
+           </div>';
 ?> 
 
   <div id="boton_logout">   

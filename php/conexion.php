@@ -328,7 +328,7 @@ function buscar_paciente($con, $apellido) {
 //funcion para crear paciente
    function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email',null)");
+    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', null)");
     if (!$resultado) {
         unset($_SESSION['mensaje_pacientes']);
         echo "Error al crear paciente: " . mysqli_error($con);
@@ -341,12 +341,13 @@ function buscar_paciente($con, $apellido) {
    function modificar_paciente($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
     unset($_SESSION['mensaje_paciente']);
-    $resultado = mysqli_query($con, "update paciente set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
+    $resultado = mysqli_query($con, "update paciente set usuario = '$usuario' , pass = '$hash_pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
     if (!$resultado) {
         $_SESSION['mensaje_pacientes'] = "Error al modificar paciente: " . mysqli_error($con);
     }
     
     $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha modificado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    return true;
     }
 
 //funcion para eliminar paciente
@@ -408,7 +409,7 @@ function crear_cita($con, $paciente, $nutricionista, $fecha, $hora) {
 
 //funcion para buscar un nutricionista en la tabla
 function obtener_tabla_citas($con ){
-    $resultado = mysqli_query($con , "select distinct n.usuario from nutricionista n join citas c on n.id_nutricionista = c.nutricionista;");
+    $resultado = mysqli_query($con , "select distinct usuario from nutricionista where tipo = 1;");
        return $resultado;
 }
 
@@ -450,7 +451,206 @@ if (!$resultado) {
     echo "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el nutricionista $nutricionista y el paciente $paciente.</h5>";
     }
 }
+/*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
+//función para ver ficha de paciente
+function obtener_datos_nutricionista ($con){
+    $usuario = $_SESSION['usuario'];
+    $resultado = mysqli_query ($con, "select id_nutricionista FROM nutricionista WHERE usuario = '$usuario'");
+    if ($row = mysqli_fetch_assoc($resultado)) {
+        return $row['id_nutricionista'];
+    } else {
+        return null;
+    }
+}
 
+//funcion que busca paciente por apellido
+function buscar_paciente_nutricionista($con, $apellido) {
+    unset($_SESSION['mensaje_paciente']);
+    $apellido = mysqli_real_escape_string($con, $apellido);
+    $resultado = mysqli_query($con, "select distinct p.usuario, p.nombre, p.apellido, p.email ,m.altura , m.peso ,
+    m.grasa_corporal , m.musculo , m.fecha_registro , m.imc from paciente p 
+    join medidas_paciente m on p.id_paciente = m.id_paciente where p.apellido like '$apellido%'");
+    return $resultado;
+}
+
+//función que obtiene lista de recetas
+function listar_recetas_usuario($con){
+    $id_nutri = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where id_nutricionista = '$id_nutri';");
+    return $resultado;
+}
+
+//funcion para crear receta
+function crear_receta_nutricionista($con, $nombre_receta, $ingredientes_receta, $calorias_receta){
+    $id_nutri = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con, "insert into receta (nombre, ingredientes, calorias,id_nutricionista) values ('$nombre_receta','$ingredientes_receta', '$calorias_receta', '$id_nutri');");
+    if (!$resultado) {
+        unset($_SESSION['mensaje_receta']);
+        echo "Error al crear la receta: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Se ha creado la receta </h5><h5> con nombre : $nombre_receta .</h5>";
+    }
+
+  //función que obtiene lista de recetas por nutricionista
+function listar_recetas_nutricionista($con){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where id_nutricionista = '$id';");
+    return $resultado;
+}
+
+//función que obtiene la tabla con el calendario de recetas
+function obtener_calendario($con , $paciente){
+    $_SESSION['calendario'] = $paciente;
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+    $id_paciente = $fila['id_paciente'];
+    $resultado = mysqli_query($con,"SELECT m.dia_semana, m.comida, r.nombre AS receta_nombre 
+            FROM menu_semanal m
+            JOIN receta r ON m.id_receta = r.id_receta
+            WHERE m.id_paciente = '$id_paciente' 
+            ORDER BY FIELD(dia_semana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'),
+                     FIELD(comida, 'Desayuno', 'Almuerzo', 'Cena');");
+    $menu = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $menu[$fila['dia_semana']][$fila['comida']] = $fila['receta_nombre'];
+    }
+    return $menu;          
+}
+
+//función que añade receta al calendario
+function crear_receta_calendario($con , $paciente , $dia , $receta , $comida){
+    $id_nutricionista = $_SESSION['id_nutricionista'];
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+    $id_paciente = $fila['id_paciente'];
+    $consulta_receta = mysqli_query($con , "select id_receta from receta where nombre = '$receta' and id_nutricionista = '$id_nutricionista'");
+    $fila = mysqli_fetch_assoc($consulta_receta);
+    $id_receta = $fila['id_receta'];
+    $resultado = mysqli_query($con, "insert into menu_semanal (id_paciente, id_nutricionista, id_receta, dia_semana, comida) 
+    values ('$id_paciente', '$id_nutricionista', '$id_receta', '$dia', '$comida')
+    ON DUPLICATE KEY UPDATE 
+    id_nutricionista = VALUES(id_nutricionista),
+    id_receta = VALUES(id_receta);");
+    if (!$resultado) {
+        unset($_SESSION['mensaje_calendario']);
+        echo "Error al crear paciente: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_calendario'] = "<h5 class='mensaje'>Se ha asignado la receta $receta</h5><h5> para el $dia al $comida, </h5><h5> al paciente $paciente.</h5>";
+}
+
+//función que obtiene lista de pacientes por nutricionista
+function obtener_pacientes_nutricionista($con){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from paciente where id_nutricionista ='$id' ");
+    return $resultado;
+}
+
+ //funcion para crear paciente para el nutricionista
+ function crear_paciente_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
+    $id = $_SESSION['id_nutricionista'];
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email','$id')");
+    if (!$resultado) {
+        unset($_SESSION['mensaje_pacientes']);
+        echo "Error al crear paciente: " . mysqli_error($con);
+    }
+    
+    $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    }
+ 
+//función para modificar receta buscada por nutricionista
+function modificar_receta_nutricionista($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq){
+    $id = $_SESSION['id_nutricionista'];
+    $nombre = mysqli_real_escape_string($con, $nombre_receta);
+    $ingredientes = mysqli_real_escape_string($con, $ingredientes_receta);
+    $calorias = mysqli_real_escape_string($con, $calorias_receta);
+    $nombre_busq = mysqli_real_escape_string($con, $nombre_busq);
+    $actualizacion = mysqli_query($con, "update receta set nombre = '$nombre' , calorias = '$calorias' , ingredientes = '$ingredientes' where id_nutricionista = '$id' and nombre = '$nombre_busq';");
+    if (!$actualizacion) {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al modificar la receta: " . mysqli_error($con)."</h5>";
+    } else {
+        $_SESSION['menu'] = obtener_calendario($con, $paciente);
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido actualizada .</h5>";
+    }
+  }
+
+  function eliminar_receta_nutricionista($con , $nombre){
+    $id = $_SESSION['id_nutricionista'];
+    $nombre = mysqli_real_escape_string($con , $nombre);
+    $borrado = mysqli_query($con , "delete from receta where nombre = '$nombre' and id_nutricionista = '$id';");
+    if (!$borrado) {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>Error al borrar la receta: " . mysqli_error($con)."</h5>";
+    } else {
+        $_SESSION['mensaje_receta'] = "<h5 class='mensaje'>La receta de $nombre </h5><h5> ha sido eliminada .</h5>";
+    }
+  }
+
+ //funcion para obtener las citas del nutricionista
+function obtener_tabla_citas_nutricionista($con ){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con , "select distinct c.fecha , c.hora , p.usuario , p.nombre , p.apellido, p.email
+     from citas c join paciente p on c.paciente = p.id_paciente where c.nutricionista = '$id';");
+       return $resultado;
+} 
+
+//función para buscar pacientes
+function listar_pacientes_nutricionista($con){
+    $id = $_SESSION['id_nutricionista'];
+    $resultado = mysqli_query($con,"select usuario from paciente where id_nutricionista = '$id'");
+    return $resultado;
+  }
+
+//funcion para crear cita
+function crear_cita_nutricionista($con, $paciente, $fecha, $hora) {
+    $id = $_SESSION['id_nutricionista'];
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $hora = mysqli_real_escape_string($con, $hora);
+    $paciente = mysqli_real_escape_string($con, $paciente);
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+        if (!$fila) {
+            $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
+            return;
+        }
+        $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
+            values ('$fecha', '$hora', '$id_paciente', '$id')");
+
+     if (!$resultado) {
+        $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al crear la cita: " . mysqli_error($con)."</h5>";
+        return;
+    }
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha creado una cita el $fecha </h5><h5>a la $hora, con el paciente $paciente.</h5>";
+}
+
+//funcion para borrar una cita
+function borrar_cita_nutricionista($con, $paciente, $fecha, $hora) {
+    $fecha = mysqli_real_escape_string($con, $fecha);
+    $hora = mysqli_real_escape_string($con, $hora);
+    $paciente = mysqli_real_escape_string($con, $paciente);
+    $id = $_SESSION['id_nutricionista'];
+
+    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+    $fila = mysqli_fetch_assoc($consulta_paciente);
+        if (!$fila) {
+            echo "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
+            return;
+        }
+        $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con, "delete from citas WHERE fecha = '$fecha' and hora = '$hora' and paciente = '$id_paciente'");
+if (!$resultado) {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Error al borrar la cita: " . mysqli_error($con)."</h5>";
+} elseif (mysqli_affected_rows($con) === 0) {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>No se encontró ninguna cita con esos datos.</h5>";
+} else {
+    $_SESSION['mensaje_cita'] = "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el paciente $paciente.</h5>";
+    }
+}
+/************************************************************************************************ */
 /*************************FUNCIONES DE PACIENTE.PHP********************************************** */
 // Función para obtener datos del paciente
 function ver_datos_paciente($con, $usuario) {
