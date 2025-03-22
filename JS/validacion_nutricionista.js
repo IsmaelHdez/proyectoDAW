@@ -1,3 +1,4 @@
+/******************VALIDACION DE NUTRICIONISTA:PHP*************************************************/
 // Función para validar nombres o apellidos
 function validar_Nombre(nombre) {
     const regex = /^[a-zA-Z\s]+$/;
@@ -266,5 +267,25 @@ document.getElementById("formulario_crear_receta").addEventListener("submit", fu
 document.getElementById("formulario_mod_receta").addEventListener("submit", function(event) {
     if (!validar_mod_receta()) {
         event.preventDefault(); // Detiene el envío del formulario si la validación falla
+    }
+});
+/*************************************************************************************************/
+function mostrarSeccion(id) {
+    let secciones = document.getElementsByClassName("seccion");
+    
+    for (let i = 0; i < secciones.length; i++) {
+        secciones[i].style.display = "none";
+    }
+
+    document.getElementById(id).style.display = "block";
+}
+document.addEventListener("DOMContentLoaded", function () {
+    let seccionGuardada = localStorage.getItem('seccion_activa');
+
+    if (seccionGuardada) {
+        mostrarSeccion(seccionGuardada); // Mostrar la sección guardada
+        localStorage.removeItem('seccion_activa'); // Eliminar el registro para futuras cargas
+    } else {
+        mostrarSeccion("div_pacientes"); // Si no hay sección guardada, mostrar la predeterminada
     }
 });

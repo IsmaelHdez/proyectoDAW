@@ -24,6 +24,12 @@ if($_SESSION["tipo"] != 1){
     <title>Document</title>
 </head>
 <body>
+<nav class="menu-lateral">
+            <button onclick="mostrarSeccion('div_pacientes')">Pacientes</button>
+            <button onclick="mostrarSeccion('div_recetas')">Recetas</button>
+            <button onclick="mostrarSeccion('div_calendario')">Calendario</button>
+            <button onclick="mostrarSeccion('div_citas')">Citas</button>
+        </nav>
 <?php
 
 //formulario para crear paciente
@@ -155,7 +161,7 @@ if(isset($_POST['ver_calendario'])){
   }
   
 //Tabla con los pacientes
-    echo '<div id="div_pacientes">
+    echo '<div id="div_pacientes" class="seccion">
     <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes_nutricionista($con);
       if(mysqli_num_rows($resultado)==0){
@@ -282,7 +288,7 @@ echo '<div id="borrar_paciente">
         </div>';
 
  //Tabla de recetas
- echo '<div id="div_recetas">
+ echo '<div id="div_recetas" class="seccion">
  <h2>Tus recetas (ración/450 grs)</h2>';
 $resultado = listar_recetas_usuario($con);
 if(mysqli_num_rows($resultado)==0){
@@ -362,7 +368,7 @@ echo '<div id="borrar_receta">
         </div>';
 
 //Select para ver tabla con el calendario de recetas
- echo '<div id="div_calendario">
+ echo '<div id="div_calendario" class="seccion">
        <form action="nutricionista.php#div_calendario" method="POST">
        <h2>Calendario de recetas</h2>
        <label for="calendario_paciente">Elija un paciente para ver su menu semanal:</label>
@@ -450,11 +456,11 @@ echo '<div id="asignar_calendario">
             </select>';
 echo   '<input type="submit" name="asignar_calendario" value="Asignar receta">';    
     echo '</form>
-          </div>
           </div>';
+    echo '</div>';
 
 //tabla de citas por nutricionistas
-echo '<div id="div_citas">
+echo '<div id="div_citas" class="seccion">
 <h2>Tu listado de citas</h2>';
 $resultado = obtener_tabla_citas_nutricionista($con);
 if(mysqli_num_rows($resultado)==0){
