@@ -16,17 +16,36 @@ $datos_paciente = ver_datos_paciente($con, $usuario);
 
 
 // Manejo de actualización de datos del paciente
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar"])){ 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar"])) {
     $nuevo_nombre = $_POST["nombre"];
     $nuevo_apellido = $_POST["apellido"];
     $nuevo_email = $_POST["email"];
     $nueva_pass = !empty($_POST["pass"]) ? password_hash($_POST["pass"], PASSWORD_DEFAULT) : null;
-    
-    modificar_datos_paciente($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $usuario, $nueva_pass);
-    
+    $nueva_foto = null;
+
+    if (isset($_FILES["nueva_foto"]) && $_FILES["nueva_foto"]["size"] > 0) {
+        if (!empty($datos_paciente["foto"])) {
+            eliminar_imagen_cloudinary($datos_paciente["foto"]);
+        }
+
+        $nueva_foto = subir_imagen_cloudinary($_FILES["nueva_foto"]["tmp_name"]);
+    }
+
+    modificar_datos_paciente($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $usuario, $nueva_pass, $nueva_foto);
+
     header("Location: paciente.php");
     exit();
 }
+
+
+
+// Manejo de imagen de perfil con Cloudinary
+
+
+
+
+
+
 
 // ----------------------------------------  REFERENTE A MEDIDAS PACIENTE  -------------------------------------------------------//
 $medidas_paciente = obtener_medidas_paciente($con, $usuario);
@@ -94,6 +113,13 @@ $citas = mostrar_citas_paciente($con, $usuario);
         <div class="contenido">
             <div id="ficha_paciente" class="seccion">
                 <h2>Ficha del Paciente</h2>
+
+                <?php if (!empty($datos_paciente["foto"])): ?>
+                    <img src="<?= $datos_paciente["foto"] ?>" alt="Foto de perfil" width="150" height="150">
+                <?php else: ?>
+                    <p>No tienes foto de perfil.</p>
+                <?php endif; ?>
+
                 <table border="1">
                     <tr><th>Dato</th><th>Valor</th></tr>
                     <tr><td>Nombre</td><td><?php echo htmlspecialchars($datos_paciente['nombre']); ?></td></tr>
@@ -107,17 +133,20 @@ $citas = mostrar_citas_paciente($con, $usuario);
                 
                 <div id="formulario_modificar_ficha">
                     <h3>Modificar Datos</h3>
-                    <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-                        <label>Nombre:</label>
-                        <input type="text" name="nombre" value="<?php echo htmlspecialchars($datos_paciente['nombre']); ?>" required>
-                        <label>Apellido:</label>
-                        <input type="text" name="apellido" value="<?php echo htmlspecialchars($datos_paciente['apellido']); ?>" required>
-                        <label>Email:</label>
-                        <input type="email" name="email" value="<?php echo htmlspecialchars($datos_paciente['email']); ?>" required>
-                        <label>Nueva Contraseña (opcional):</label>
+                    <form action="paciente.php" method="POST" enctype="multipart/form-data">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" value="<?= $datos_paciente['nombre'] ?>" required>
+                        <label for="apellido">Apellido:</label>
+                        <input type="text" name="apellido" value="<?= $datos_paciente['apellido'] ?>" required>
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" name="email" value="<?= $datos_paciente['email'] ?>" required>
+                        <label for="pass">Nueva Contraseña (opcional):</label>
                         <input type="password" name="pass">
+                        <label for="nueva_foto">Foto de perfil:</label>
+                        <input type="file" name="nueva_foto" accept="image/*">
                         <button type="submit" name="modificar">Guardar Cambios</button>
                     </form>
+
                 </div>
             </div>
 
@@ -240,3 +269,4 @@ $citas = mostrar_citas_paciente($con, $usuario);
     </div>
 </body>
 </html>
+
