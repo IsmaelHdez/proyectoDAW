@@ -18,13 +18,13 @@ function validar_Correo(correo) {
 
 // Función para validar textos con menos de 3 caracteres
 function validar_Entrada(texto) {
-        const textRegex = /^[^\s@]{3,}$/;
+        const textRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)*$/;
         return textRegex.test(texto);
     }
 
   // Función para validar textos con menos de 10 caracteres
 function validar_Entrada_Ingredientes(texto) {
-    const textRegex = /^[^\s@]{10,}$/;
+    const textRegex = /^.{10,}$/;
     return textRegex.test(texto);
 }
 
@@ -36,6 +36,12 @@ let pass = document.getElementById("pass_paciente").value.trim();
 let nombre = document.getElementById("nombre_paciente").value.trim();
 let apellido = document.getElementById("apellido_paciente").value.trim();
 let email = document.getElementById("email_paciente").value.trim();
+
+console.log(document.getElementById("usuario_paciente"));
+    console.log(document.getElementById("pass_paciente").value);
+    console.log(document.getElementById("nombre_paciente").value);
+    console.log(document.getElementById("apellido_paciente").value);
+    console.log(document.getElementById("email_paciente").value);
 
 
 if (usuario === "" || pass === "" || nombre === "" || apellido === "" || email === "") {
@@ -272,19 +278,31 @@ document.getElementById("formulario_mod_receta").addEventListener("submit", func
 /*************************************************************************************************/
 function mostrarSeccion(id) {
     let secciones = document.getElementsByClassName("seccion");
-    
+
+    // Ocultar todas las secciones
     for (let i = 0; i < secciones.length; i++) {
         secciones[i].style.display = "none";
     }
 
+    // Mostrar la sección especificada
     document.getElementById(id).style.display = "block";
+
+    // Guardar la sección activa en localStorage
+    localStorage.setItem('seccion_activa', id);
 }
+
+// Evento para cambiar la sección cuando se hace clic en un botón (input)
+document.querySelectorAll(".boton-seccion").forEach(button => {
+    button.addEventListener("click", function() {
+        mostrarSeccion(button.getAttribute('data-seccion')); // La sección se toma del atributo data-seccion
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     let seccionGuardada = localStorage.getItem('seccion_activa');
 
     if (seccionGuardada) {
         mostrarSeccion(seccionGuardada); // Mostrar la sección guardada
-        localStorage.removeItem('seccion_activa'); // Eliminar el registro para futuras cargas
     } else {
         mostrarSeccion("div_pacientes"); // Si no hay sección guardada, mostrar la predeterminada
     }
