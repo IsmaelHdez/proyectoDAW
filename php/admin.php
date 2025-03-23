@@ -327,11 +327,37 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente" id="apellido_paciente" required><br/>
             <label for="email_paciente">Email :</label>
             <input type="email" name="email_paciente" id="email_paciente" required><br/>
+            <label for="imagen_paciente">Imagen de perfil:</label><br/>
+            <input type="file" name="imagen_paciente" id="imagen_paciente" accept="image/*"><br/>
             <input type="submit" name="crear_paciente" value="Crear paciente">
         </form>
         <div id="mensaje_error_crear_paciente" style="color: red; display: none;"></div>
         </div>';
-
+?>
+        <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+        <script>
+            const cloudinaryWidget = cloudinary.createUploadWidget({
+                cloudName: 'dup8qzlzv',  // Sustituye con tu nombre de nube de Cloudinary
+                uploadPreset: 'ml_default',  // Sustituye con tu preset de carga
+                sources: ['local', 'url', 'camera'],  // Fuentes de carga posibles
+                showAdvancedOptions: true,
+                cropping: true,
+                multiple: false,
+                maxFileSize: 10000000,  // 10MB
+                clientAllowedFormats: ['jpg', 'png', 'jpeg'],
+            }, (error, result) => {
+                if (result && result.event === 'success') {
+                    // Al subir la imagen, insertar la URL en el formulario
+                    document.getElementById('imagen_paciente').value = result.info.secure_url;
+                }
+            });
+        
+            // Trigger de la subida de la imagen cuando el usuario selecciona un archivo
+            document.getElementById('imagen_paciente').addEventListener('change', function() {
+                cloudinaryWidget.open();
+            });
+        </script>
+<?php
 //Modificar paciente
   echo '<div id="modificar_paciente">
         <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST">
