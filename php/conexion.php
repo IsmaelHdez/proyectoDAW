@@ -472,11 +472,12 @@ function obtener_datos_nutricionista ($con){
 
 //funcion que busca paciente por apellido
 function buscar_paciente_nutricionista($con, $apellido) {
+    $id = $_SESSION['id_nutricionista'];
     unset($_SESSION['mensaje_paciente']);
     $apellido = mysqli_real_escape_string($con, $apellido);
-    $resultado = mysqli_query($con, "select distinct p.usuario, p.nombre, p.apellido, p.email ,m.altura , m.peso ,
-    m.grasa_corporal , m.musculo , m.fecha_registro , m.imc from paciente p 
-    join medidas_paciente m on p.id_paciente = m.id_paciente where p.apellido like '$apellido%'");
+    $resultado = mysqli_query($con, "select distinct p.usuario, p.nombre, p.apellido, p.email 
+     from paciente p join nutricionista n on p.id_nutricionista = n.id_nutricionista
+     where p.apellido like '$apellido%' and n.id_nutricionista = '$id'");
     return $resultado;
 }
 

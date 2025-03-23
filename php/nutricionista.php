@@ -191,23 +191,13 @@ if(isset($_POST['ver_calendario'])){
         if (!empty($_POST['apellido_paciente_buscar'])) {
             $busqueda = mysqli_real_escape_string($con, trim($_POST['apellido_paciente_buscar']));
             $resultado = buscar_paciente_nutricionista($con, $busqueda);
+            
             if ($resultado && mysqli_num_rows($resultado) > 0) {
                 while ($fila = mysqli_fetch_assoc($resultado)) {
-                    echo "<h2>Información del Paciente ".htmlspecialchars($fila['usuario'])."</h2>
-                    <table>
-                    <tr><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>
-                    <tr><td>" . htmlspecialchars($fila['usuario']) . "</th>
-                        <td>" . htmlspecialchars($fila['nombre']) ." ".htmlspecialchars($fila['apellido']) ."</th>
-                        <td>" . htmlspecialchars($fila['email']) . "</th></tr>
-                    <tr><th>Fecha Registro</th><th>Altura (cm)</th><th>Peso (kg)</th></tr>
-                    <tr><td>" . htmlspecialchars($fila['fecha_registro']) . "</th>
-                        <td>" . htmlspecialchars($fila['altura']) . "</th>
-                        <td>" . htmlspecialchars($fila['peso']) . "</th></tr>
-                    <tr><th>Grasa Corporal (%)</th><th>Músculo (%)</th><th>IMC</th></tr>
-                    <tr><td>" . htmlspecialchars($fila['grasa_corporal']) . "</th>
-                        <td>" . htmlspecialchars($fila['musculo']) . "</th>
-                        <td>" . htmlspecialchars($fila['imc']) . "</th></tr> 
-                        </table>";
+                    echo "<p><b>Apellido: </b>" . htmlspecialchars($fila['apellido']) . "</p>";
+                    echo "<p><b>Nombre: </b>" . htmlspecialchars($fila['nombre']) . "</p>";
+                    echo "<p><b>Email: </b>" . htmlspecialchars($fila['email']) . "</p>";
+                    echo "<p><b>Usuario: </b>" . htmlspecialchars($fila['usuario']) . "</p>";
                 }
             } else {
                 echo "<h5 class='mensaje'>No se encontraron resultados para '$busqueda'.</h5>";
