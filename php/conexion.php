@@ -178,6 +178,18 @@ function eliminar_imagen_cloudinary($url_actual) {
 
 /*************************FUNCIONES DE ADMIN.PHP********************************************** */
 
+//función para buscar pacientes
+function listar_pacientes($con){
+    $resultado = mysqli_query($con,"select usuario from paciente");
+    return $resultado;
+  }
+  
+  //función para buscar nutricionista
+  function listar_nutricionista($con){
+      $resultado = mysqli_query($con,"select usuario from nutricionista where tipo = 1");
+      return $resultado;
+    }
+
 //función que obtiene lista de nutricionistas
 function obtener_nutricionistas($con){
     $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from nutricionista where tipo = 1");
@@ -198,40 +210,6 @@ function obtener_pacientes($con){
     return $resultado;
 }
 
-//función que obtiene lista de recetas
-function listar_recetas($con){
-    $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta");
-    return $resultado;
-}
-
-//función que obtiene recetas por calorias
-function buscar_calorias($con, $opcion){
-    if($opcion == 1){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 200;");
-        return $resultado;
-    }elseif($opcion == 2){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 350;");
-        return $resultado;
-    }elseif($opcion == 3){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias < 450;");
-        return $resultado;
-    }elseif($opcion == 4){
-        $resultado = mysqli_query($con,"select nombre, ingredientes, calorias from receta where calorias > 500;");
-    return $resultado;
-    }
-}
-
-//función para buscar pacientes
-function listar_pacientes($con){
-  $resultado = mysqli_query($con,"select usuario from paciente");
-  return $resultado;
-}
-
-//función para buscar nutricionista
-function listar_nutricionista($con){
-    $resultado = mysqli_query($con,"select usuario from nutricionista where tipo = 1");
-    return $resultado;
-  }
 
 //funcion para modificar el paciente y asignarlo al nutricionista
 function asociar_paciente($con,$paciente,$nutricionista){
@@ -248,35 +226,6 @@ function asociar_paciente($con,$paciente,$nutricionista){
     }
    }
 
- //función que busca receta por nombre
-   function buscar_nombre_receta($con, $nombre) {
-    if (empty($nombre)) {
-        return false; 
-    }
-    $nombre = mysqli_real_escape_string($con, $nombre);
-    $resultado = mysqli_query($con, "select nombre, ingredientes, calorias from receta where nombre LIKE '$nombre%'");
-    return $resultado;
-}   
-
-//funcion que asocia una receta a un paciente
-function asociar_receta($con,$receta,$paciente){
-    $fila_paciente = mysqli_query($con, "select id_paciente from paciente where usuario = '$paciente'");
-        if ($fila_paciente && mysqli_num_rows($fila_paciente) > 0) {
-            $resultado_paciente = mysqli_fetch_assoc($fila_paciente);
-            $id_paciente =(int) $resultado_paciente['id_paciente'];
-        }
-    $fila_receta = mysqli_query($con, "select id_receta from receta where nombre = '$receta'");
-    if ($fila_receta && mysqli_num_rows($fila_receta) > 0) {
-        $resultado_receta = mysqli_fetch_assoc($fila_receta);
-        $id_receta =(int) $resultado_receta['id_receta'];
-    }
-    $query = "insert into lista (paciente,plato) values ('$id_paciente','$id_receta')";
-    if (mysqli_query($con, $query)) {
-        $_SESSION['mensaje_asociar_receta'] = "<h5>Receta $receta asociada al paciente $paciente.</h5>";
-    } else {
-        $_SESSION['mensaje_asociar_receta'] = "<h5 class='mensaje'>Error al asociar la receta: " . mysqli_error($con)."</h5>";
-    }
-   }
 
 //funcion para crear nutricionista
    function crear_nutricionista_admin($con, $nombre, $apellido, $usuario, $pass, $email){
@@ -381,83 +330,7 @@ function buscar_paciente($con, $apellido) {
         $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha eliminado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
     }
 
-//funcion para crear cita
-function crear_cita($con, $paciente, $nutricionista, $fecha, $hora) {
-    $fecha = mysqli_real_escape_string($con, $fecha);
-    $hora = mysqli_real_escape_string($con, $hora);
-    $paciente = mysqli_real_escape_string($con, $paciente);
-    $nutricionista = mysqli_real_escape_string($con, $nutricionista);
-    
-    $consulta_nutricionista = mysqli_query($con , "select id_nutricionista from nutricionista where usuario = '$nutricionista'");
-    $fila = mysqli_fetch_assoc($consulta_nutricionista);
-        if (!$fila) {
-            $_SESSION['mensaje_asociar'] = "<h5 class='mensaje'>No se encontró ningún nutricionista con el usuario: $nutricionista.</h5>";
-            return;
-        }
-        $id_nutricionista = $fila['id_nutricionista'];
 
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-        if (!$fila) {
-            $_SESSION['mensaje_asociar'] = "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
-            return;
-        }
-        $id_paciente = $fila['id_paciente'];
-
-    $resultado = mysqli_query($con,  "insert into citas (fecha, hora, paciente, nutricionista) 
-            values ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
-
-     if (!$resultado) {
-        $_SESSION['mensaje_asociar'] = "<h5 class='mensaje'>Error al crear la cita: " . mysqli_error($con)."</h5>";
-        return;
-    }
-    $_SESSION['mensaje_asociar'] = "<h5 class='mensaje'>Se ha creado una cita el $fecha a la $hora,</h5><h5> para el nutricionista $nutricionista y el paciente $paciente.</h5>";
-}
-
-//funcion para buscar un nutricionista en la tabla
-function obtener_tabla_citas($con ){
-    $resultado = mysqli_query($con , "select distinct usuario from nutricionista where tipo = 1;");
-       return $resultado;
-}
-
-// Función para obtener las citas por nutricionista
-function obtener_citas_por_nutricionista($con, $nutricionista) {
-    $query = "select distinct p.usuario , c.fecha ,c.hora FROM citas c join nutricionista n on n.id_nutricionista = c.nutricionista join paciente p on p.id_paciente = c.paciente where n.usuario = '$nutricionista'";
-    return mysqli_query($con, $query);
-}
-
-//funcion para borrar una cita
-function borrar_cita($con, $paciente, $nutricionista, $fecha, $hora) {
-    $fecha = mysqli_real_escape_string($con, $fecha);
-    $hora = mysqli_real_escape_string($con, $hora);
-    $paciente = mysqli_real_escape_string($con, $paciente);
-    $nutricionista = mysqli_real_escape_string($con, $nutricionista);
-    
-    $consulta_nutricionista = mysqli_query($con , "select id_nutricionista from nutricionista where usuario = '$nutricionista'");
-    $fila = mysqli_fetch_assoc($consulta_nutricionista);
-        if (!$fila) {
-            echo "<h5 class='mensaje'>No se encontró ningún nutricionista con el usuario: $nutricionista.</h5>";
-            return;
-        }
-        $id_nutricionista = $fila['id_nutricionista'];
-
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
-    $fila = mysqli_fetch_assoc($consulta_paciente);
-        if (!$fila) {
-            echo "<h5 class='mensaje'>No se encontró ningún paciente con el usuario: $paciente.</h5>";
-            return;
-        }
-        $id_paciente = $fila['id_paciente'];
-    var_dump($fecha , $hora , $nutricionista, $paciente);
-    $resultado = mysqli_query($con, "DELETE FROM citas WHERE fecha = '$fecha' AND hora = '$hora' AND paciente = '$id_paciente' AND nutricionista = '$id_nutricionista'");
-if (!$resultado) {
-    echo "<h5 class='mensaje'>Error al borrar la cita: " . mysqli_error($con)."</h5>";
-} elseif (mysqli_affected_rows($con) === 0) {
-    echo "<h5 class='mensaje'>No se encontró ninguna cita con esos datos.</h5>";
-} else {
-    echo "<h5 class='mensaje'>Se ha eliminado la cita del $fecha a las $hora, con el nutricionista $nutricionista y el paciente $paciente.</h5>";
-    }
-}
 /*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
 //función para ver ficha de paciente
 function obtener_datos_nutricionista ($con){

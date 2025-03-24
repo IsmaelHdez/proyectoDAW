@@ -96,31 +96,6 @@ if (isset($_POST['eliminar_paciente'])) {
 }
 
 
-//formulario para asociar paciente a nutricionista
-if(isset($_POST['paciente']) && isset($_POST['nutricionista'])){
-    if(!empty($_POST['paciente']) && !empty($_POST['nutricionista'])){
-        $paciente = $_POST['paciente'];
-      $nutricionista = $_POST['nutricionista'];
-      asociar_paciente($con,$paciente,$nutricionista);
-      header('Location:admin.php#asociar_nutricionista');
-      exit;
-   }else{
-    $_SESSION['mensaje_pacientes'] = '<h5 class="mensaje">Debe asignar un paciente a un nutricionista.</h5>';
-    }
-}
-
-//formulario para borrar una cita
-if(isset($_POST['borrar_cita'])){
-  if(!empty($_POST['paciente_cita_borrar']) && !empty($_POST['nutricionista_cita_borrar']) && !empty($_POST['borrar_hora_cita']) && !empty($_POST['borrar_fecha_cita'])){
-      $paciente = $_POST['paciente_cita_borrar'];
-      $nutricionista = $_POST['nutricionista_cita_borrar'];
-      $fecha = $_POST['borrar_fecha_cita'];
-      $hora = $_POST['borrar_hora_cita'];
-      borrar_cita($con , $paciente , $nutricionista , $fecha , $hora);
-  }else{
-      echo '<h5 class="mensaje">Debe rellenar todos los datos.</h5>';
-  }
-}
 //tabla con los nutricionistas
 ?>
 <!DOCTYPE html>
@@ -130,10 +105,14 @@ if(isset($_POST['borrar_cita'])){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../CSS/admin.css">
 <script src="../js/logout.js" defer></script>
-<script src="../JS/validacion_admin.js" defer></script>
+<script src="../js/validacion_admin.js" defer></script>
 <title>Document</title>
 </head>
-        <div id="div_nutricionista">
+    <nav class="menu-lateral">
+        <button onclick="mostrarSeccion('div_nutricionista')">Nutricionistas</button>
+        <button onclick="mostrarSeccion('div_pacientes')">Pacientes</button>
+    </nav>
+        <div id="div_nutricionista" class="seccion">
         <body><h2>Listado de clientes/nutricionistas</h2>
 <?php
     $resultado = obtener_nutricionistas($con);
@@ -264,7 +243,7 @@ echo '<div id="borrar_nutri">
       
       
 //Tabla con los pacientes
-    echo '<div id="div_pacientes">
+    echo '<div id="div_pacientes" class="seccion">
     <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes($con);
       if(mysqli_num_rows($resultado)==0){
@@ -407,248 +386,9 @@ echo '<div id="borrar_paci">
         </div>
         </div>';
 
-//Tabla de recetas
-  echo '<div id="div_recetas">
-        <h2>Recetas (ración/450 grs)</h2>';
-    $resultado = listar_recetas($con);
-    if(mysqli_num_rows($resultado)==0){
-      echo "<p>No hay recetas disponibles.</p>";
-    }else{
-      echo "<table>
-      <tr><th>Plato</th><th>calorias/racion</th><th>Ingredientes</th></tr>";
-      while($fila = mysqli_fetch_array($resultado)){
-          extract($fila);
-          echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
-      }
-      echo "</table>";
-  }
-  echo "<hr>";
-
-//Buscador receta
-  echo '<div id="buscador_receta">
-      <form action="admin.php#buscador_receta" method="POST">
-          <h2>Buscador de receta por calorias</h2>
-          <label for="calorias">Filtrar por calorías:</label>
-        <select name="calorias" id="calorias">
-            <option value=1>Menos de 200 calorías</option>
-            <option value=2>Menos de 350 calorías</option>
-            <option value=3>Menos de 450 calorías</option>
-            <option value=4>Más de 500 calorías</option>
-        </select><br/>
-          <input type="submit" name="buscar_receta">
-      </form>
-  </div>';
-
-if (isset($_POST['buscar_receta'])) {
-    if (!empty($_POST['calorias'])) {
-        $busqueda = mysqli_real_escape_string($con, trim($_POST['calorias']));
-        $resultado = buscar_calorias($con, $busqueda);
-        
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                echo "<div id='resultado_receta'><h3>***Receta***</h3>
-                <h4>Receta : ".htmlspecialchars($fila['nombre'])."</h4>
-                <h4>Calorias : ".htmlspecialchars($fila['calorias'])."</h4>
-                <h4>Descripción : ".htmlspecialchars($fila['ingredientes'])."</h4></div>";
-                
-            }
-        } else {
-            echo '<h5 class="mensaje">No se encontraron recetas.</h5>';
-        }
-    } 
-}
-  
-  //asociar paciente a nutricionista
-  echo '<div id="asociar_nutricionista">
-  <form action="admin.php#asociar_nutricionista" method="POST">
-    <h2>Asigne un paciente a un nutricionista.</h2>
-    <label for="paciente">Asigne el paciente:</label>
-    <select name="paciente" id="paciente">';
-        $resultado = listar_pacientes($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $paciente = $fila['usuario'];
-                echo "<option value='$paciente'>$paciente</option>";
-            }
-        } 
-    echo '</select>
-    <label for="nutricionista">y el nutricionista a el que le es asignado:</label>
-    <select name="nutricionista" id="nutricionista">';
-        $resultado = listar_nutricionista($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $nutricionista = $fila['usuario'];
-                echo "<option value='$nutricionista'>$nutricionista</option>";
-            }
-        } 
-    echo '</select>
-    <br/>
-    <input type="submit" name="paciente_a_nutricionista" value="Asociar">
-</form>';
-if(isset($_SESSION['mensaje_asociar'])){
-        echo $_SESSION['mensaje_asociar'];
-    }
-echo '</div>';
-
-  //asociar receta a paciente
-  echo '<div id="asociar_receta">
-    <form action="admin.php#asociar_receta" method="POST">
-      <h2>Asigne recetas a un paciente</h2>
-      <label for="nombre_receta">Seleccione la receta</label>
-      <select name="nombre_receta" id="receta">';
-        $resultado = listar_recetas($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $receta = $fila['nombre'];
-                echo "<option value='$receta'>$receta</option>";
-            }
-        } 
-    echo '</select>
-          <label for="paciente_nombre">Elija un paciente para asignar la receta anterior:</label>
-            <select name="paciente_nombre" id="paciente_nombre">';
-                  $resultado = listar_pacientes($con);
-                    if ($resultado && mysqli_num_rows($resultado) > 0) {
-                     while ($fila = mysqli_fetch_assoc($resultado)) {
-                       $paciente = $fila['usuario'];
-                       echo "<option value='$paciente'>$paciente</option>";
-                }
-             }
-    echo '</select>
-         <input type="submit" name="paciente_a_receta" value="Asociar">
-</form>';
-//formulario para asignar la receta a un paciente
-if(isset($_POST['paciente_a_receta'])){
-    if(!empty($_POST['nombre_receta']) && !empty($_POST['paciente_nombre'])){
-        $nombre_receta = $_POST['nombre_receta'];
-        $paciente = $_POST['paciente_nombre'];
-        asociar_receta($con, $nombre_receta, $paciente);
-    } else {
-        echo '<h5 class="mensaje">Error: Asegúrese de seleccionar un paciente y una receta.</h5>';
-    }
-}
-if(isset($_SESSION['mensaje_asociar_receta'])){
-    echo $_SESSION['mensaje_asociar_receta'];
-}
-  echo '</div>';
-  
- 
-//tabla de citas por nutricionistas
-    echo '</div>
-    <div id="div_citas">
-    <h2>Listado de citas por nutricionista</h2>
-    <form action="admin.php#div_citas" method="POST">
-    <label for="nutricionista_tabla_cita">Elija un nutricionista para ver sus citas :</label>
-    <select name="nutricionista_tabla_cita" id="nutricionista_tabla_cita">';
-      $resultado = obtener_tabla_citas($con);
-      if ($resultado && mysqli_num_rows($resultado) > 0) {
-        while ($fila = mysqli_fetch_assoc($resultado)) {
-            $nutricionista_cita = $fila['usuario'];
-            echo "<option value='$nutricionista_cita'>$nutricionista_cita</option>";
-        } 
-        }else{
-            echo '<option value="" >No hay nutricionistas!</option>';
-        }
-        echo '</select><br/>
-        <input type="submit" name="submit" value="Ver citas">
-    </form>';
-    if (isset($_POST['nutricionista_tabla_cita']) && !empty($_POST['nutricionista_tabla_cita'])) {
-        $nutricionista_seleccionado = $_POST['nutricionista_tabla_cita'];
-        $citas = obtener_citas_por_nutricionista($con, $nutricionista_seleccionado);
-        
-        if ($citas && mysqli_num_rows($citas) > 0) {
-            echo "<h3>Citas de $nutricionista_seleccionado</h3>";
-            echo "<table border='1'>
-                    <tr><th>Paciente</th><th>Fecha</th><th>Hora</th>
-                    </tr>";
-            while ($fila = mysqli_fetch_assoc($citas)) {
-                echo "<tr><td>{$fila['usuario']}</td><td>{$fila['fecha']}</td><td>{$fila['hora']}</td>
-                      </tr>";
-            }
-            echo "</table>";
-        } else {
-            echo '<h5 class="mensaje"> No hay citas para este nutricionista.</h5>';
-        }
-    }
-
-//crear citas
-echo '<div id="crear_cita">
-  <form action="admin.php#crear_cita" method="POST">
-    <h2>Creación de citas :</h2>
-    <label for="paciente_cita">Asigne el paciente:</label>
-    <select name="paciente_cita" id="paciente_cita">';
-        $resultado = listar_pacientes($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $paciente = $fila['usuario'];
-                echo "<option value='$paciente'>$paciente</option>";
-            }
-        } 
-    echo '</select><br/>
-    <label for="nutricionista_cita">Elija el nutricionista :</label>
-    <select name="nutricionista_cita" id="nutricionista_cita">';
-        $resultado = listar_nutricionista($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $nutricionista = $fila['usuario'];
-                echo "<option value='$nutricionista'>$nutricionista</option>";
-            }
-        } 
-    echo '</select><br/>';
-    echo '<label for="hora_cita" name="hora_cita">Hora de la cita (hh:mm):</label>
-         <input type="time" name="hora_cita"><br/>
-         <label for="date" name="fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
-         <input type="date" name="fecha_cita"><br/>
-         <input type="submit" name="crear_cita" value="Crear cita">';
-
- //formulario para crear una cita
-if(isset($_POST['crear_cita'])){
-    if(!empty('paciente_cita') && !empty('nutricionista_cita') && !empty('hora_cita') && !empty('fecha_cita')){
-        $paciente = $_POST['paciente_cita'];
-        $nutricionista = $_POST['nutricionista_cita'];
-        $fecha = $_POST['fecha_cita'];
-        $hora = $_POST['hora_cita'];
-        crear_cita($con , $paciente , $nutricionista , $fecha , $hora);
-        echo "<h5 class='mensaje'>Creada cita del paciente $paciente con el nutricionista $nutricionista ,</h5><h5>para el dìa $fecha a las $hora .</h5>";
-      }else{
-          echo '<h5 class="mensaje">Debe rellenar todos los datos.</h5>';
-      }
-  }
-
-//Borrar citas
-echo '<div id="borrar_cita">
-  <form action="admin.php#borrar_cita" method="POST">
-    <h2>Cancelación de citas :</h2>
-    <label for="nutricionista_cita_borrar">Elija el nutricionista:</label>
-    <select name="nutricionista_cita_borrar" id="nutricionista_cita_borrar">';
-        $resultado = listar_nutricionista($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $nutricionista = $fila['usuario'];
-                echo "<option value='$nutricionista'>$nutricionista</option>";
-            }
-        } 
-    echo '</select><br/>
-    <label for="paciente_cita_borrar">Elija el paciente :</label>
-    <select name="paciente_cita_borrar" id="paciente_cita_borrar">';
-        $resultado = listar_pacientes($con);
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            while ($fila = mysqli_fetch_assoc($resultado)) {
-                $paciente = $fila['usuario'];
-                echo "<option value='$paciente'>$paciente</option>";
-            }
-        } 
-    echo '</select><br/>';
-    echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:mm):</label>
-         <input type="time" name="borrar_hora_cita"><br/>
-         <label for="date" name="borrar_fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
-         <input type="date" name="borrar_fecha_cita"><br/>
-         <input type="submit" name="borrar_cita" value="Borrar cita">';
-
-        echo '</div>
-              </div>
-              </div>
-        <div id="boton_logout">   
+echo        '<div id="boton_logout">   
         <button id="cerrarSesion">Cerrar sesión</button>
+             </div>
             </body>
                 </html>';
  
