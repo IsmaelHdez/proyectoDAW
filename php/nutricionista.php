@@ -30,7 +30,7 @@ if($_SESSION["tipo"] != 1){
         <button onclick="mostrarSeccion('div_calendario')">Calendario</button>
         <button onclick="mostrarSeccion('div_citas')">Citas</button>
         </nav>
-    <?php
+<?php
 
 //formulario para crear paciente
 if (isset($_POST['crear_paciente'])) {
@@ -373,7 +373,7 @@ echo '<div id="borrar_receta">
             }
  echo   '<input type="submit" name="ver_calendario" value="Ver calendario">
          </form>';
-            $menu = $_SESSION['menu'] ?? [];  
+ 
         echo '<table>';
         if(!empty($_SESSION['calendario'])){
         echo   '<h2>Calendario de '.$_SESSION['calendario'].'</h2>
@@ -408,14 +408,14 @@ echo '<div id="borrar_receta">
 //Asignar receta a paciente en el calendario
 echo '<div id="asignar_calendario">
       <form action="nutricionista.php#div_calendario" method="POST">
-<h2>Asignación de recetas al calendario del paciente</h2>
-<label for="asignar_paciente_calendario">Elija un paciente:</label>
-     <select name="asignar_paciente_calendario" id="asignar_paciente_calendario">';
-       $resultado = listar_pacientes_nutricionista($con);
-       if ($resultado && mysqli_num_rows($resultado) > 0) {
-          while ($fila = mysqli_fetch_assoc($resultado)) {
-          $paciente = $fila['usuario'];
-          echo "<option value='$paciente'>$paciente</option>";
+       <h2>Asignación de recetas al calendario del paciente</h2>
+       <label for="asignar_paciente_calendario">Elija un paciente:</label>
+       <select name="asignar_paciente_calendario" id="asignar_paciente_calendario">';
+         $resultado = listar_pacientes_nutricionista($con);
+          if ($resultado && mysqli_num_rows($resultado) > 0) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+            $paciente = $fila['usuario'];
+            echo "<option value='$paciente'>$paciente</option>";
          }
      }
      echo '</select>
@@ -428,8 +428,9 @@ echo '<div id="asignar_calendario">
             echo "<option value='$receta'>$receta</option>";
          }
       }
-      echo '</select>
-            <label for="asignar_dia_calendario">Elija un día de la semana:</label>
+?>      
+           </select>
+           <label for="asignar_dia_calendario">Elija un día de la semana:</label>
            <select name="asignar_dia_calendario" id="asignar_dia_calendario">
             <option value="Lunes">Lunes</option>
             <option value="Martes">Martes</option>
@@ -438,19 +439,18 @@ echo '<div id="asignar_calendario">
             <option value="Viernes">Viernes</option>
             <option value="Sábado">Sábado</option>
             <option value="Domingo">Domingo</option>
-            </select>';
-      echo '</select>
+            </select>
             <label for="asignar_comida_calendario">Elija un día de la semana:</label>
-           <select name="asignar_comida_calendario" id="asignar_comida_calendario">
+            <select name="asignar_comida_calendario" id="asignar_comida_calendario">
             <option value="Desayuno">Desayuno</option>
             <option value="Almuerzo">Almuerzo</option>
             <option value="Cena">Cena</option>
-            </select>';
-echo   '<input type="submit" name="asignar_calendario" value="Asignar receta">   
+            </select>
+            <input type="submit" name="asignar_calendario" value="Asignar receta">   
           </form>
           </div>
-          </div>';
-          
+        </div>
+<?php          
 //tabla de citas por nutricionistas
 echo '<div id="div_citas" class="seccion">
        <h2>Tu listado de citas</h2>';
