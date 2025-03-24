@@ -373,7 +373,8 @@ echo '<div id="borrar_receta">
             }
  echo   '<input type="submit" name="ver_calendario" value="Ver calendario">
          </form>';
- 
+         if (isset($_SESSION['calendario']) && !empty($_SESSION['calendario'])) {
+            $menu = $_SESSION['menu'] ?? [];  
         echo '<table>';
         if(!empty($_SESSION['calendario'])){
         echo   '<h2>Calendario de '.$_SESSION['calendario'].'</h2>
@@ -399,6 +400,7 @@ echo '<div id="borrar_receta">
         }
     echo "</table>";
         }
+    }  
     echo "</form>
           </div>";
     
