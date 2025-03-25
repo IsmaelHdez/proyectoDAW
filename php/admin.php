@@ -12,20 +12,25 @@ if($_SESSION["tipo"] != 3){
     }
     
 
-    //formulario para crear nutricionista
-if (isset($_POST['crear_nutricionista'])) {
-    if (!empty($_POST['usuario_nutricionista']) && !empty($_POST['pass_nutricionista']) && !empty($_POST['nombre_nutricionista']) && !empty($_POST['apellido_nutricionista']) && !empty($_POST['email_nutricionista'])) {
-        $usuario_nutricionista = $_POST['usuario_nutricionista'];
-        $pass_nutricionista = $_POST['pass_nutricionista'];
-        $nombre_nutricionista = $_POST['nombre_nutricionista'];
-        $apellido_nutricionista = $_POST['apellido_nutricionista'];
-        $email_nutricionista = $_POST['email_nutricionista'];
-        $resultado = crear_nutricionista_admin($con, $nombre_nutricionista , $apellido_nutricionista , $usuario_nutricionista , $pass_nutricionista ,  $email_nutricionista);
+//formulario para crear nutricionista
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_nutricionista"])) {
+    $nuevo_usuario = $_POST["usuario_nutricionista"];
+    $nuevo_nombre = $_POST["nombre_nutricionista"];
+    $nuevo_apellido = $_POST["apellido_nutricionista"];
+    $nuevo_email = $_POST["email_nutricionista"];
+    $nueva_pass = $_POST["pass_nutricionista"];
+    
+    if(empty($_FILES["foto_nutricionista"]["tmp_name"])){
+        $_SESSION['mensaje_nutricionista'] = "<h5>Debe incluir una foto para crear al nutricionista.</h5>";
         header('Location:admin.php#div_nutricionista');
         exit;
-
-    } 
+    }
+    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_nutricionista"]["tmp_name"]);
+    crear_nutricionista_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
+    header('Location:admin.php#div_nutricionista');
+    exit;
 }
+
 //formulario para modificar un nutricionista
 if (isset($_POST['nutricionista_mod'])) {
     if (!empty($_POST['usuario_nutricionista_mod']) && !empty($_POST['pass_nutricionista_mod']) 
@@ -55,17 +60,22 @@ if (isset($_POST['eliminar_nutricionista'])) {
 
 
 //formulario para crear paciente
-if (isset($_POST['crear_paciente'])) {
-    if (!empty($_POST['usuario_paciente']) && !empty($_POST['pass_paciente']) && !empty($_POST['nombre_paciente']) && !empty($_POST['apellido_paciente']) && !empty($_POST['email_paciente'])) {
-        $usuario_paciente = $_POST['usuario_paciente'];
-        $pass_paciente = $_POST['pass_paciente'];
-        $nombre_paciente = $_POST['nombre_paciente'];
-        $apellido_paciente = $_POST['apellido_paciente'];
-        $email_paciente = $_POST['email_paciente'];
-        $resultado = crear_paciente($con, $nombre_paciente , $apellido_paciente , $usuario_paciente , $pass_paciente ,  $email_paciente);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
+    $nuevo_usuario = $_POST["usuario_paciente"];
+    $nuevo_nombre = $_POST["nombre_paciente"];
+    $nuevo_apellido = $_POST["apellido_paciente"];
+    $nuevo_email = $_POST["email_paciente"];
+    $nueva_pass = $_POST["pass_paciente"];
+    
+    if(empty($_FILES["foto_paciente"]["tmp_name"])){
+        $_SESSION['mensaje_pacientes'] = "<h5>Debe incluir una foto para crear al paciente.</h5>";
         header('Location:admin.php#div_pacientes');
         exit;
-    } 
+    }
+    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
+    crear_paciente_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
+    header('Location:admin.php#div_pacientes');
+    exit;
 }
 
 //formulario para modificar un paciente
@@ -166,7 +176,7 @@ if (isset($_POST['buscar_nutricionista'])) {
 
 //crear nutricionista
 echo '<div id="crear_nutricionista">
-    <form id="formulario_crear_nutricionista" action="admin.php#crear_nutricionista" method="POST">
+    <form id="formulario_crear_nutricionista" action="admin.php#crear_nutricionista" method="POST" enctype="multipart/form-data">
         <h2>Creación de nutricionistas</h2>
         <label for="usuario_nutricionista">Usuario :</label>
         <input type="text" name="usuario_nutricionista" id="usuario_nutricionista" required><br/>
@@ -183,6 +193,9 @@ echo '<div id="crear_nutricionista">
         <label for="email_nutricionista">Email :</label>
         <input type="email" name="email_nutricionista" id="email_nutricionista" required><br/>
         
+        <label for="foto_nutricionista">Foto de perfil:</label>
+        <input type="file" name="foto_nutricionista" id="foto_nutricionista" accept="image/*">
+
         <input type="submit" name="crear_nutricionista" value="Crear nutricionista">
     </form>
     <div id="mensaje_error_crear_nutricionista" style="color: red; display: none;"></div>
@@ -294,7 +307,7 @@ echo '<div id="borrar_nutri">
 
 //crear paciente
 echo '<div id="crear_paciente">
-        <form id="formulario_crear_paciente" action="admin.php#div_pacientes" method="POST">
+        <form id="formulario_crear_paciente" action="admin.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
             <input type="text" name="usuario_paciente" id="usuario_paciente" required><br/>
@@ -306,37 +319,16 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente" id="apellido_paciente" required><br/>
             <label for="email_paciente">Email :</label>
             <input type="email" name="email_paciente" id="email_paciente" required><br/>
-            <label for="imagen_paciente">Imagen de perfil:</label><br/>
-            <input type="file" name="imagen_paciente" id="imagen_paciente" accept="image/*"><br/>
+            <label for="foto_paciente">Foto de perfil:</label>
+            <input type="file" name="foto_paciente" id="foto_paciente" accept="image/*">
             <input type="submit" name="crear_paciente" value="Crear paciente">
         </form>
         <div id="mensaje_error_crear_paciente" style="color: red; display: none;"></div>
         </div>';
-?>
-        <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-        <script>
-            const cloudinaryWidget = cloudinary.createUploadWidget({
-                cloudName: 'dup8qzlzv',  // Sustituye con tu nombre de nube de Cloudinary
-                uploadPreset: 'ml_default',  // Sustituye con tu preset de carga
-                sources: ['local', 'url', 'camera'],  // Fuentes de carga posibles
-                showAdvancedOptions: true,
-                cropping: true,
-                multiple: false,
-                maxFileSize: 10000000,  // 10MB
-                clientAllowedFormats: ['jpg', 'png', 'jpeg'],
-            }, (error, result) => {
-                if (result && result.event === 'success') {
-                    // Al subir la imagen, insertar la URL en el formulario
-                    document.getElementById('imagen_paciente').value = result.info.secure_url;
-                }
-            });
-        
-            // Trigger de la subida de la imagen cuando el usuario selecciona un archivo
-            document.getElementById('imagen_paciente').addEventListener('change', function() {
-                cloudinaryWidget.open();
-            });
-        </script>
-<?php
+
+
+
+
 //Modificar paciente
   echo '<div id="modificar_paciente">
         <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST">
