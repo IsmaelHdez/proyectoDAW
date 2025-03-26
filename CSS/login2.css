@@ -1,35 +1,57 @@
-/* Estilos generales del cuerpo */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+#elementos {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#imagen {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 60vh;
+    width: 55%;
+    
+}
+
+#imagen img{
+    width: 100%;
+    opacity: 0.3; /* Opacidad del 30% */
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+    background-color: white; /* Asegura que el fondo sea blanco */  
+}
+
+/* Estilos generales del cuerpo */
+#login {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    
 }
 
 /* Estilos para el título principal */
-h1 {
-    color: #333;
+#formulario_login h1 {
     text-align: center;
     font-size: 2.5em;
     margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #4CAF50;
 }
 
 /* Estilos para el contenedor del formulario */
 #formulario_login {
-    padding: 30px;
-    width: 100%;
-    max-width: 400px;
-}
-
-/* Estilos para el encabezado del formulario */
-#formulario_login h1 {
-    font-size: 1.8em;
-    color: #4CAF50;
-    margin-bottom: 20px;
+    width: 60%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
 }
 
 /* Estilos para las etiquetas de los campos de formulario */
@@ -67,7 +89,7 @@ input[type="submit"]:hover {
     background-color: #45a049;
 }
 
-/* Estilos para el enlace debajo del formulario */
+
 a {
     display: block;
     text-align: center;
