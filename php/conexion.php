@@ -226,7 +226,6 @@ function asociar_paciente($con,$paciente,$nutricionista){
     }
    }
 
-
 //funcion para crear nutricionista
    function crear_nutricionista_admin($con, $nombre, $apellido, $usuario, $pass, $email){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
@@ -237,6 +236,20 @@ function asociar_paciente($con,$paciente,$nutricionista){
        }
        $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Se ha creado el nutricionista $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";    
     }
+
+  // Función para crear nutricionista
+function crear_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null) {
+    unset($_SESSION['mensaje_nutricionista']);
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $query = "insert into nutricionista (usuario, pass, nombre, apellido, email, foto, tipo)values 
+    ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , 1)";
+
+    if (mysqli_query($con, $query)) {
+        $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Se ha creado el nutricionista $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    } else {
+        $_SESSION['mensaje_nutricionista'] = "Tus datos no se han podido modificar.";
+    }
+}   
    
 //funcion para modificar nutricionista
    function modificar_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
@@ -281,18 +294,20 @@ function buscar_paciente($con, $apellido) {
     return $resultado;
 }
 
-//funcion para crear paciente
-   function crear_paciente($con, $nombre, $apellido, $usuario, $pass, $email){
+ // Función para crear paciente
+function crear_paciente_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null) {
+    unset($_SESSION['mensaje_pacientes']);
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', null)");
-    if (!$resultado) {
-        unset($_SESSION['mensaje_pacientes']);
-        echo "Error al crear paciente: " . mysqli_error($con);
+    $query = "insert into paciente (usuario, pass, nombre, apellido, email,foto,id_nutricionista)values 
+    ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , null)";
+
+    if (mysqli_query($con, $query)) {
+        $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    } else {
+        $_SESSION['mensaje_pacientes'] = "Tus datos no se han podido modificar.";
     }
-    
-    $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
-    }
- 
+}
+
     //funcion para modificar paciente
    function modificar_paciente($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
