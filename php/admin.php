@@ -36,13 +36,32 @@ if (isset($_POST['nutricionista_mod'])) {
     if (!empty($_POST['usuario_nutricionista_mod']) && !empty($_POST['pass_nutricionista_mod']) 
     && !empty($_POST['nombre_nutricionista_mod']) && !empty($_POST['apellido_nutricionista_mod']) 
 && !empty($_POST['email_nutricionista_mod']) && !empty($_POST['busq_nutricionista'])) {
-    $busq_nutricionista = $_POST['busq_nutricionista'];
+        $busq_nutricionista = $_POST['busq_nutricionista'];
         $usuario_nutricionista_mod = $_POST['usuario_nutricionista_mod'];
-        $pass_nutricionista_mod = $_POST['pass_nutricionista_mod'];
+        $pass_nutricionista_mod = !empty($_POST["pass_nutricionista_mod"]) ? password_hash($_POST["pass_nutricionista_mod"], PASSWORD_DEFAULT) : null;
         $nombre_nutricionista_mod = $_POST['nombre_nutricionista_mod'];
         $apellido_nutricionista_mod = $_POST['apellido_nutricionista_mod'];
         $email_nutricionista_mod = $_POST['email_nutricionista_mod'];
-        $resultado = modificar_nutricionista($con, $nombre_nutricionista_mod , $apellido_nutricionista_mod , $usuario_nutricionista_mod , $pass_nutricionista_mod ,  $email_nutricionista_mod , $busq_nutricionista);
+        $nueva_foto = null;
+
+        if (isset($_FILES["foto_nutricionista_mod"]) && $_FILES["foto_nutricionista_mod"]["size"] > 0) {
+            // Buscar la foto actual en la base de datos
+            $resultado = mysqli_query($con, "SELECT foto FROM nutricionista WHERE usuario = '$busq_nutricionista'");
+            
+            if ($resultado && mysqli_num_rows($resultado) > 0) {
+                $fila = mysqli_fetch_assoc($resultado);
+                
+                // Eliminar la foto solo si existe
+                if (!empty($fila['foto'])) {
+                    eliminar_imagen_cloudinary($fila['foto']);
+                }
+            }
+            
+            // Subir nueva foto
+            $nueva_foto = subir_imagen_cloudinary($_FILES["foto_nutricionista_mod"]["tmp_name"]);
+        }
+        $foto_actualizada = $nueva_foto ? $nueva_foto : $fila['foto']; 
+        $resultado = modificar_nutricionista_cloudinary($con, $nombre_nutricionista_mod , $apellido_nutricionista_mod ,  $email_nutricionista_mod, $usuario_nutricionista_mod , $pass_nutricionista_mod  , $foto_actualizada ,$busq_nutricionista);
         header('Location:admin.php#div_nutricionista');
         exit;
     } 
@@ -85,15 +104,35 @@ if (isset($_POST['paciente_mod'])) {
 && !empty($_POST['email_paciente_mod']) && !empty($_POST['busq_paciente'])) {
     $busq_paciente = $_POST['busq_paciente'];
     $usuario_paciente_mod = $_POST['usuario_paciente_mod'];
-        $pass_paciente_mod = $_POST['pass_paciente_mod'];
-        $nombre_paciente_mod = $_POST['nombre_paciente_mod'];
-        $apellido_paciente_mod = $_POST['apellido_paciente_mod'];
-        $email_paciente_mod = $_POST['email_paciente_mod'];
-        $resultado = modificar_paciente($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $busq_paciente);
-        header('Location:admin.php#div_pacientes');
-        exit;
+    $pass_paciente_mod = !empty($_POST["pass_paciente_mod"]) ? password_hash($_POST["pass_paciente_mod"], PASSWORD_DEFAULT) : null;
+    $nombre_paciente_mod = $_POST['nombre_paciente_mod'];
+    $apellido_paciente_mod = $_POST['apellido_paciente_mod'];
+    $email_paciente_mod = $_POST['email_paciente_mod'];
+    $nueva_foto = null;
+
+    if (isset($_FILES["foto_paciente_mod"]) && $_FILES["foto_paciente_mod"]["size"] > 0) {
+        // Buscar la foto actual en la base de datos
+        $resultado = mysqli_query($con, "SELECT foto FROM paciente WHERE usuario = '$busq_paciente'");
+        
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            $fila = mysqli_fetch_assoc($resultado);
+            
+            // Eliminar la foto solo si existe
+            if (!empty($fila['foto'])) {
+                eliminar_imagen_cloudinary($fila['foto']);
+            }
+        }
+        
+        // Subir nueva foto
+        $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente_mod"]["tmp_name"]);
+    }
+    $foto_actualizada = $nueva_foto ? $nueva_foto : $fila['foto']; 
+    $resultado = modificar_paciente_cloudinary($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $foto_actualizada , $busq_paciente);
+    header('Location:admin.php#div_pacientes');
+    exit;
     } 
 }
+
 
 //formulario para eliminar paciente
 if (isset($_POST['eliminar_paciente'])) {
@@ -204,7 +243,7 @@ echo '<div id="crear_nutricionista">
 
 //Modificar nutricionista
 echo '<div id="modificar_nutricionista">
-   <form id="formulario_mod_nutricionista" action="admin.php#div_nutricionista" method="POST">
+   <form id="formulario_mod_nutricionista" action="admin.php#div_nutricionista" method="POST" enctype="multipart/form-data">
    <h2>Modificación de nutricionistas</h2>
        </select><br/>
        <label for="busq_nutricionista">Elija el nutricionista :</label>
@@ -228,6 +267,8 @@ echo '<div id="modificar_nutricionista">
           <input type="text" name="apellido_nutricionista_mod" id="apellido_nutricionista_mod" required><br/>
           <label for="email_nutricionista_mod">Email :</label>
           <input type="email" name="email_nutricionista_mod" id="email_nutricionista_mod" required><br/>
+          <label for="foto_nutricionista_mod">Foto de perfil:</label>
+        <input type="file" name="foto_nutricionista_mod" id="foto_nutricionista_mod" accept="image/*">
           <input type="submit" name="nutricionista_mod" value="Modificar nutricionista">
       </form>
       <div id="mensaje_error_mod_nutricionista" style="color: red; display: none;"></div>
@@ -331,7 +372,7 @@ echo '<div id="crear_paciente">
 
 //Modificar paciente
   echo '<div id="modificar_paciente">
-        <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST">
+        <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="busq_paciente" id="busq_paciente">';
@@ -354,6 +395,8 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente_mod" id="apellido_paciente_mod" required><br/>
             <label for="email_paciente_mod">Email :</label>
             <input type="email" name="email_paciente_mod" id="email_paciente_mod" required><br/>
+            <label for="foto_paciente_mod">Foto de perfil:</label>
+            <input type="file" name="foto_paciente_mod" id="foto_paciente_mod" accept="image/*">
             <input type="submit" name="paciente_mod" value="Modificar paciente">
         </form>
         <div id="mensaje_error_mod_paciente" style="color: red; display: none;"></div>
