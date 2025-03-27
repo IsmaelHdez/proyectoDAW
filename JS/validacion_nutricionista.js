@@ -1,7 +1,7 @@
 /******************VALIDACION DE NUTRICIONISTA:PHP*************************************************/
 // Función para validar nombres o apellidos
 function validar_Nombre(nombre) {
-    const regex = /^[a-zA-Z\s]+$/;
+    const regex = /^[a-zA-Z\sñÑ]+$/;
     return regex.test(nombre);
 }
 
@@ -10,17 +10,17 @@ function validar_Numeros(numero) {
     const regex = /^[0-9]+$/;
     return regex.test(numero);
 }
+
 // Función para validar correos electrónicos
 function validar_Correo(correo) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(correo);
 }
 
-// Función para validar textos con menos de 3 caracteres
 function validar_Entrada(texto) {
-        const textRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)*$/;
-        return textRegex.test(texto);
-    }
+    const textRegex = /^[a-zA-Z\sñÑ]{3,}$/; // Permite letras y espacios, mínimo 3 caracteres
+    return textRegex.test(texto);
+}
 
   // Función para validar textos con menos de 10 caracteres
 function validar_Entrada_Ingredientes(texto) {
@@ -37,7 +37,7 @@ let nombre = document.getElementById("nombre_paciente").value.trim();
 let apellido = document.getElementById("apellido_paciente").value.trim();
 let email = document.getElementById("email_paciente").value.trim();
 
-console.log(document.getElementById("usuario_paciente"));
+    console.log(document.getElementById("usuario_paciente").value);
     console.log(document.getElementById("pass_paciente").value);
     console.log(document.getElementById("nombre_paciente").value);
     console.log(document.getElementById("apellido_paciente").value);
