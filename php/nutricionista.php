@@ -32,18 +32,24 @@ if($_SESSION["tipo"] != 1){
         </nav>
 <?php
 
+
 //formulario para crear paciente
-if (isset($_POST['crear_paciente'])) {
-    if (!empty($_POST['usuario_paciente']) && !empty($_POST['pass_paciente']) && !empty($_POST['nombre_paciente']) && !empty($_POST['apellido_paciente']) && !empty($_POST['email_paciente'])) {
-        $usuario_paciente = $_POST['usuario_paciente'];
-        $pass_paciente = $_POST['pass_paciente'];
-        $nombre_paciente = $_POST['nombre_paciente'];
-        $apellido_paciente = $_POST['apellido_paciente'];
-        $email_paciente = $_POST['email_paciente'];
-        $resultado = crear_paciente_nutricionista($con, $nombre_paciente , $apellido_paciente , $usuario_paciente , $pass_paciente ,  $email_paciente);
-        header('Location:nutricionista.php#div_pacientes');
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
+    $nuevo_usuario = $_POST["usuario_paciente"];
+    $nuevo_nombre = $_POST["nombre_paciente"];
+    $nuevo_apellido = $_POST["apellido_paciente"];
+    $nuevo_email = $_POST["email_paciente"];
+    $nueva_pass = $_POST["pass_paciente"];
+    
+    if(empty($_FILES["foto_paciente"]["tmp_name"])){
+        $_SESSION['mensaje_pacientes'] = "<h5>Debe incluir una foto para crear al paciente.</h5>";
+        header('Location:admin.php#div_pacientes');
         exit;
-    } 
+    }
+    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
+    crear_paciente_nutri_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
+    header('Location:nutricionista.php#div_pacientes');
+    exit;
 }
 
 //formulario para modificar un paciente
@@ -53,13 +59,32 @@ if (isset($_POST['paciente_mod'])) {
 && !empty($_POST['email_paciente_mod']) && !empty($_POST['busq_paciente'])) {
     $busq_paciente = $_POST['busq_paciente'];
     $usuario_paciente_mod = $_POST['usuario_paciente_mod'];
-        $pass_paciente_mod = $_POST['pass_paciente_mod'];
-        $nombre_paciente_mod = $_POST['nombre_paciente_mod'];
-        $apellido_paciente_mod = $_POST['apellido_paciente_mod'];
-        $email_paciente_mod = $_POST['email_paciente_mod'];
-        $resultado = modificar_paciente($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $busq_paciente);
-        header('Location:nutricionista.php#div_pacientes');
-        exit;
+    $pass_paciente_mod = !empty($_POST["pass_paciente_mod"]) ? password_hash($_POST["pass_paciente_mod"], PASSWORD_DEFAULT) : null;
+    $nombre_paciente_mod = $_POST['nombre_paciente_mod'];
+    $apellido_paciente_mod = $_POST['apellido_paciente_mod'];
+    $email_paciente_mod = $_POST['email_paciente_mod'];
+    $nueva_foto = null;
+
+    if (isset($_FILES["foto_paciente_mod"]) && $_FILES["foto_paciente_mod"]["size"] > 0) {
+        // Buscar la foto actual en la base de datos
+        $resultado = mysqli_query($con, "SELECT foto FROM paciente WHERE usuario = '$busq_paciente'");
+        
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            $fila = mysqli_fetch_assoc($resultado);
+            
+            // Eliminar la foto solo si existe
+            if (!empty($fila['foto'])) {
+                eliminar_imagen_cloudinary($fila['foto']);
+            }
+        }
+        
+        // Subir nueva foto
+        $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente_mod"]["tmp_name"]);
+    }
+    $foto_actualizada = $nueva_foto ? $nueva_foto : $fila['foto']; 
+    $resultado = modificar_paciente_cloudinary($con, $nombre_paciente_mod , $apellido_paciente_mod , $usuario_paciente_mod , $pass_paciente_mod ,  $email_paciente_mod , $foto_actualizada , $busq_paciente);
+    header('Location:nutricionista.php#div_pacientes');
+    exit;
     } 
 }
 
@@ -211,7 +236,7 @@ if(isset($_POST['ver_calendario'])){
 
 //crear paciente
 echo '<div id="crear_paciente">
-        <form id="formulario_crear_paciente" action="nutricionista.php#div_pacientes" method="POST">
+        <form id="formulario_crear_paciente" action="nutricionista.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
             <input type="text" name="usuario_paciente" id="usuario_paciente" required><br/>
@@ -223,6 +248,8 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente" id="apellido_paciente" required><br/>
             <label for="email_paciente">Email :</label>
             <input type="email" name="email_paciente" id="email_paciente" required><br/>
+            <label for="foto_paciente">Foto de perfil:</label>
+            <input type="file" name="foto_paciente" id="foto_paciente" accept="image/*">
             <input type="submit" name="crear_paciente">
         </form>
         <div id="mensaje_error_crear_paciente" style="color: red; display: none;"></div>
@@ -230,7 +257,7 @@ echo '<div id="crear_paciente">
 
 //Modificar paciente
   echo '<div id="modificar_paciente">
-        <form id="formulario_mod_paciente" action="nutricionista.php#div_pacientes" method="POST">
+        <form id="formulario_mod_paciente" action="nutricionista.php#div_pacientes" method="POST" enctype="multipart/form-data" >
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
             <select name="busq_paciente" id="busq_paciente">';
@@ -253,6 +280,8 @@ echo '<div id="crear_paciente">
             <input type="text" name="apellido_paciente_mod" id="apellido_paciente_mod" required><br/>
             <label for="email_paciente_mod">Email :</label>
             <input type="email" name="email_paciente_mod" id="email_paciente_mod" required><br/>
+            <label for="foto_paciente_mod">Foto de perfil:</label>
+            <input type="file" name="foto_paciente_mod" id="foto_paciente_mod" accept="image/*">
             <input type="submit" name="paciente_mod" value="Modificar paciente">
         </form>
         <div id="mensaje_error_mod_paciente" style="color: red; display: none;"></div>

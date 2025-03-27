@@ -456,20 +456,22 @@ function obtener_pacientes_nutricionista($con){
     $resultado = mysqli_query($con,"select usuario , nombre , apellido , email from paciente where id_nutricionista ='$id' ");
     return $resultado;
 }
-
- //funcion para crear paciente para el nutricionista
- function crear_paciente_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email){
-    $id = $_SESSION['id_nutricionista'];
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $resultado = mysqli_query($con, "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista) values ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email','$id')");
-    if (!$resultado) {
-        unset($_SESSION['mensaje_pacientes']);
-        echo "Error al crear paciente: " . mysqli_error($con);
-    }
-    
-    $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
-    }
  
+  // Función para crear paciente para el nutricionista
+function crear_paciente_nutri_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null) {
+    $id = $_SESSION['id_nutricionista'];
+    unset($_SESSION['mensaje_pacientes']);
+    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+    $query = "insert into paciente (usuario, pass, nombre, apellido, email,foto,id_nutricionista)values 
+    ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , '$id')";
+
+    if (mysqli_query($con, $query)) {
+        $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
+    } else {
+        $_SESSION['mensaje_pacientes'] = "Tus datos no se han podido modificar.";
+    }
+}   
+
 //función para modificar receta buscada por nutricionista
 function modificar_receta_nutricionista($con, $nombre_receta, $ingredientes_receta , $calorias_receta , $nombre_busq){
     $id = $_SESSION['id_nutricionista'];
