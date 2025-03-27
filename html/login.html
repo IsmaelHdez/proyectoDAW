@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../CSS/login.css">
+    <link rel="stylesheet" href="../CSS/login2.css">
     <script src="../js/validacion.js" defer></script>
     <title>Login</title>
 </head>
 <body>
-    <div id="formulario_login">
-        <h1>Acceder a cuenta usuario</h1>
-        <div id="formulario">
-            <form method="POST" id="formulario">
-                <label for="">Usuario: </label>
-                <input type="text" name="usuario" id="text_usuario" required><br/>
-                <label for="">Contraseña: </label>
-                <input type="password" name="pass" id="text_pass" required><br/>
-                <input type="submit" name="ingresar" id="ingresar" value="Ingresar">
-            </form>
+    <div id="elementos">
+        <div id="imagen">
+            <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742936606/consulta_nutricionista.jpg" alt="">
         </div>
-        <div id="mensaje_error" style="color: red; display: none;">Usuario o contraseña incorrectos</div>
-        <a href="../php/crear_nutricionista.php">Crear nuevo usuario...</a>
+        <div id="login">
+            <div id="formulario_login">
+                <h1>Acceder a cuenta usuario</h1>
+                <div id="formulario">
+                    <form method="POST" id="formulario">
+                        <label for="">Usuario: </label>
+                        <input type="text" name="usuario" id="text_usuario" required><br/>
+                        <label for="">Contraseña: </label>
+                        <input type="password" name="pass" id="text_pass" required><br/>
+                        <input type="submit" name="ingresar" id="ingresar" value="Ingresar">
+                    </form>
+                </div>
+                <div id="mensaje_error" style="color: red; display: none;">Usuario o contraseña incorrectos</div>
+                <a href="../php/crear_nutricionista.php">Crear nuevo usuario...</a>
+            </div>
+        </div>    
     </div>
 </body>
 </html>
