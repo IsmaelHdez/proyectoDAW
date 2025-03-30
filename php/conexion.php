@@ -103,10 +103,12 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo)
 }
 
 function obtener_nutricionista($con) {
-    $resultado = mysqli_query($con, "SELECT * FROM nutricionista");
+    $resultado = mysqli_query($con, "SELECT * FROM nutricionista ORDER BY id_nutricionista DESC LIMIT 4;");
     if (mysqli_num_rows($resultado) > 0) {
         while ($row = $resultado->fetch_assoc()) {
-            $nutricionistas[] = $row;
+            if ($row['tipo'] == 1) {
+                $nutricionistas[] = $row;
+            }
         }
     }
     return $nutricionistas;
