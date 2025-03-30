@@ -4,7 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require("../html/crear_nutricionista.html");
+
 require("conexion.php");
+require("../html/header.html");
+require("../html/crear_nutricionista.html");
+require("../html/footer.html");
 
 ?>

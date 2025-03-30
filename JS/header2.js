@@ -3,7 +3,7 @@ document.getElementById('loginBtn').addEventListener('click', function() {
 });
 
 document.getElementById('registerBtn').addEventListener('click', function() {
-    window.location.href = 'crear_paciente.php'; 
+    window.location.href = 'crear_nutricionista.php'; 
 });
 
 document.getElementById('logo').addEventListener('click', function() {

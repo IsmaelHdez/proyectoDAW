@@ -49,3 +49,11 @@
     text-transform: uppercase;
     margin: 0;
 }
+
+.titulo_noticias h3 {
+    padding: 30px;
+}
+
+.titulo_nutricionistas h3 {
+    padding: 30px;
+}
