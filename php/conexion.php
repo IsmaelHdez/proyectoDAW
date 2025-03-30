@@ -102,6 +102,16 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo)
     }
 }
 
+function obtener_nutricionista($con) {
+    $resultado = mysqli_query($con, "SELECT * FROM nutricionista");
+    if (mysqli_num_rows($resultado) > 0) {
+        while ($row = $resultado->fetch_assoc()) {
+            $nutricionistas[] = $row;
+        }
+    }
+    return $nutricionistas;
+}
+
 
 /*************************GESTIÓN DE IMÁGENES********************************************** */
 
