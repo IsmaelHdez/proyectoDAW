@@ -192,13 +192,15 @@ if(isset($_POST['ver_calendario'])){
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
     }else{
-        echo "<table>
+        echo "<div id='contenedor-tabla'>
+              <table>
         <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+              </div>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
@@ -259,7 +261,7 @@ echo '<div id="crear_paciente">
   echo '<div id="modificar_paciente">
         <form id="formulario_mod_paciente" action="nutricionista.php#div_pacientes" method="POST" enctype="multipart/form-data" >
             <h2>Modificación de pacientes</h2>
-            <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
+            <label for="busq_paciente">Elija un paciente para modificar sus datos:</label>
             <select name="busq_paciente" id="busq_paciente">';
               $resultado = listar_pacientes_nutricionista($con);
               if ($resultado && mysqli_num_rows($resultado) > 0) {
@@ -291,7 +293,7 @@ echo '<div id="crear_paciente">
 echo '<div id="borrar_paciente">
         <form action="nutricionista.php#div_pacientes" method="POST">
             <h3>Eliminación de pacientes</h3>
-            <label for="borrar_paciente">Elija un paciente para asignar la receta anterior:</label>
+            <label for="borrar_paciente">Elija un paciente a eliminar:</label>
             <select name="borrar_paciente" id="borrar_paciente">';
               $resultado = listar_pacientes_nutricionista($con);
               if ($resultado && mysqli_num_rows($resultado) > 0) {
@@ -313,13 +315,15 @@ $resultado = listar_recetas_usuario($con);
 if(mysqli_num_rows($resultado)==0){
 echo "<h5>No hay recetas disponibles.</h5>";
 }else{
-echo "<table>
+echo "<div id='contenedor-tabla'>
+      <table>
 <tr><th>Plato</th><th>calorias/racion</th><th>Ingredientes</th></tr>";
 while($fila = mysqli_fetch_array($resultado)){
    extract($fila);
    echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
 }
-echo "</table>";
+echo "</table>
+      </div>";
 }
 if(isset($_SESSION['mensaje_receta'])){
     echo $_SESSION['mensaje_receta'];
@@ -489,13 +493,15 @@ echo '<div id="div_citas" class="seccion">
        if(mysqli_num_rows($resultado)==0){
 echo "<h5>No tienes citas disponibles.</h5>";
       }else{
-echo "<table>
+echo "<div id='contenedor-tabla'>
+      <table>
 <tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>";
        while($fila = mysqli_fetch_array($resultado)){
        extract($fila);
 echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
        }
-echo "</table>";
+echo "</table>
+      </div>";
        }
 if(isset($_SESSION['mensaje_cita'])){
     echo $_SESSION['mensaje_cita'];

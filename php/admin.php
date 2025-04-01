@@ -169,13 +169,15 @@ if (isset($_POST['eliminar_paciente'])) {
         echo '<h5 class="mensaje">No se encuentran usuarios.</h5>';
     }
     else{
-        echo "<table>
-        <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
+        echo "<div id='contenedor-tabla'>
+              <table>
+              <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+              </div>";
     }
     if(isset($_SESSION['mensaje_nutricionista'])){
         echo $_SESSION['mensaje_nutricionista'];
@@ -279,7 +281,6 @@ echo '<div id="modificar_nutricionista">
 echo '<div id="borrar_nutri">
       <form action="admin.php#div_nutricionista" method="POST">
       <h2>Eliminación de nutricionistas</h2>
-      </select><br/>
        <label for="borrar_nutricionista">Elija el nutricionista :</label>
        <select name="borrar_nutricionista" id="borrar_nutricionista">';
         $resultado = listar_nutricionista($con);
@@ -303,13 +304,15 @@ echo '<div id="borrar_nutri">
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
     }else{
-        echo "<table>
+        echo "<div id='contenedor-tabla'>
+              <table>
         <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+            </div>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
