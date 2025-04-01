@@ -23,7 +23,7 @@ foto VARCHAR(255),
 tipo int,
 sesion varchar(255),
 id_nutricionista int,
-foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
+foreign key(id_nutricionista) references nutricionista(id_nutricionista) on delete cascade );
 
 create table receta(
 id_receta int primary key auto_increment,
@@ -32,7 +32,7 @@ ingredientes text,
 calorias int,
 foto VARCHAR(255),
 id_nutricionista int,
-foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
+foreign key(id_nutricionista) references nutricionista(id_nutricionista) on delete cascade);
 
 create table menu_semanal (
     id_menu int primary key auto_increment,
@@ -41,9 +41,9 @@ create table menu_semanal (
     id_receta int,
     dia_semana enum('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'),
     comida enum('Desayuno', 'Almuerzo', 'Cena'),
-    foreign key (id_paciente) references paciente(id_paciente),
-    foreign key (id_nutricionista) references nutricionista(id_nutricionista),
-    foreign key (id_receta) references receta(id_receta),
+    foreign key (id_paciente) references paciente(id_paciente) on delete cascade,
+    foreign key (id_nutricionista) references nutricionista(id_nutricionista) on delete cascade,
+    foreign key (id_receta) references receta(id_receta) on delete cascade,
     unique (id_paciente, dia_semana, comida) );
 
 create table medidas_paciente (
@@ -55,7 +55,7 @@ create table medidas_paciente (
     grasa_corporal decimal(5,2),
     musculo decimal(5,2),
     imc decimal(5,2) as (peso / (altura * altura)),
-    foreign key (id_paciente) references paciente(id_paciente) );
+    foreign key (id_paciente) references paciente(id_paciente) on delete cascade);
 
 create table objetivos_paciente (
 	id_objetivo int primary key auto_increment,
@@ -64,8 +64,8 @@ create table objetivos_paciente (
     objetivo_peso decimal(5,2),
     objetivo_grasa_corporal decimal(5,2),
     objetivo_musculo decimal(5,2),
-    foreign key (id_paciente) references paciente(id_paciente),
-    foreign key (id_nutricionista) references nutricionista(id_nutricionista),
+    foreign key (id_paciente) references paciente(id_paciente) on delete cascade,
+    foreign key (id_nutricionista) references nutricionista(id_nutricionista) on delete cascade,
     unique (id_paciente) );
 
 create table citas(
@@ -74,8 +74,8 @@ fecha date not null,
 hora time not null,
 paciente int,
 nutricionista int,
-foreign key (paciente) references paciente(id_paciente),
-foreign key (nutricionista) references nutricionista(id_nutricionista));
+foreign key (paciente) references paciente(id_paciente) on delete cascade,
+foreign key (nutricionista) references nutricionista(id_nutricionista) on delete cascade);
 
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin", "$2y$10$HOKoILE97x0Om4f5IIuE1u.cv1vm3NTfPUtr0zNncNwEQwga5vFeS", "admin", "admin", "admin@gmail", 3);
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("caro", "caro1234", "Casimiro", "Aroca Henares", "arocahenares@gmail.com", 1);
@@ -139,7 +139,7 @@ INSERT INTO receta (nombre, ingredientes, calorias, id_nutricionista) VALUES
  insert into medidas_paciente (id_paciente, fecha_registro, altura, peso, grasa_corporal, musculo) values (2, '2025-03-01', 60, 60.5, 13.5, 38.2);
  
  insert into objetivos_paciente (id_paciente, id_nutricionista, objetivo_peso, objetivo_grasa_corporal, objetivo_musculo) values (1, 1, 65.0, 12.0, 45.0);
- select * from nutricionista;
+ select * from menu_semanal;
  select * from paciente;
  select * from medidas_paciente where id_paciente = 1;
  drop database nutrigo;
