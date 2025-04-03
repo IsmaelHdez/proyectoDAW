@@ -155,36 +155,55 @@ if (isset($_POST['eliminar_paciente'])) {
 <link rel="stylesheet" href="../CSS/admin.css">
 <script src="../js/logout.js" defer></script>
 <script src="../js/validacion_admin.js" defer></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <title>Document</title>
 </head>
-    <nav class="menu-lateral">
-        <button onclick="mostrarSeccion('div_nutricionista')">Nutricionistas</button>
-        <button onclick="mostrarSeccion('div_pacientes')">Pacientes</button>
-    </nav>
-        <div id="div_nutricionista" class="seccion">
-        <body><h2>Listado de clientes/nutricionistas</h2>
+<body>
+<nav class="menu-lateral">
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_nutricionista">Nutricionistas</button>
+        <ul id="submenu_nutricionista" class="submenu">
+            <li onclick="mostrarSeccion('sub_nutricionista','contenedor_tabla_nutricionista')">Buscar por apellido</li>
+            <li onclick="mostrarSeccion('crear_nutricionista','contenedor_tabla_nutricionista')">Creación</li>
+            <li onclick="mostrarSeccion('modificar_nutricionista','contenedor_tabla_nutricionista')">Modificación</li>
+            <li onclick="mostrarSeccion('borrar_nutri','contenedor_tabla_nutricionista')">Eliminación</li>
+        </ul>
+    </div>
+    
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
+        <ul id="submenu_pacientes" class="submenu">
+            <li onclick="mostrarSeccion('sub_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
+            <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
+            <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
+            <li onclick="mostrarSeccion('borrar_paci','contenedor_tabla_paciente')">Eliminación</li>
+        </ul>
+    </div>
+</nav>
 <?php
+    echo  '<div id="div_nutricionista" >
+           <div id="contenedor_tabla_nutricionista" class="seccion">
+        <h2>Listado de clientes/nutricionistas</h2>';
     $resultado = obtener_nutricionistas($con);
     if(mysqli_num_rows($resultado)==0){
         echo '<h5 class="mensaje">No se encuentran usuarios.</h5>';
     }
     else{
-        echo "<div id='contenedor-tabla'>
-              <table>
+        echo "<table>
               <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>
-              </div>";
+        echo "</table>";
     }
     if(isset($_SESSION['mensaje_nutricionista'])){
         echo $_SESSION['mensaje_nutricionista'];
     }
+        echo  "</div>";
     
     //Buscar nutricionistas
-    echo '<div id="sub_nutricionista">
+    echo '<div id="sub_nutricionista" class="seccion">
 <form action="admin.php#sub_nutricionista" method="POST">
 <h2>Buscador de nutricionistas por apellidos</h2>
 <h3>Introduzca el apellido completo o la inicial</h3>
@@ -216,7 +235,7 @@ if (isset($_POST['buscar_nutricionista'])) {
         
 
 //crear nutricionista
-echo '<div id="crear_nutricionista">
+echo '<div id="crear_nutricionista" class="seccion">
     <form id="formulario_crear_nutricionista" action="admin.php#crear_nutricionista" method="POST" enctype="multipart/form-data">
         <h2>Creación de nutricionistas</h2>
         <label for="usuario_nutricionista">Usuario :</label>
@@ -244,7 +263,7 @@ echo '<div id="crear_nutricionista">
 
 
 //Modificar nutricionista
-echo '<div id="modificar_nutricionista">
+echo '<div id="modificar_nutricionista" class="seccion">
    <form id="formulario_mod_nutricionista" action="admin.php#div_nutricionista" method="POST" enctype="multipart/form-data">
    <h2>Modificación de nutricionistas</h2>
        </select><br/>
@@ -278,7 +297,7 @@ echo '<div id="modificar_nutricionista">
    
    
 //Eliminar nutricionista
-echo '<div id="borrar_nutri">
+echo '<div id="borrar_nutri" class="seccion">
       <form action="admin.php#div_nutricionista" method="POST">
       <h2>Eliminación de nutricionistas</h2>
        <label for="borrar_nutricionista">Elija el nutricionista :</label>
@@ -298,28 +317,28 @@ echo '<div id="borrar_nutri">
       
       
 //Tabla con los pacientes
-    echo '<div id="div_pacientes" class="seccion">
+    echo '<div id="div_pacientes" >
+          <div id="contenedor_tabla_paciente" class="seccion">
     <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
     }else{
-        echo "<div id='contenedor-tabla'>
-              <table>
+        echo "<table>
         <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>
-            </div>";
+        echo "</table>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
     }
+        echo  "</div>";
     
     //Buscador pacientes
-    echo '<div id="buscador_paciente">
+    echo '<div id="buscador_paciente" class="seccion">
     <form action="admin.php#buscador_paciente" method="POST">
     <h2>Buscador de paciente por apellido</h2>
     <h3>Introduzca el apellido completo o la inicial</h3>
@@ -350,7 +369,7 @@ echo '<div id="borrar_nutri">
 
 
 //crear paciente
-echo '<div id="crear_paciente">
+echo '<div id="crear_paciente"class="seccion" >
         <form id="formulario_crear_paciente" action="admin.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
@@ -374,7 +393,7 @@ echo '<div id="crear_paciente">
 
 
 //Modificar paciente
-  echo '<div id="modificar_paciente">
+  echo '<div id="modificar_paciente" class="seccion">
         <form id="formulario_mod_paciente" action="admin.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para asignar la receta anterior:</label>
@@ -406,7 +425,7 @@ echo '<div id="crear_paciente">
         </div>';
 
 //Eliminar paciente
-echo '<div id="borrar_paci">
+echo '<div id="borrar_paci" class="seccion">
         <form action="admin.php#div_pacientes" method="POST">
             <h3>Eliminación de pacientes</h3>
             <label for="borrar_paciente">Elija un paciente para eliminar:</label>
