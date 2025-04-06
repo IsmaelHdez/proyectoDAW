@@ -258,22 +258,27 @@ function mostrarSeccion(id, tipo) {
         tabla.style.display = "block";
     }
 
+    if (tipo === "contenedor_tabla_nutricionista") {
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_nutricionista").style.display = "block";
+    } else if (tipo === "contenedor_tabla_paciente") {
+        document.getElementById("div_nutricionista").style.display = "none";
+        document.getElementById("div_pacientes").style.display = "block";
+    }
+
     // Guardar la sección activa en localStorage
     localStorage.setItem("seccion_activa", id);
     localStorage.setItem("tabla_activa", tipo);
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
     let seccionGuardada = localStorage.getItem('seccion_activa');
     let tablaGuardada = localStorage.getItem('tabla_activa');
 
     if (seccionGuardada && tablaGuardada) {
-        mostrarSeccion(tablaGuardada); // Mostrar la sección guardada
-        mostrarSeccion(seccionGuardada); // Mostrar la sección guardada
+        mostrarSeccion(seccionGuardada,tablaGuardada); // Mostrar la sección guardada
     } else {
-        mostrarSeccion("sub_nutricionista");
-        mostrarSeccion("crear_nutricionista");
+        mostrarSeccion("crear_nutricionista","contenedor_tabla_nutricionista");
          // Si no hay sección guardada, mostrar la predeterminada
     }
 });

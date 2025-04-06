@@ -94,9 +94,10 @@ table {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
+
 #contenedor_tabla_nutricionista , #contenedor_tabla_paciente{
-    overflow-y: auto;
-    max-height: 300px;
+    overflow-y: auto ;
+    max-height: 220px;
 }
 
 #resultado_receta {
@@ -109,9 +110,9 @@ table {
 }
 
 h5{
-font-size: 20px;
-width: 60%;
-color: white;
+    font-size: 20px;
+    width: 60%;
+    color: white;
 }
 
 th, td {

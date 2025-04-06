@@ -276,34 +276,70 @@ document.getElementById("formulario_mod_receta").addEventListener("submit", func
     }
 });
 /*************************************************************************************************/
-function mostrarSeccion(id) {
+function mostrarSeccion(id, tipo) {
     let secciones = document.getElementsByClassName("seccion");
 
     // Ocultar todas las secciones
     for (let i = 0; i < secciones.length; i++) {
         secciones[i].style.display = "none";
     }
-
     // Mostrar la sección especificada
     document.getElementById(id).style.display = "block";
 
-    // Guardar la sección activa en localStorage
-    localStorage.setItem('seccion_activa', id);
-}
+    // Mostrar la tabla correcta según el tipo
+    let tabla = document.getElementById(tipo);
+    if (tabla) {
+        tabla.style.display = "block";
+    }
 
-// Evento para cambiar la sección cuando se hace clic en un botón (input)
-document.querySelectorAll(".boton-seccion").forEach(button => {
-    button.addEventListener("click", function() {
-        mostrarSeccion(button.getAttribute('data-seccion')); // La sección se toma del atributo data-seccion
-    });
-});
+    if (tipo === "contenedor_tabla_paciente") {
+        document.getElementById("div_pacientes").style.display = "block";
+        document.getElementById("div_recetas").style.display = "none";
+        document.getElementById("div_calendario").style.display = "none";
+        document.getElementById("div_citas").style.display = "none";
+    } else if (tipo === "tabla_contenedor_recetas") {
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_recetas").style.display = "block";
+        document.getElementById("div_calendario").style.display = "none";
+        document.getElementById("div_citas").style.display = "none";
+    } else if (tipo === "tabla_calendario") {
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_recetas").style.display = "none";
+        document.getElementById("div_calendario").style.display = "block";
+        document.getElementById("div_citas").style.display = "none";
+    } else if (tipo === "tabla_citas") {
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_recetas").style.display = "none";
+        document.getElementById("div_calendario").style.display = "none";
+        document.getElementById("div_citas").style.display = "block";
+    }
+
+    // Guardar la sección activa en localStorage
+    localStorage.setItem("seccion_activa", id);
+    localStorage.setItem("tabla_activa", tipo);
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     let seccionGuardada = localStorage.getItem('seccion_activa');
+    let tablaGuardada = localStorage.getItem('tabla_activa');
 
-    if (seccionGuardada) {
-        mostrarSeccion(seccionGuardada); // Mostrar la sección guardada
+    if (seccionGuardada && tablaGuardada) {
+        mostrarSeccion(seccionGuardada,tablaGuardada); // Mostrar la sección guardada
     } else {
-        mostrarSeccion("div_pacientes"); // Si no hay sección guardada, mostrar la predeterminada
+        mostrarSeccion("crear_paciente","contenedor_tabla_paciente");
+         // Si no hay sección guardada, mostrar la predeterminada
     }
 });
+
+//función para abrir menú
+$(document).ready(function(){
+    $(".menu-btn").click(function(){
+        var target = $(this).data("target");
+        $(".submenu").not(target).slideUp(); // Cierra otros submenús
+        $(target).slideToggle();
+    });
+});
+    // Cierra el submenú cuando se hace clic en una opción
+    $(".submenu li").click(function(){
+        $(this).parent().slideUp();
+    });
