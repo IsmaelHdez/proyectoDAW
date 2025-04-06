@@ -12,7 +12,7 @@ $nutricionistas = obtener_nutricionista($con);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutricionistas</title>
-    <link rel="stylesheet" href="../CSS/targetas_nutricionistas.css">
+    <link rel="stylesheet" href="../CSS/targetas.css">
 </head>
 <body>
     <div class="titulo_nutricionistas">
@@ -22,9 +22,15 @@ $nutricionistas = obtener_nutricionista($con);
             <div class="card-container">
                 <?php foreach ($nutricionistas as $nutricionista): ?>
                     <div class="card">
-                        <h2><?= htmlspecialchars($nutricionista['nombre'] . " " . $nutricionista['apellido']) ?></h2>
-                        <p><strong>Email:</strong> <?= htmlspecialchars($nutricionista['email']) ?></p>
-                        <p><strong>Tipo:</strong> <?= $nutricionista['tipo'] == 1 ? "Nutricionista" : "General" ?></p>
+                        <div id="imagen_perfil">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCpC-_LHlo1b8M_TVCybqNxxPbIngjU7o2oQ&s" alt="">
+                            <p>imagen</p>
+                        </div>
+                        <div id="datos_nutricionista">
+                            <h2><?= htmlspecialchars($nutricionista['nombre'] . " " . $nutricionista['apellido']) ?></h2>
+                            <p><strong>Email:</strong> <?= htmlspecialchars($nutricionista['email']) ?></p>
+                            <p><strong>Tipo:</strong> <?= $nutricionista['tipo'] == 1 ? "Nutricionista" : "General" ?></p>
+                        </div>                        
                     </div>
                 <?php endforeach; ?>
             </div>
