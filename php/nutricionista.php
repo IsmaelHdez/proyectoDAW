@@ -20,16 +20,43 @@ if($_SESSION["tipo"] != 1){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/logout.js" defer></script>
     <script src="../js/validacion_nutricionista.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="../CSS/admin.css">
     <title>Document</title>
 </head>
 <body>
-    <nav class="menu-lateral">
-        <button onclick="mostrarSeccion('div_pacientes')">Pacientes</button>
-        <button onclick="mostrarSeccion('div_recetas')">Recetas</button>
-        <button onclick="mostrarSeccion('div_calendario')">Calendario</button>
-        <button onclick="mostrarSeccion('div_citas')">Citas</button>
-        </nav>
+<nav class="menu-lateral">
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
+        <ul id="submenu_pacientes" class="submenu">
+            <li onclick="mostrarSeccion('buscador_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
+            <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
+            <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
+            <li onclick="mostrarSeccion('borrar_paci','contenedor_tabla_paciente')">Eliminación</li>
+        </ul>
+    </div>
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_recetas">Recetas</button>
+        <ul id="submenu_recetas" class="submenu">
+            <li onclick="mostrarSeccion('crear_receta','tabla_contenedor_recetas')">Creación</li>
+            <li onclick="mostrarSeccion('modificar_receta','tabla_contenedor_recetas')">Modificación</li>
+            <li onclick="mostrarSeccion('borrar_receta','tabla_contenedor_recetas)">Eliminación</li>
+        </ul>
+    </div>
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_calendario">Calendario</button>
+        <ul id="submenu_calendario" class="submenu">
+            <li onclick="mostrarSeccion('asignar_calendario','tabla_calendario')">Asignar receta al calendario</li>
+        </ul>
+    </div>
+    <div class="menu-item">
+        <button class="menu-btn" data-target="#submenu_citas">Recetas</button>
+        <ul id="submenu_citas" class="submenu">
+            <li onclick="mostrarSeccion('crear_cita','tabla_citas')">Creación</li>
+            <li onclick="mostrarSeccion('borrar_cita','tabla_citas)">Eliminación</li>
+        </ul>
+    </div>
+</nav>
 <?php
 
 
@@ -186,34 +213,34 @@ if(isset($_POST['ver_calendario'])){
   }
   
 //Tabla con los pacientes
-    echo '<div id="div_pacientes" class="seccion">
-    <h2>Listado de pacientes</h2>';
+    echo '<div id="div_pacientes">
+          <div id="contenedor_tabla_paciente" class="seccion">
+          <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes_nutricionista($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
     }else{
-        echo "<div id='contenedor-tabla'>
-              <table>
+        echo "<table>
         <tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>";
         while($fila = mysqli_fetch_array($resultado)){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>
-              </div>";
+        echo "</table>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
     }
+        echo  "</div>";
+
     //Buscador pacientes
-    echo '<div id="buscador_paciente">
+    echo '<div id="buscador_paciente" class="seccion">
     <form action="nutricionista.php#buscador_paciente" method="POST">
     <h2>Buscador de información sobre el paciente</h2>
     <h3>Introduzca el apellido completo o la inicial</h3>
     <input type="text" name="apellido_paciente_buscar" id="apellido_paciente_buscar" required><br/>
     <input type="submit" name="buscar_paciente">
-    </form>
-    </div>';
+    </form>';
     if (isset($_POST['buscar_paciente'])) {
         if (!empty($_POST['apellido_paciente_buscar'])) {
             $busqueda = mysqli_real_escape_string($con, trim($_POST['apellido_paciente_buscar']));
@@ -233,11 +260,11 @@ if(isset($_POST['ver_calendario'])){
             echo '<h5 class="mensaje">Por favor, ingrese un apellido para buscar.</h5>';
         }
     } 
-    
+   echo "</div>"; 
 
 
 //crear paciente
-echo '<div id="crear_paciente">
+echo '<div id="crear_paciente" class="seccion">
         <form id="formulario_crear_paciente" action="nutricionista.php#div_pacientes" method="POST" enctype="multipart/form-data">
             <h2>Creación de pacientes</h2>
             <label for="usuario_paciente">Usuario :</label>
@@ -258,7 +285,7 @@ echo '<div id="crear_paciente">
         </div>';
 
 //Modificar paciente
-  echo '<div id="modificar_paciente">
+  echo '<div id="modificar_paciente" class="seccion">
         <form id="formulario_mod_paciente" action="nutricionista.php#div_pacientes" method="POST" enctype="multipart/form-data" >
             <h2>Modificación de pacientes</h2>
             <label for="busq_paciente">Elija un paciente para modificar sus datos:</label>
@@ -290,7 +317,7 @@ echo '<div id="crear_paciente">
         </div>';
 
 //Eliminar paciente
-echo '<div id="borrar_paciente">
+echo '<div id="borrar_paciente" class="seccion">
         <form action="nutricionista.php#div_pacientes" method="POST">
             <h3>Eliminación de pacientes</h3>
             <label for="borrar_paciente">Elija un paciente a eliminar:</label>
@@ -309,27 +336,28 @@ echo '<div id="borrar_paciente">
         </div>';
 
  //Tabla de recetas
- echo '<div id="div_recetas" class="seccion">
+ echo '<div id="div_recetas" >
+       <div id="tabla_contenedor_recetas" class="seccion">
  <h2>Tus recetas (ración/450 grs)</h2>';
 $resultado = listar_recetas_usuario($con);
 if(mysqli_num_rows($resultado)==0){
 echo "<h5>No hay recetas disponibles.</h5>";
 }else{
-echo "<div id='contenedor-tabla'>
-      <table>
+echo "<table>
 <tr><th>Plato</th><th>calorias/racion</th><th>Ingredientes</th></tr>";
 while($fila = mysqli_fetch_array($resultado)){
    extract($fila);
    echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
 }
-echo "</table>
-      </div>";
+echo "</table>";
 }
 if(isset($_SESSION['mensaje_receta'])){
     echo $_SESSION['mensaje_receta'];
 }
+echo "</div>";
+
 //crear receta
-echo '<div id="crear_receta">
+echo '<div id="crear_receta" class="seccion">
         <form id="formulario_crear_receta" action="nutricionista.php#div_recetas" method="POST">
             <h2>Creación de recetas</h2>
             <label for="nombre_receta">Nombre :</label>
@@ -345,7 +373,7 @@ echo '<div id="crear_receta">
         </div>';
 
 //Modificar receta
-echo '<div id="modificar_receta">
+echo '<div id="modificar_receta" class="seccion">
 <form id="formulario_mod_receta" action="nutricionista.php#div_recetas" method="POST">
     <h2>Modificación de recetas</h2>
     <label for="busq_receta">Elija una receta a modificar:</label>
@@ -372,7 +400,7 @@ echo '</select>
 </div>';
 
 //Eliminar receta
-echo '<div id="borrar_receta">
+echo '<div id="borrar_receta" class="seccion">
         <form action="nutricionista.php#div_recetas" method="POST">
             <h3>Eliminación de recetas</h3>
             <label for="borrar_receta">Elija una receta a eliminar:</label>
@@ -391,8 +419,8 @@ echo '<div id="borrar_receta">
         </div>';
 
 //Select para ver tabla con el calendario de recetas
- echo '<div id="div_calendario" class="seccion">
-       <div id="tabla_calendario">
+ echo '<div id="div_calendario" >
+       <div id="tabla_calendario" class="seccion">
        <form action="nutricionista.php#div_calendario" method="POST">
        <h2>Calendario de recetas</h2>
        <label for="calendario_paciente">Elija un paciente para ver su menu semanal:</label>
@@ -434,14 +462,15 @@ echo '<div id="borrar_receta">
     echo "</table>";
         }
     }  
-    echo "</form>
-          </div>";
+    echo "</form>";
     
     if(isset($_SESSION['mensaje_calendario'])){
        echo $_SESSION['mensaje_calendario'];
         }
+    echo "</div>";
+
 //Asignar receta a paciente en el calendario
-echo '<div id="asignar_calendario">
+echo '<div id="asignar_calendario" class="seccion">
       <form action="nutricionista.php#div_calendario" method="POST">
        <h2>Asignación de recetas al calendario del paciente</h2>
        <label for="asignar_paciente_calendario">Elija un paciente:</label>
@@ -486,29 +515,30 @@ echo '<div id="asignar_calendario">
           </div>
         </div>
 <?php          
+
 //tabla de citas por nutricionistas
-echo '<div id="div_citas" class="seccion">
+echo '<div id="div_citas" >
+      <div id="tabla_citas" class="seccion">
        <h2>Tu listado de citas</h2>';
        $resultado = obtener_tabla_citas_nutricionista($con);
        if(mysqli_num_rows($resultado)==0){
 echo "<h5>No tienes citas disponibles.</h5>";
       }else{
-echo "<div id='contenedor-tabla'>
-      <table>
+echo "<table>
 <tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>";
        while($fila = mysqli_fetch_array($resultado)){
        extract($fila);
 echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
        }
-echo "</table>
-      </div>";
+echo "</table>";
        }
 if(isset($_SESSION['mensaje_cita'])){
     echo $_SESSION['mensaje_cita'];
 }
+echo "</div>";
 
 //crear citas
-echo '<div id="crear_cita">
+echo '<div id="crear_cita" class="seccion">
 <form action="nutricionista.php#div_citas" method="POST">
 <h2>Creación de citas :</h2>
 <label for="paciente_cita">Asigne el paciente:</label>
@@ -531,7 +561,7 @@ echo '<label for="hora_cita" name="hora_cita">Hora de la cita (hh:mm):</label>
 
 
 //Borrar citas
-echo '<div id="borrar_cita">
+echo '<div id="borrar_cita" class="seccion">
 <form action="nutricionista.php#borrar_cita" method="POST">
 <h2>Cancelación de citas :</h2>
 <label for="paciente_cita_borrar">Elija el paciente :</label>

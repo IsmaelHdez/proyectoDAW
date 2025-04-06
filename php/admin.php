@@ -163,7 +163,7 @@ if (isset($_POST['eliminar_paciente'])) {
     <div class="menu-item">
         <button class="menu-btn" data-target="#submenu_nutricionista">Nutricionistas</button>
         <ul id="submenu_nutricionista" class="submenu">
-            <li onclick="mostrarSeccion('sub_nutricionista','contenedor_tabla_nutricionista')">Buscar por apellido</li>
+            <li onclick="mostrarSeccion('buscador_nutricionista','contenedor_tabla_nutricionista')">Buscar por apellido</li>
             <li onclick="mostrarSeccion('crear_nutricionista','contenedor_tabla_nutricionista')">Creación</li>
             <li onclick="mostrarSeccion('modificar_nutricionista','contenedor_tabla_nutricionista')">Modificación</li>
             <li onclick="mostrarSeccion('borrar_nutri','contenedor_tabla_nutricionista')">Eliminación</li>
@@ -173,7 +173,7 @@ if (isset($_POST['eliminar_paciente'])) {
     <div class="menu-item">
         <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
         <ul id="submenu_pacientes" class="submenu">
-            <li onclick="mostrarSeccion('sub_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
+            <li onclick="mostrarSeccion('buscador_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
             <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
             <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
             <li onclick="mostrarSeccion('borrar_paci','contenedor_tabla_paciente')">Eliminación</li>
@@ -182,8 +182,8 @@ if (isset($_POST['eliminar_paciente'])) {
 </nav>
 <?php
     echo  '<div id="div_nutricionista" >
-           <div id="contenedor_tabla_nutricionista" class="seccion">
-        <h2>Listado de clientes/nutricionistas</h2>';
+           <h2>Listado de clientes/nutricionistas</h2>
+           <div id="contenedor_tabla_nutricionista" class="seccion">';
     $resultado = obtener_nutricionistas($con);
     if(mysqli_num_rows($resultado)==0){
         echo '<h5 class="mensaje">No se encuentran usuarios.</h5>';
@@ -203,15 +203,14 @@ if (isset($_POST['eliminar_paciente'])) {
         echo  "</div>";
     
     //Buscar nutricionistas
-    echo '<div id="sub_nutricionista" class="seccion">
-<form action="admin.php#sub_nutricionista" method="POST">
+    echo '<div id="buscador_nutricionista" class="seccion">
+<form action="admin.php#buscador_nutricionista" method="POST">
 <h2>Buscador de nutricionistas por apellidos</h2>
 <h3>Introduzca el apellido completo o la inicial</h3>
 <input type="text" name="nutricionista_apellido" id="nutricionista_apellido" required><br/>
 <input type="submit" name="buscar_nutricionista" value="Buscar nutricionista">
 
-</form>
-</div>';
+</form>';
 //formulario para buscar nutricionista por apellido
 if (isset($_POST['buscar_nutricionista'])) {
     if (!empty($_POST['nutricionista_apellido'])) {
@@ -232,7 +231,7 @@ if (isset($_POST['buscar_nutricionista'])) {
         echo '<h5 class="mensaje">Por favor, ingrese un apellido para buscar.</h5>';
     }
 }
-        
+ echo '</div>';       
 
 //crear nutricionista
 echo '<div id="crear_nutricionista" class="seccion">
@@ -318,8 +317,8 @@ echo '<div id="borrar_nutri" class="seccion">
       
 //Tabla con los pacientes
     echo '<div id="div_pacientes" >
-          <div id="contenedor_tabla_paciente" class="seccion">
-    <h2>Listado de pacientes</h2>';
+          <h2>Listado de pacientes</h2>
+          <div id="contenedor_tabla_paciente" class="seccion">';
     $resultado = obtener_pacientes($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
@@ -344,8 +343,7 @@ echo '<div id="borrar_nutri" class="seccion">
     <h3>Introduzca el apellido completo o la inicial</h3>
     <input type="text" name="apellido_paciente_buscar" id="apellido_paciente_buscar" required><br/>
     <input type="submit" name="buscar_paciente">
-    </form>
-    </div>';
+    </form>';
     if (isset($_POST['buscar_paciente'])) {
         if (!empty($_POST['apellido_paciente_buscar'])) {
             $busqueda = mysqli_real_escape_string($con, trim($_POST['apellido_paciente_buscar']));
@@ -365,7 +363,7 @@ echo '<div id="borrar_nutri" class="seccion">
             echo '<h5 class="mensaje">Por favor, ingrese un apellido para buscar.</h5>';
         }
     } 
-    
+  echo '</div>';  
 
 
 //crear paciente
