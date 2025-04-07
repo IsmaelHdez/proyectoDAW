@@ -20,12 +20,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_nutricionista"])
     $nuevo_email = $_POST["email_nutricionista"];
     $nueva_pass = $_POST["pass_nutricionista"];
     
-    if(empty($_FILES["foto_nutricionista"]["tmp_name"])){
-        $_SESSION['mensaje_nutricionista'] = "<h5>Debe incluir una foto para crear al nutricionista.</h5>";
-        header('Location:admin.php#div_nutricionista');
-        exit;
+    if ($_FILES["foto_nutricionista"]["size"] > 0) {
+        $nueva_foto = subir_imagen_cloudinary($_FILES["foto_nutricionista"]["tmp_name"]);
+    }else{
+        $nueva_foto = null;
     }
-    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_nutricionista"]["tmp_name"]);
     crear_nutricionista_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
     header('Location:admin.php#div_nutricionista');
     exit;
@@ -86,12 +85,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
     $nuevo_email = $_POST["email_paciente"];
     $nueva_pass = $_POST["pass_paciente"];
     
-    if(empty($_FILES["foto_paciente"]["tmp_name"])){
-        $_SESSION['mensaje_pacientes'] = "<h5>Debe incluir una foto para crear al paciente.</h5>";
-        header('Location:admin.php#div_pacientes');
-        exit;
+    if ($_FILES["foto_paciente"]["size"] > 0) {
+        $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
+    }else{
+        $nueva_foto = null;
     }
-    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
     crear_paciente_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
     header('Location:admin.php#div_pacientes');
     exit;
@@ -159,7 +157,10 @@ if (isset($_POST['eliminar_paciente'])) {
 <title>Document</title>
 </head>
 <body>
-<nav class="menu-lateral">
+    <nav class="menu-lateral">
+    <div class="logo">
+    <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo" >
+    </div>
     <div class="menu-item">
         <button class="menu-btn" data-target="#submenu_nutricionista">Nutricionistas</button>
         <ul id="submenu_nutricionista" class="submenu">
@@ -183,7 +184,8 @@ if (isset($_POST['eliminar_paciente'])) {
 <?php
     echo  '<div id="div_nutricionista" >
            <h2>Listado de clientes/nutricionistas</h2>
-           <div id="contenedor_tabla_nutricionista" class="seccion">';
+           <div id="contenedor_tabla_nutricionista" class="seccion">
+           <div id="tabla_nutricionista">';
     $resultado = obtener_nutricionistas($con);
     if(mysqli_num_rows($resultado)==0){
         echo '<h5 class="mensaje">No se encuentran usuarios.</h5>';
@@ -195,7 +197,8 @@ if (isset($_POST['eliminar_paciente'])) {
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+              </div>";
     }
     if(isset($_SESSION['mensaje_nutricionista'])){
         echo $_SESSION['mensaje_nutricionista'];
@@ -318,7 +321,8 @@ echo '<div id="borrar_nutri" class="seccion">
 //Tabla con los pacientes
     echo '<div id="div_pacientes" >
           <h2>Listado de pacientes</h2>
-          <div id="contenedor_tabla_paciente" class="seccion">';
+          <div id="contenedor_tabla_paciente" class="seccion">
+          <div id="tabla_paciente">';
     $resultado = obtener_pacientes($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
@@ -329,7 +333,8 @@ echo '<div id="borrar_nutri" class="seccion">
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+              </div>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];

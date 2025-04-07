@@ -278,6 +278,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (seccionGuardada && tablaGuardada) {
         mostrarSeccion(seccionGuardada,tablaGuardada); // Mostrar la sección guardada
     } else {
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_nutricionista").style.display = "block";
         mostrarSeccion("crear_nutricionista","contenedor_tabla_nutricionista");
          // Si no hay sección guardada, mostrar la predeterminada
     }
@@ -295,3 +297,9 @@ $(document).ready(function(){
     $(".submenu li").click(function(){
         $(this).parent().slideUp();
     });
+
+//función para borrar el localStorage    
+document.getElementById("cerrarSesion").addEventListener("click", function() {
+    localStorage.removeItem("seccion_activa");
+    localStorage.removeItem("tabla_activa");
+});

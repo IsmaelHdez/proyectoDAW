@@ -95,7 +95,7 @@ table {
     border-radius: 10px;
 }
 
-#contenedor_tabla_nutricionista , #contenedor_tabla_paciente{
+#tabla_nutricionista, #tabla_paciente, #tabla_recetas, #tabla_cita{
     overflow-y: auto ;
     max-height: 220px;
 }
@@ -154,12 +154,31 @@ tbody tr:hover {
     left: 0;
     width: 100%;
     background-color: #45a0496f;
-    padding: 10px 0;
+    padding: 10px 20px;
     display: flex;
-    justify-content: center;
+    align-items: center;  /* Alinea los elementos verticalmente */
+    justify-content: center;  /* Centra los botones */
     gap: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+}
+
+.logo {
+    position: absolute;
+    left: 20px; /* Mantiene el logo a la izquierda */
+    top: 50%;
+    transform: translateY(-46%); /* Lo centra verticalmente dentro del nav */
+}
+
+.logo img {
+    width: 96px; /* Aumenta el tamaño del logo */
+    height: 96px;
+    object-fit: contain; /* Mantiene las proporciones */
+}
+
+.menu-container {
+    display: flex;
+    gap: 15px;
 }
 
 .menu-item {
@@ -209,3 +228,4 @@ tbody tr:hover {
 .submenu li:hover {
     background: #ddd;
 }
+

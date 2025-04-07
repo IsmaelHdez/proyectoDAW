@@ -327,7 +327,10 @@ document.addEventListener("DOMContentLoaded", function () {
         mostrarSeccion(seccionGuardada,tablaGuardada); // Mostrar la sección guardada
     } else {
         mostrarSeccion("crear_paciente","contenedor_tabla_paciente");
-         // Si no hay sección guardada, mostrar la predeterminada
+        document.getElementById("div_pacientes").style.display = "block";
+        document.getElementById("div_recetas").style.display = "none";
+        document.getElementById("div_calendario").style.display = "none";
+        document.getElementById("div_citas").style.display = "none";
     }
 });
 
@@ -343,3 +346,9 @@ $(document).ready(function(){
     $(".submenu li").click(function(){
         $(this).parent().slideUp();
     });
+
+//función para borrar el localStorage    
+document.getElementById("cerrarSesion").addEventListener("click", function() {
+       localStorage.removeItem("seccion_activa");
+       localStorage.removeItem("tabla_activa");
+});
