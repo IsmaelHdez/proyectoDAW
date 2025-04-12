@@ -26,13 +26,16 @@ if($_SESSION["tipo"] != 1){
 </head>
 <body>
 <nav class="menu-lateral">
+    <div class="logo">
+        <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo" >
+    </div>
     <div class="menu-item">
         <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
         <ul id="submenu_pacientes" class="submenu">
             <li onclick="mostrarSeccion('buscador_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
             <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
             <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_paci','contenedor_tabla_paciente')">Eliminación</li>
+            <li onclick="mostrarSeccion('borrar_paciente','contenedor_tabla_paciente')">Eliminación</li>
         </ul>
     </div>
     <div class="menu-item">
@@ -40,7 +43,7 @@ if($_SESSION["tipo"] != 1){
         <ul id="submenu_recetas" class="submenu">
             <li onclick="mostrarSeccion('crear_receta','tabla_contenedor_recetas')">Creación</li>
             <li onclick="mostrarSeccion('modificar_receta','tabla_contenedor_recetas')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_receta','tabla_contenedor_recetas)">Eliminación</li>
+            <li onclick="mostrarSeccion('borrar_receta','tabla_contenedor_recetas')">Eliminación</li>
         </ul>
     </div>
     <div class="menu-item">
@@ -50,10 +53,10 @@ if($_SESSION["tipo"] != 1){
         </ul>
     </div>
     <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_citas">Recetas</button>
+        <button class="menu-btn" data-target="#submenu_citas">Citas</button>
         <ul id="submenu_citas" class="submenu">
             <li onclick="mostrarSeccion('crear_cita','tabla_citas')">Creación</li>
-            <li onclick="mostrarSeccion('borrar_cita','tabla_citas)">Eliminación</li>
+            <li onclick="mostrarSeccion('borrar_cita','tabla_citas')">Eliminación</li>
         </ul>
     </div>
 </nav>
@@ -68,12 +71,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
     $nuevo_email = $_POST["email_paciente"];
     $nueva_pass = $_POST["pass_paciente"];
     
-    if(empty($_FILES["foto_paciente"]["tmp_name"])){
-        $_SESSION['mensaje_pacientes'] = "<h5>Debe incluir una foto para crear al paciente.</h5>";
-        header('Location:admin.php#div_pacientes');
-        exit;
+    if ($_FILES["foto_paciente"]["size"] > 0) {
+        $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
+    }else{
+        $nueva_foto = null;
     }
-    $nueva_foto = subir_imagen_cloudinary($_FILES["foto_paciente"]["tmp_name"]);
     crear_paciente_nutri_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $nuevo_usuario, $nueva_pass, $nueva_foto);
     header('Location:nutricionista.php#div_pacientes');
     exit;
@@ -215,6 +217,7 @@ if(isset($_POST['ver_calendario'])){
 //Tabla con los pacientes
     echo '<div id="div_pacientes">
           <div id="contenedor_tabla_paciente" class="seccion">
+          <div id="tabla_paciente">
           <h2>Listado de pacientes</h2>';
     $resultado = obtener_pacientes_nutricionista($con);
       if(mysqli_num_rows($resultado)==0){
@@ -226,7 +229,8 @@ if(isset($_POST['ver_calendario'])){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>";
+        echo "</table>
+              </div>";
     }
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
@@ -337,8 +341,9 @@ echo '<div id="borrar_paciente" class="seccion">
 
  //Tabla de recetas
  echo '<div id="div_recetas" >
+       <h2>Tus recetas (ración/450 grs)</h2>
        <div id="tabla_contenedor_recetas" class="seccion">
- <h2>Tus recetas (ración/450 grs)</h2>';
+       <div id="tabla_recetas">';
 $resultado = listar_recetas_usuario($con);
 if(mysqli_num_rows($resultado)==0){
 echo "<h5>No hay recetas disponibles.</h5>";
@@ -349,7 +354,8 @@ while($fila = mysqli_fetch_array($resultado)){
    extract($fila);
    echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
 }
-echo "</table>";
+echo "</table>
+     </div>";
 }
 if(isset($_SESSION['mensaje_receta'])){
     echo $_SESSION['mensaje_receta'];
@@ -518,8 +524,9 @@ echo '<div id="asignar_calendario" class="seccion">
 
 //tabla de citas por nutricionistas
 echo '<div id="div_citas" >
+      <h2>Tu listado de citas</h2>
       <div id="tabla_citas" class="seccion">
-       <h2>Tu listado de citas</h2>';
+      <div id="tabla_cita">';
        $resultado = obtener_tabla_citas_nutricionista($con);
        if(mysqli_num_rows($resultado)==0){
 echo "<h5>No tienes citas disponibles.</h5>";
@@ -530,7 +537,8 @@ echo "<table>
        extract($fila);
 echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
        }
-echo "</table>";
+echo "</table>
+      </div>";
        }
 if(isset($_SESSION['mensaje_cita'])){
     echo $_SESSION['mensaje_cita'];

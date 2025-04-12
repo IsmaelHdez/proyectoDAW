@@ -294,8 +294,14 @@ function asociar_paciente($con,$paciente,$nutricionista){
 function crear_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null) {
     unset($_SESSION['mensaje_nutricionista']);
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    $query = "insert into nutricionista (usuario, pass, nombre, apellido, email, foto, tipo)values 
-    ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , 1)";
+
+    if ($foto != null) {
+        $query = "insert into nutricionista (usuario, pass, nombre, apellido, email, foto, tipo)values 
+        ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , 1)";
+    }else{
+    $query = "insert into nutricionista (usuario, pass, nombre, apellido, email, tipo)values 
+    ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', 1)";
+    }
 
     if (mysqli_query($con, $query)) {
         $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Se ha creado el nutricionista $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
@@ -372,7 +378,15 @@ function crear_paciente_cloudinary($con, $nombre, $apellido, $email, $usuario, $
     $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
     $query = "insert into paciente (usuario, pass, nombre, apellido, email,foto,id_nutricionista)values 
     ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , null)";
-
+    
+    if ($foto != null) {
+        $query = "insert into paciente (usuario, pass, nombre, apellido, email,foto,id_nutricionista)values 
+        ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', '$foto' , null)";
+    }else{
+        $query = "insert into paciente (usuario, pass, nombre, apellido, email,id_nutricionista)values 
+        ('$usuario' , '$hash_pass' ,'$nombre', '$apellido', '$email', null)";
+    }
+    
     if (mysqli_query($con, $query)) {
         $_SESSION['mensaje_pacientes'] = "<h5 class='mensaje'>Se ha creado el paciente $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
     } else {
