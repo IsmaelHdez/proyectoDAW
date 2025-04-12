@@ -73,27 +73,46 @@ function borrar_sesion(){
 $data = json_decode(file_get_contents("php://input"), true);
 if ($data) {
     $con = conexion();
-    if (isset($data['nombre_crear']) && isset($data['apellido_crear']) && isset($data['usuario_crear']) && isset($data['pass_crear']) && isset($data['email_crear'])) {
-        crear_usuario($con, $data['nombre_crear'], $data['apellido_crear'], $data['usuario_crear'], $data['pass_crear'], $data['email_crear'], 1);
+    // Revisar si los datos de creación de usuario están presentes
+    if (isset($data['nombre_crear']) && isset($data['apellido_crear']) && isset($data['usuario_crear']) && isset($data['pass_crear']) && isset($data['email_crear']) && isset($data['image'])) {
+        
+        // Subir la imagen si existe
+        $image_url = null;
+        if (isset($data['image']) && !empty($data['image'])) {
+            // Convertir la imagen base64 a un archivo temporal
+            $image_url = subir_imagen_cloudinary_registro($data['image']);
+        }
+
+        // Crear usuario en la base de datos con o sin imagen
+        crear_usuario($con, $data['nombre_crear'], $data['apellido_crear'], $data['usuario_crear'], $data['pass_crear'], $data['email_crear'], 1, $image_url);
     } 
 
+    // Validación de usuario existente
     if (isset($data['usuario']) && isset($data['pass'])) {
         validar_usuario($con, $data['usuario'], $data['pass']);
     }
     
+    // Cerrar sesión
     if (isset($data['action']) && $data['action'] === "cerrar_sesion") {
         borrar_sesion();
         echo json_encode(["success" => true]);
     }
-    
 }
 
-function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo){
+// Función para crear el usuario en la base de datos
+function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo, $imagen_url){
     $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email' and usuario = '$usuario';");
 
     if (mysqli_num_rows($resultado) == 0){
         $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-        mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
+
+        // Si hay una imagen, la insertamos también
+        if ($imagen_url) {
+            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo, foto) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo', '$imagen_url');");
+        } else {
+            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
+        }
+        
         $_SESSION["tipo"] = $tipo;
         $redirect1 = "nutricionista.php";
         echo json_encode(["success" => true, "redirect" => $redirect1]);
@@ -114,6 +133,38 @@ function obtener_nutricionista($con) {
     return $nutricionistas;
 }
 
+// Función para subir la imagen a Cloudinary
+function subir_imagen_cloudinary_registro($imagen_base64) {
+    $cloud_name = "dup8qzlzv"; // Tu Cloud name de Cloudinary
+    $api_key = "257596798154478"; // Tu API key de Cloudinary
+    $upload_url = "https://api.cloudinary.com/v1_1/$cloud_name/image/upload";
+    
+    // Decodificar la imagen base64
+    $image_data = base64_decode(str_replace('data:image/jpeg;base64,', '', $imagen_base64));
+
+    // Crear un archivo temporal para la imagen
+    $tmp_file = tempnam(sys_get_temp_dir(), 'cloudinary_');
+    file_put_contents($tmp_file, $image_data);
+
+    $data = [
+        "file" => new CURLFile($tmp_file),
+        "upload_preset" => "ml_default" // El nombre de tu upload preset
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $upload_url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $result = json_decode($response, true);
+    
+    // El URL seguro de la imagen subida
+    return isset($result["secure_url"]) ? $result["secure_url"] : null;
+}
 
 /*************************GESTIÓN DE IMÁGENES********************************************** */
 

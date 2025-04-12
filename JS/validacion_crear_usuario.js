@@ -67,13 +67,30 @@ document.getElementById("formulario").addEventListener("submit", async function(
         return;
     }
 
+    // Obtener el archivo de imagen (si existe)
+    let imageFile = document.getElementById("subir_foto").files[0];
+    let base64Image = "";
+    
+    // Si se seleccionó un archivo de imagen, convertirlo a base64
+    if (imageFile) {
+        base64Image = await convertToBase64(imageFile);
+    }
+
     // Si todas las validaciones pasaron
     if (validarNombre && validarApellido && validarCorreo && validarPass) {
         // Si todo es válido, enviamos la solicitud al servidor
         let respuesta = await fetch("../php/conexion.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ usuario_crear, pass_crear, pass2_crear, nombre_crear, apellido_crear, email_crear })
+            body: JSON.stringify({
+                nombre_crear,
+                apellido_crear,
+                usuario_crear,
+                nombre_crear,
+                pass_crear,
+                email_crear,
+                image: base64Image // Enviar la imagen en base64 si se seleccionó una
+            })
         });
 
         let resultado = await respuesta.json();
@@ -88,6 +105,16 @@ document.getElementById("formulario").addEventListener("submit", async function(
         }
     }
 });
+
+// Función para convertir la imagen a base64
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result); // El resultado es la imagen en base64
+        reader.onerror = reject;
+        reader.readAsDataURL(file); // Lee el archivo y lo convierte a base64
+    });
+}
 
 function generarToken() {
     return crypto.randomUUID(); // Genera un UUID único

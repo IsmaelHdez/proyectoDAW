@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 
-require("conexion.php");
+
 require("../html/header.html");
 require("../html/crear_nutricionista.html");
 require("../html/footer.html");

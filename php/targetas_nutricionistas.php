@@ -23,7 +23,7 @@ $nutricionistas = obtener_nutricionista($con);
                 <?php foreach ($nutricionistas as $nutricionista): ?>
                     <div class="card">
                         <div id="imagen_perfil">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCpC-_LHlo1b8M_TVCybqNxxPbIngjU7o2oQ&s" alt="">
+                            <img src="<?= $nutricionista['foto']?>" alt="">
                             <p>imagen</p>
                         </div>
                         <div id="datos_nutricionista">
