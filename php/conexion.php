@@ -112,8 +112,8 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo,
         } else {
             mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
         }
-        
         $_SESSION["tipo"] = $tipo;
+        $_SESSION["usuario"] = $usuario;
         $redirect1 = "nutricionista.php";
         echo json_encode(["success" => true, "redirect" => $redirect1]);
     } else{

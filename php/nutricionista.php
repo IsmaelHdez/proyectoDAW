@@ -229,9 +229,10 @@ if(isset($_POST['ver_calendario'])){
             extract($fila);
             echo "<tr><td>$usuario</td><td>$nombre</td><td>$apellido</td><td>$email</td></tr>";
         }
-        echo "</table>
-              </div>";
+        echo "</table>";
     }
+        echo "</div>";
+
     if(isset($_SESSION['mensaje_pacientes'])){
         echo $_SESSION['mensaje_pacientes'];
     }
@@ -336,27 +337,27 @@ echo '<div id="borrar_paciente" class="seccion">
       echo '</select>
             <input type="submit" name="eliminar_paciente" value="Eliminar paciente">
         </form>
-        </div>
         </div>';
+      echo  '</div>';
 
  //Tabla de recetas
  echo '<div id="div_recetas" >
        <h2>Tus recetas (ración/450 grs)</h2>
        <div id="tabla_contenedor_recetas" class="seccion">
        <div id="tabla_recetas">';
-$resultado = listar_recetas_usuario($con);
-if(mysqli_num_rows($resultado)==0){
-echo "<h5>No hay recetas disponibles.</h5>";
-}else{
-echo "<table>
-<tr><th>Plato</th><th>calorias/racion</th><th>Ingredientes</th></tr>";
-while($fila = mysqli_fetch_array($resultado)){
-   extract($fila);
-   echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
-}
-echo "</table>
-     </div>";
-}
+        $resultado = listar_recetas_usuario($con);
+        if(mysqli_num_rows($resultado)==0){
+           echo "<h5>No hay recetas disponibles.</h5>";
+        }else{
+           echo "<table>
+           <tr><th>Plato</th><th>calorias/racion</th><th>Ingredientes</th></tr>";
+        while($fila = mysqli_fetch_array($resultado)){
+            extract($fila);
+           echo "<tr><td>$nombre</td><td>$calorias</td><td>$ingredientes</td></tr>";
+        }
+           echo "</table>";
+    }
+           echo "</div>";
 if(isset($_SESSION['mensaje_receta'])){
     echo $_SESSION['mensaje_receta'];
 }
@@ -391,7 +392,7 @@ echo '<div id="modificar_receta" class="seccion">
          echo "<option value='$receta'>$receta</option>";
         }
     }
-echo '</select>
+    echo '</select>
     <h4>Modifique los datos de la receta : </h4>
     <label for="nombre_receta_mod">Nombre :</label>
     <input type="text" name="nombre_receta_mod" id="nombre_receta_mod" required><br/>
@@ -421,8 +422,8 @@ echo '<div id="borrar_receta" class="seccion">
       echo '</select>
             <input type="submit" name="eliminar_receta" value="Eliminar receta">
         </form>
-        </div>
         </div>';
+      echo   '</div>';
 
 //Select para ver tabla con el calendario de recetas
  echo '<div id="div_calendario" >
@@ -437,9 +438,14 @@ echo '<div id="borrar_receta" class="seccion">
                  $paciente = $fila['usuario'];
                  echo "<option value='$paciente'>$paciente</option>";
                 }
+            } else {
+                echo '<option disabled>No hay pacientes disponibles</option>';
             }
- echo   '<input type="submit" name="ver_calendario" value="Ver calendario">
-         </form>';
+                   
+            echo '</select>
+                  <input type="submit" name="ver_calendario" value="Ver calendario">
+                  </form>';
+
          if (isset($_SESSION['calendario']) && !empty($_SESSION['calendario'])) {
             $menu = $_SESSION['menu'] ?? [];  
         echo '<table>';
@@ -498,8 +504,8 @@ echo '<div id="asignar_calendario" class="seccion">
             echo "<option value='$receta'>$receta</option>";
          }
       }
-?>      
-           </select>
+    
+     echo  '</select>
            <label for="asignar_dia_calendario">Elija un día de la semana:</label>
            <select name="asignar_dia_calendario" id="asignar_dia_calendario">
             <option value="Lunes">Lunes</option>
@@ -519,8 +525,7 @@ echo '<div id="asignar_calendario" class="seccion">
             <input type="submit" name="asignar_calendario" value="Asignar receta">   
           </form>
           </div>
-        </div>
-<?php          
+        </div>';         
 
 //tabla de citas por nutricionistas
 echo '<div id="div_citas" >
@@ -529,17 +534,18 @@ echo '<div id="div_citas" >
       <div id="tabla_cita">';
        $resultado = obtener_tabla_citas_nutricionista($con);
        if(mysqli_num_rows($resultado)==0){
-echo "<h5>No tienes citas disponibles.</h5>";
+         echo "<h5>No tienes citas disponibles.</h5>";
       }else{
-echo "<table>
-<tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>";
+         echo "<table>
+      <tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Nombre completo</th><th>Email</th></tr>";
        while($fila = mysqli_fetch_array($resultado)){
        extract($fila);
-echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
+        echo "<tr><td>$fecha</td><td>$hora</td><td>$usuario</td><td>$nombre $apellido</td><td>$email</td></tr>";
        }
-echo "</table>
-      </div>";
+        echo "</table>";
        }
+        echo "</div>";
+
 if(isset($_SESSION['mensaje_cita'])){
     echo $_SESSION['mensaje_cita'];
 }
