@@ -301,6 +301,8 @@ echo '<div id="crear_paciente" class="seccion">
                  $paciente = $fila['usuario'];
                  echo "<option value='$paciente'>$paciente</option>";
                 }
+            }else {
+                echo '<option disabled>No hay pacientes disponibles</option>';
             }
       echo '</select>
             <h4>Vuelva a introducir los datos del paciente : </h4>
@@ -333,6 +335,8 @@ echo '<div id="borrar_paciente" class="seccion">
                  $paciente = $fila['usuario'];
                  echo "<option value='$paciente'>$paciente</option>";
                 }
+            }else {
+                echo '<option disabled>No hay pacientes disponibles</option>';
             }
       echo '</select>
             <input type="submit" name="eliminar_paciente" value="Eliminar paciente">
@@ -391,6 +395,8 @@ echo '<div id="modificar_receta" class="seccion">
          $receta = $fila['nombre'];
          echo "<option value='$receta'>$receta</option>";
         }
+    }else {
+        echo '<option disabled>No hay recetas disponibles</option>';
     }
     echo '</select>
     <h4>Modifique los datos de la receta : </h4>
@@ -418,6 +424,8 @@ echo '<div id="borrar_receta" class="seccion">
                  $receta = $fila['nombre'];
                  echo "<option value='$receta'>$receta</option>";
                 }
+            }else {
+                echo '<option disabled>No hay recetas disponibles</option>';
             }
       echo '</select>
             <input type="submit" name="eliminar_receta" value="Eliminar receta">
@@ -493,7 +501,10 @@ echo '<div id="asignar_calendario" class="seccion">
             $paciente = $fila['usuario'];
             echo "<option value='$paciente'>$paciente</option>";
          }
-     }
+     }else {
+        echo '<option disabled>No hay pacientes disponibles</option>';
+    }
+
      echo '</select>
            <label for="asignar_receta_calendario">Elija una receta:</label>
            <select name="asignar_receta_calendario" id="asignar_receta_calendario">';
@@ -503,7 +514,9 @@ echo '<div id="asignar_calendario" class="seccion">
             $receta = $fila['nombre'];
             echo "<option value='$receta'>$receta</option>";
          }
-      }
+      }else {
+                echo '<option disabled>No hay recetas disponibles</option>';
+            }
     
      echo  '</select>
            <label for="asignar_dia_calendario">Elija un día de la semana:</label>
@@ -563,7 +576,9 @@ echo '<div id="crear_cita" class="seccion">
             $paciente = $fila['usuario'];
             echo "<option value='$paciente'>$paciente</option>";
         }
-    } 
+    } else {
+        echo '<option disabled>No hay pacientes disponibles</option>';
+    }
 echo '<label for="hora_cita" name="hora_cita">Hora de la cita (hh:mm):</label>
      <input type="time" name="hora_cita"><br/>
      <label for="date" name="fecha_cita">Fecha de la cita (aaaa-mm-dd):</label>
@@ -586,7 +601,9 @@ echo '<div id="borrar_cita" class="seccion">
             $paciente = $fila['usuario'];
             echo "<option value='$paciente'>$paciente</option>";
         }
-    } 
+    } else {
+        echo '<option disabled>No hay pacientes disponibles</option>';
+    }
 echo '</select><br/>';
 echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:mm):</label>
      <input type="time" name="borrar_hora_cita"><br/>
