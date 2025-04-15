@@ -247,11 +247,11 @@ function listar_pacientes($con){
     return $resultado;
   }
   
-  //función para buscar nutricionista
-  function listar_nutricionista($con){
-      $resultado = mysqli_query($con,"select usuario from nutricionista where tipo = 1");
-      return $resultado;
-    }
+//función para buscar nutricionista
+function listar_nutricionista($con){
+    $resultado = mysqli_query($con,"select usuario from nutricionista where tipo = 1");
+    return $resultado;
+  }
 
 //función que obtiene lista de nutricionistas
 function obtener_nutricionistas($con){
@@ -310,17 +310,6 @@ function crear_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuar
     }
 }   
    
-//funcion para modificar nutricionista
-   function modificar_nutricionista($con, $nombre, $apellido, $usuario, $pass, $email , $busqueda){
-    $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
-    unset($_SESSION['mensaje_nutricionista']);
-    $resultado = mysqli_query($con, "update nutricionista set usuario = '$usuario' , pass = '$pass' , nombre = '$nombre', apellido = '$apellido' , email = '$email' where usuario = '$busqueda'");
-    if (!$resultado) {
-        $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Error al modificar usuario: " . mysqli_error($con)."</h5>";
-      }
-    $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Se ha modificado el nutricionista $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";    
-    }
-
   // Función para modificar nutricionista
   function modificar_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null, $busqueda) {
     unset($_SESSION['mensaje_nutricionista']);
@@ -438,6 +427,15 @@ function crear_paciente_cloudinary($con, $nombre, $apellido, $email, $usuario, $
 
 
 /*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
+
+//funcion para mostrar panel con el usuario registrado
+function mostrar_panel_nutricionista($con) {
+    $id = $_SESSION['id_nutricionista'];
+    $query = "select usuario ,nombre , apellido , foto , email from nutricionista where id_nutricionista = '$id';";
+    $resultado = mysqli_query($con , $query);
+    return $resultado;
+}
+
 //función para ver ficha de paciente
 function obtener_datos_nutricionista ($con){
     $usuario = $_SESSION['usuario'];

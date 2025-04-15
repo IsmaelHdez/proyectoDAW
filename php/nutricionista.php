@@ -25,6 +25,21 @@ if($_SESSION["tipo"] != 1){
     <title>Document</title>
 </head>
 <body>
+<?php
+    $resultado = mostrar_panel_nutricionista($con);
+    $fila = mysqli_fetch_assoc($resultado);
+    echo "<button id='toggle-panel'>👤 {$fila['usuario']}</button>";
+    echo "<div id='side-panel'>";
+    echo "<button id='close-panel'>✖</button>";
+    if($fila['foto'] == null){
+        echo "<img src='https://res.cloudinary.com/dup8qzlzv/image/upload/v1744743726/sin_foto_hjvtev.jpg' alt='Foto de perfil' width='140' height='140'>";
+    }else{
+        echo "<img src='{$fila['foto']}' alt='Foto de perfil' width='140' height='140'>";
+    }
+    echo "<p><strong>Nombre:</strong> <span id='user-name'>{$fila['nombre']} {$fila['apellido']}</span></p>";
+    echo "<p><strong>Email:</strong> <span id='user-email'>{$fila['email']}</span></p>";
+?>
+</div>
 <nav class="menu-lateral">
     <div class="logo">
         <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo" >
