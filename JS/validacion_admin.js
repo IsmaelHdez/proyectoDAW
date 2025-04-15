@@ -1,6 +1,6 @@
 // Función para validar nombres o apellidos
        function validar_Nombre(nombre) {
-        const regex = /^[a-zA-Z\sñÑ]+$/;
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         return regex.test(nombre);
     }
 

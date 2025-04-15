@@ -1,7 +1,7 @@
 /******************VALIDACION DE NUTRICIONISTA:PHP*************************************************/
 // Función para validar nombres o apellidos
 function validar_Nombre(nombre) {
-    const regex = /^[a-zA-Z\sñÑ]+$/;
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
     return regex.test(nombre);
 }
 
@@ -352,3 +352,15 @@ document.getElementById("cerrarSesion").addEventListener("click", function() {
        localStorage.removeItem("seccion_activa");
        localStorage.removeItem("tabla_activa");
 });
+
+$(document).ready(function () {
+    // Mostrar el panel al hacer clic en el botón de abrir
+    $('#toggle-panel').on('click', function () {
+      $('#side-panel').addClass('open');
+    });
+
+    // Ocultar el panel al hacer clic en el botón de cerrar
+    $('#close-panel').on('click', function () {
+      $('#side-panel').removeClass('open');
+    });
+  });
