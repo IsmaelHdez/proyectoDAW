@@ -310,5 +310,50 @@ tbody tr:hover {
         font-size: 0.9em;
     }
 }
+  /* Botón flotante para abrir */
+  #toggle-panel {
+    position: fixed;
+    top: 8px;
+    right: 20px;
+    z-index: 1001;
+    padding: 10px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 
+  /* Panel lateral oculto inicialmente */
+  #side-panel {
+    position: fixed;
+    top: 58px;
+    right: -320px;
+    width: 170px;
+    height: 240px;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    background-color: #45a0496f;
+    border-radius: 8px;
+  }
+
+  /* Clase activa para mostrar el panel */
+  #side-panel.open {
+    right: 0;
+  }
+
+  /* Botón de cerrar dentro del panel */
+  #close-panel {
+    position: absolute;
+    top: 230px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+  }
 
