@@ -7,10 +7,10 @@ switch ($id) {
         require("../html/objetivo.html");
         break;
     case '2':
-        echo "Página para el Enlace 2";
+        require("../html/quienes_somos.html");
         break;
     case '3':
-        echo "Página para el Enlace 3";
+        require("../html/secciones.html");
         break;
     case '4':
         echo "Página para el Enlace 4";
