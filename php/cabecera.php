@@ -13,7 +13,10 @@ switch ($id) {
         require("../html/secciones.html");
         break;
     case '4':
-        echo "Página para el Enlace 4";
+        require("../html/equipo.html");
+        break;
+    case '5':
+        require("../html/contacto.html");
         break;
     default:
         echo "Página por defecto o error: No se ha seleccionado un enlace válido.";
