@@ -12,6 +12,7 @@ function conexion(){
 
     // Seleccionar la base de datos a usar
     mysqli_select_db($con, $GLOBALS["db_name"]);
+    mysqli_set_charset($con, "utf8mb4");
 
     return $con;
 }
@@ -74,7 +75,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 if ($data) {
     $con = conexion();
     // Revisar si los datos de creación de usuario están presentes
-    if (isset($data['nombre_crear']) && isset($data['apellido_crear']) && isset($data['usuario_crear']) && isset($data['pass_crear']) && isset($data['email_crear']) && isset($data['image'])) {
+    if (isset($data['nombre_crear']) && isset($data['apellido_crear']) && isset($data['usuario_crear']) && isset($data['pass_crear']) && isset($data['email_crear']) && isset($data['image']) && isset($data['especialidad'])) {
         
         // Subir la imagen si existe
         $image_url = null;
@@ -84,7 +85,7 @@ if ($data) {
         }
 
         // Crear usuario en la base de datos con o sin imagen
-        crear_usuario($con, $data['nombre_crear'], $data['apellido_crear'], $data['usuario_crear'], $data['pass_crear'], $data['email_crear'], 1, $image_url);
+        crear_usuario($con, $data['nombre_crear'], $data['apellido_crear'], $data['usuario_crear'], $data['pass_crear'], $data['email_crear'], 1, $image_url, $data['especialidad']);
     } 
 
     // Validación de usuario existente
@@ -100,17 +101,20 @@ if ($data) {
 }
 
 // Función para crear el usuario en la base de datos
-function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo, $imagen_url){
+function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo, $imagen_url, $especialidad){
     $resultado = mysqli_query($con, "SELECT * FROM nutricionista WHERE email = '$email' and usuario = '$usuario';");
 
     if (mysqli_num_rows($resultado) == 0){
         $hash_pass = password_hash($pass, PASSWORD_DEFAULT);
 
-        // Si hay una imagen, la insertamos también
+        $consulta = mysqli_query($con, "SELECT id_opcion FROM opciones WHERE tipo = '$especialidad'");
+        $fila = mysqli_fetch_assoc($consulta);
+        $id_opcion = $fila['id_opcion'];
+
         if ($imagen_url) {
-            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo, foto) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo', '$imagen_url');");
+            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo, foto, opcion) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo', '$imagen_url', $id_opcion);");
         } else {
-            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo');");
+            mysqli_query($con, "INSERT INTO nutricionista (usuario, pass, nombre, apellido, email, tipo, opcion) VALUES ('$usuario', '$hash_pass', '$nombre', '$apellido', '$email', '$tipo', $id_opcion);");
         }
         $_SESSION["tipo"] = $tipo;
         $_SESSION["usuario"] = $usuario;
@@ -165,6 +169,39 @@ function subir_imagen_cloudinary_registro($imagen_base64) {
     // El URL seguro de la imagen subida
     return isset($result["secure_url"]) ? $result["secure_url"] : null;
 }
+
+function nombre_nutricionista($con) {
+    $nutricionista = [];
+
+    $resultado = mysqli_query($con, "SELECT nombre FROM nutricionista WHERE tipo = 1;");
+    
+    if (!$resultado) {
+        die("Error en la consulta: " . mysqli_error($con));
+    }
+
+    while ($fila = mysqli_fetch_assoc($resultado)) {
+        $nutricionista[] = '<option value="' . htmlspecialchars($fila['nombre']) . '">' . htmlspecialchars($fila['nombre']) . '</option>';
+    }
+
+    return $nutricionista;
+}
+
+function tipo_nutricionista($con){
+    $tipo_nutricionista = [];
+
+    $resultado = mysqli_query($con, "SELECT tipo FROM opciones;");
+    
+    if (!$resultado) {
+        die("Error en la consulta: " . mysqli_error($con));
+    }
+
+    while ($fila = mysqli_fetch_assoc($resultado)) {
+        $tipo_nutricionista[] = '<option value="' . htmlspecialchars($fila['tipo']) . '">' . htmlspecialchars($fila['tipo']) . '</option>';
+    }
+
+    return $tipo_nutricionista;
+}
+
 
 /*************************GESTIÓN DE IMÁGENES********************************************** */
 

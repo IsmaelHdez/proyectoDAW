@@ -7,6 +7,7 @@ document.getElementById("formulario").addEventListener("submit", async function(
     let pass_crear = document.getElementById("pass").value.trim();
     let pass2_crear = document.getElementById("pass2").value.trim();
     let email_crear = document.getElementById("email").value.trim();
+    let especialidad = document.getElementById("opciones").value.trim();
 
     let token = generarToken();
     setCookie("token", token, 1);
@@ -18,7 +19,7 @@ document.getElementById("formulario").addEventListener("submit", async function(
     mensajeError.style.display = "none";
 
     // Validación de campos vacíos
-    if (usuario_crear === "" || pass_crear === "" || pass2_crear === "" || nombre_crear === "" || apellido_crear === "" || email_crear === "") {
+    if (usuario_crear === "" || pass_crear === "" || pass2_crear === "" || nombre_crear === "" || apellido_crear === "" || email_crear === "" || especialidad === "") {
         alert("Todos los campos son obligatorios");
         return;
     }
@@ -49,6 +50,13 @@ document.getElementById("formulario").addEventListener("submit", async function(
     // Mostrar error si el nombre o apellido no son válidos
     if (!validarNombre || !validarApellido) {
         mensajeError.textContent = "El nombre y el apellido no pueden contener números";
+        mensajeError.style.display = "block";
+        return;
+    }
+
+    // Mostrar error si el nombre o apellido no son válidos
+    if (especialidad == "Seleccione una opción") {
+        mensajeError.textContent = "Selecciona una especialidad";
         mensajeError.style.display = "block";
         return;
     }
@@ -89,7 +97,8 @@ document.getElementById("formulario").addEventListener("submit", async function(
                 nombre_crear,
                 pass_crear,
                 email_crear,
-                image: base64Image // Enviar la imagen en base64 si se seleccionó una
+                especialidad,
+                image: base64Image                
             })
         });
 

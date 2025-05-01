@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 require("../html/header.html");
-require("../html/crear_nutricionista.html");
+require("crear_nutricionista_formulario.php");
 require("../html/footer.html");
 
 ?>

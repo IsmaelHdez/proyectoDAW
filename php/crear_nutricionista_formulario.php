@@ -1,3 +1,9 @@
+<?php
+require("conexion.php");
+
+$con = conexion();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +35,15 @@
                         <input type="password" name="pass2" id="pass2" required><br/>
                         <label for="email">Email: </label>
                         <input type="text" name="email" id="email" required><br/>
+                        <select id="opciones" name="opciones" required>
+                            <option value="">Seleccione una opción</option>
+                                <?php
+                                    $especialidades = tipo_nutricionista($con);
+                                    foreach ($especialidades as $especialidad) {
+                                        echo $especialidad;
+                                    }                    
+                                ?>
+                            </select>
                         <input type="file" name="subir_foto" id="subir_foto" required>
                         <input type="submit" name="registrar" id="registrar" value="Registrar">
                     </form>

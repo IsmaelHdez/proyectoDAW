@@ -16,7 +16,7 @@ switch ($id) {
         require("../html/equipo.html");
         break;
     case '5':
-        require("../html/contacto.html");
+        require("contacto.php");
         break;
     default:
         echo "Página por defecto o error: No se ha seleccionado un enlace válido.";

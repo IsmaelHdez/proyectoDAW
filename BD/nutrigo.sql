@@ -1,6 +1,10 @@
 create database if not exists nutrigo;
 use nutrigo;
 
+create table opciones(
+id_opcion int primary key auto_increment,
+tipo varchar(255));
+
 create table nutricionista(
 id_nutricionista int primary key auto_increment,
 usuario varchar(50),
@@ -10,7 +14,11 @@ apellido varchar(50),
 email varchar(60),
 sesion varchar(255),
 tipo int,
-foto varchar(255));
+foto varchar(255),
+opcion int,
+foreign key(opcion) references opciones(id_opcion));
+
+
 
 create table paciente(
 id_paciente int primary key auto_increment,
@@ -75,11 +83,26 @@ nutricionista int,
 foreign key (paciente) references paciente(id_paciente),
 foreign key (nutricionista) references nutricionista(id_nutricionista));
 
+INSERT INTO opciones (tipo) VALUES
+('Nutricionista clínico'),
+('Nutricionista deportivo'),
+('Nutricionista pediátrico'),
+('Nutricionista geriátrico'),
+('Nutricionista comunitario o de salud pública'),
+('Nutricionista vegetariano o vegano'),
+('Nutricionista funcional o integrativo'),
+('Nutricionista oncológico'),
+('Nutricionista especializado en trastornos de la conducta alimentaria (TCA)'),
+('Nutricionista endocrinológico'),
+('Nutricionista especializado en fertilidad y embarazo'),
+('Nutricionista renal');
+
+
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin",
  "$2y$10$HOKoILE97x0Om4f5IIuE1u.cv1vm3NTfPUtr0zNncNwEQwga5vFeS",
  "admin", "admin", "admin@gmail", 3);
- insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("caro", "caro1234", "Casimiro", "Aroca Henares", "arocahenares@gmail.com", 1);
- insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("pepe", "pepe1234", "Jose", "Sanchez Lopez", "sanchezlopez@gmail.com", 1);
+ insert into nutricionista(usuario, pass, nombre, apellido, email, tipo, foto) values ("caro", "caro1234", "Casimiro", "Aroca Henares", "arocahenares@gmail.com", 1, "https://res.cloudinary.com/dup8qzlzv/image/upload/v1743526170/phpAA60_oyctyg.jpg");
+ insert into nutricionista(usuario, pass, nombre, apellido, email, tipo, foto) values ("pepe", "pepe1234", "Jose", "Sanchez Lopez", "sanchezlopez@gmail.com", 1, "https://res.cloudinary.com/dup8qzlzv/image/upload/v1743526170/phpAA60_oyctyg.jpg");
  
  insert into paciente(usuario, pass, nombre, apellido, email, tipo, id_nutricionista) values ("torrente", "$2y$10$Jmdca9UXTVxVP/DlqoLiJ.WVeUhRpigI84mgIEOqp5HS/6Qrbmpz6", "Santiago", "Segura Martin", "seguramartin@gmail.com", 2, 1);
  insert into paciente(usuario, pass, nombre, apellido, email,id_nutricionista) values ("maca", "maca1234", "Mario", "Casas Sierra", "casassierra@gmail.com", 1);
