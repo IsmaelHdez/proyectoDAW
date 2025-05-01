@@ -163,6 +163,9 @@ INSERT INTO receta (nombre, ingredientes, calorias, id_nutricionista) VALUES
  
  insert into objetivos_paciente (id_paciente, id_nutricionista, objetivo_peso, objetivo_grasa_corporal, objetivo_musculo) values (1, 1, 65.0, 12.0, 45.0);
  select * from nutricionista;
- select * from paciente;
+ select * from opciones;
  select * from medidas_paciente where id_paciente = 1;
+ 
+ SELECT n.nombre, n.apellido, n.email, n.tipo, o.tipo FROM nutricionista n, opciones o WHERE n.opcion = o.id_opcion ORDER BY id_nutricionista DESC LIMIT 4;
+ 
  drop database nutrigo;
