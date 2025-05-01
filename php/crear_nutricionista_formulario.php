@@ -9,7 +9,7 @@ $con = conexion();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../CSS/login3.css">
+    <link rel="stylesheet" href="../CSS/login.css">
     <script src="../js/validacion_crear_usuario.js" defer></script>
     <title>Login</title>
 </head>
@@ -20,7 +20,7 @@ $con = conexion();
         </div>
         <div id="login">
             <div id="formulario_login">
-                <h1>Acceder a cuenta usuario</h1>
+                <h1>Registrar Nutricionista</h1>
                 <div id="formulario">
                     <form id="formulario_nutricionista" method="POST">
                         <label for="nombre">Nombre: </label>
