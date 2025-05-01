@@ -126,7 +126,9 @@ function crear_usuario($con, $nombre, $apellido, $usuario, $pass, $email, $tipo,
 }
 
 function obtener_nutricionista($con) {
-    $resultado = mysqli_query($con, "SELECT * FROM nutricionista ORDER BY id_nutricionista DESC LIMIT 4;");
+    $nutricionistas = []; // <- Aseguramos que siempre es un array
+    $resultado = mysqli_query($con, "SELECT n.nombre, n.apellido, n.email, n.tipo, n.foto, o.tipo AS especialidad FROM nutricionista n, opciones o WHERE n.opcion = o.id_opcion ORDER BY id_nutricionista DESC LIMIT 4;");
+    
     if (mysqli_num_rows($resultado) > 0) {
         while ($row = $resultado->fetch_assoc()) {
             if ($row['tipo'] == 1) {
@@ -134,8 +136,10 @@ function obtener_nutricionista($con) {
             }
         }
     }
+
     return $nutricionistas;
 }
+
 
 // Función para subir la imagen a Cloudinary
 function subir_imagen_cloudinary_registro($imagen_base64) {

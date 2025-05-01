@@ -4,6 +4,7 @@ require("conexion.php");
 $con = conexion();
 
 $nutricionistas = obtener_nutricionista($con);
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +31,7 @@ $nutricionistas = obtener_nutricionista($con);
                             <h2><?= htmlspecialchars($nutricionista['nombre'] . " " . $nutricionista['apellido']) ?></h2>
                             <p><strong>Email:</strong> <?= htmlspecialchars($nutricionista['email']) ?></p>
                             <p><strong>Tipo:</strong> <?= $nutricionista['tipo'] == 1 ? "Nutricionista" : "General" ?></p>
+                            <p><strong>Especialidad:</strong> <?= htmlspecialchars($nutricionista['especialidad']) ?></p>
                         </div>                        
                     </div>
                 <?php endforeach; ?>
