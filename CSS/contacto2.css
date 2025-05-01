@@ -66,3 +66,30 @@ textarea {
         gap: 30px;
     }
 }
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+    margin-bottom: 15px;
+}
+
+select:focus {
+    border-color: #3498db; /* Cambiar el borde al foco */
+    outline: none; /* Eliminar el borde por defecto del navegador */
+}
+
+option {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+option:hover {
+    background-color: #f0f0f0; /* Color de fondo al pasar el ratón */
+}
