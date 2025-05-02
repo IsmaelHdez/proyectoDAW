@@ -1,6 +1,8 @@
 <?php
-// Inicia la sesión al principio del script
-session_start();
+// Verifica si no se ha iniciado una sesión; si no, la inicia
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Incluye archivos necesarios
 require("conexion.php");
