@@ -6,8 +6,22 @@ $con = conexion();
 $perfil = usuario_perfil($con);
 $nombre = $perfil['nombre'];
 $apellido = $perfil['apellido'];
+$tipo = $perfil['tipo'];
 $foto = $perfil['foto'];
 
+$direccion = "";
+
+if ($tipo == 1) {
+    $direccion = "nutricionista.php";
+}
+
+if ($tipo == 2) {
+    $direccion = "paciente.php";
+}
+
+if ($tipo == 3) {
+    $direccion = "admin.php";
+}
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +48,7 @@ $foto = $perfil['foto'];
         
         <div id="perfil">
             <img src="<?php echo $foto; ?>" alt="Foto de perfil">
-            <a href="nutricionista.php"><?php echo $nombre . " " . $apellido; ?></a>
+            <a href=<?php echo $direccion; ?>><?php echo $nombre . " " . $apellido; ?></a>
         </div>
 
     </div>

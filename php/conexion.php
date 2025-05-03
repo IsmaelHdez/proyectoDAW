@@ -209,7 +209,7 @@ function tipo_nutricionista($con){
 function usuario_perfil($con){
 
     $usuario = $_SESSION['usuario'];
-    $resultado = mysqli_query($con, "SELECT nombre, apellido, foto FROM nutricionista WHERE usuario = '$usuario' UNION ALL SELECT nombre, apellido, foto FROM paciente WHERE usuario = '$usuario';");
+    $resultado = mysqli_query($con, "SELECT nombre, apellido, tipo, foto FROM nutricionista WHERE usuario = '$usuario' UNION ALL SELECT nombre, apellido, tipo, foto FROM paciente WHERE usuario = '$usuario';");
     $perfil = mysqli_fetch_assoc($resultado);
     return $perfil;
 
