@@ -1,3 +1,9 @@
+body {
+    background-color: #f0e9e9; 
+    margin: 0;
+    padding: 0;    
+  }
+
 #imagen_perfil {
     width: 150px;
     height: 150px;
@@ -22,6 +28,7 @@
     background: white;
     padding: 15px;
     border-radius: 8px;
+    border: 2px solid #4C7305;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 400px;
     text-align: left;
@@ -41,4 +48,5 @@
 
 .titulo_nutricionistas h3 {
     padding: 60px;
+    color: #4C7305;
 }

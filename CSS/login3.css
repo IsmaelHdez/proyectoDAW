@@ -3,7 +3,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    
 }
 
 #imagen {
@@ -13,18 +12,16 @@
     justify-content: center;
     height: 60vh;
     width: 55%;
-    
 }
 
-#imagen img{
+#imagen img {
     width: 100%;
-    opacity: 0.3; /* Opacidad del 30% */
+    opacity: 0.3;
     -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
     mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
-    background-color: white; /* Asegura que el fondo sea blanco */  
+    background-color: white;
 }
 
-/* Estilos generales del cuerpo */
 #login {
     width: 45%;
     display: flex;
@@ -32,19 +29,15 @@
     align-items: center;
     justify-content: center;
     height: 70vh;
-    
 }
 
-/* Estilos para el título principal */
+/* TITULO PRINCIPAL */
 #formulario_login h1 {
     text-align: center;
-    font-size: 2.5em;
-    margin-bottom: 20px;
     font-size: 1.8em;
-    color: #4CAF50;
+    color: #4C7305; /* COLOR: título principal */
 }
 
-/* Estilos para el contenedor del formulario */
 #formulario_login {
     width: 60%;
     align-items: center;
@@ -54,14 +47,12 @@
     font-family: Arial, sans-serif;
 }
 
-/* Estilos para las etiquetas de los campos de formulario */
 label {
     font-size: 1.1em;
     margin-bottom: 8px;
     color: #333;
 }
 
-/* Estilos para los campos de entrada */
 input[type="text"], input[type="password"] {
     width: 100%;
     padding: 12px;
@@ -72,9 +63,9 @@ input[type="text"], input[type="password"] {
     font-size: 1em;
 }
 
-/* Estilos para el botón de enviar */
+/* BOTÓN DE ENVIAR */
 input[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #4C7305; /* COLOR: botón */
     color: white;
     border: none;
     padding: 12px;
@@ -82,28 +73,32 @@ input[type="submit"] {
     font-size: 1.1em;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 input[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #A5D615; /* COLOR: hover botón */
+    color: white;
 }
 
-
+/* LINK: crear usuario */
 a {
     display: block;
     text-align: center;
     margin-top: 15px;
     text-decoration: none;
     font-size: 1em;
-    color: #4CAF50;
+    color: #4C7305; /* COLOR: link normal */
+    transition: color 0.3s ease;
 }
 
 a:hover {
     text-decoration: underline;
+    color: #A5D615; /* COLOR: hover link */
+    background-color: transparent;
 }
 
-/* Estilo para el campo de subir foto */
+/* INPUT FILE */
 input[type="file"] {
     padding: 12px;
     margin-bottom: 15px;
@@ -115,9 +110,9 @@ input[type="file"] {
     cursor: pointer;
 }
 
-/* Estilo para el texto del campo input de archivo */
+/* BOTÓN DE FILE SELECTOR */
 input[type="file"]::file-selector-button {
-    background-color: #4CAF50;
+    background-color: #4C7305; /* COLOR: botón archivo */
     color: white;
     padding: 10px;
     border: none;
@@ -126,19 +121,18 @@ input[type="file"]::file-selector-button {
     transition: background-color 0.3s ease;
 }
 
-/* Efecto hover para el campo de archivo */
 input[type="file"]::file-selector-button:hover {
-    background-color: #45a049;
+    background-color: #42b3bb; /* COLOR: hover archivo */
 }
 
-/* Si quieres mostrar el nombre del archivo después de seleccionarlo */
+/* SI SE MUESTRA NOMBRE DE ARCHIVO */
 input[type="file"]:not(:empty) {
     background-color: #f0f0f0;
     color: #333;
     font-style: italic;
 }
 
-/* Estilo para el campo select */
+/* SELECT */
 select {
     width: 100%;
     padding: 12px;
@@ -150,7 +144,7 @@ select {
     cursor: pointer;
 }
 
-/* Estilo para las opciones dentro del select */
+/* OPCIONES DENTRO DE SELECT */
 select option {
     padding: 10px;
     background-color: white;
@@ -158,13 +152,13 @@ select option {
     color: #333;
 }
 
-/* Efecto cuando el campo select está enfocado */
+/* FOCUS EN SELECT */
 select:focus {
-    border-color: #4CAF50;
+    border-color: #4C7305; /* COLOR: borde select enfocado */
     outline: none;
 }
 
-/* Efecto de hover para las opciones */
+/* HOVER EN SELECT */
 select:hover {
-    border-color: #45a049;
+    border-color: #A5D615; /* COLOR: hover select */
 }

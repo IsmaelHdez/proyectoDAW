@@ -1,5 +1,13 @@
+/* Fondo general claro para toda la página */
+body {
+    background-color: #4C7305;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
 #encabezado {
-    background-color: #2a7a7f;
+    background-color: #4C7305; /* verde intenso */
     width: 100%;
     height: 100px;
     margin: 0;
@@ -32,7 +40,7 @@
 }
 
 .enlaces a:hover {
-    color: #1b5e61;
+    color: #A5D615; /* verde claro del logo */
 }
 
 .botones {
@@ -43,9 +51,9 @@
 }
 
 button {
-    background: linear-gradient(135deg, #308488, #42b3bb);
+    background: linear-gradient(135deg, #A5D615, #4C7305);
     color: white;
-    border: 2px solid #42b3bb;
+    border: none;
     padding: 12px 25px;
     font-size: 16px;
     cursor: pointer;
@@ -56,8 +64,8 @@ button {
 
 button:hover {
     background: #fff;
-    color: #42b3bb;
-    border: 2px solid #42b3bb;
+    color: #4C7305;
+    border: 2px solid #4C7305;
     transform: translateY(-3px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
@@ -66,4 +74,3 @@ button:active {
     transform: translateY(0);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
-

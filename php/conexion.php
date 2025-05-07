@@ -812,7 +812,7 @@ function mostrar_citas_paciente($con, $usuario) {
     $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
     $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
     
-    $citas_query = mysqli_query($con, "SELECT fecha, hora FROM citas WHERE paciente = '$id_paciente'");
+    $citas_query = mysqli_query($con, "SELECT id_citas, fecha, hora FROM citas WHERE paciente = '$id_paciente'");
     
     $citas = [];
     while ($fila = mysqli_fetch_assoc($citas_query)) {
@@ -836,11 +836,12 @@ function crear_cita_paciente($con, $usuario, $fecha, $hora) {
     mysqli_query($con, "INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
 }
 
-function modificar_cita_paciente($con, $usuario, $fecha, $hora) {
+function modificar_cita_paciente($con, $usuario, $id_cita, $nueva_fecha, $nueva_hora) {
     $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
     $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
-    mysqli_query($con, "UPDATE citas SET fecha = '$fecha', hora = '$hora' WHERE paciente = '$id_paciente'");
+    mysqli_query($con, "UPDATE citas SET fecha = '$nueva_fecha', hora = '$nueva_hora' WHERE id_citas = '$id_cita' AND paciente = '$id_paciente'");
 }
+
 
 function borrar_cita_paciente($con, $usuario, $fecha, $hora) {
     $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");

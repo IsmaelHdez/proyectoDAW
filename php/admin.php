@@ -154,7 +154,7 @@ if (isset($_POST['eliminar_paciente'])) {
 <script src="../js/logout.js" defer></script>
 <script src="../js/validacion_admin.js" defer></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<title>Document</title>
+<title>Nutrigo</title>
 </head>
 <body>
     <nav class="menu-lateral">

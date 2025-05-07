@@ -1,0 +1,24 @@
+/* Eliminar márgenes y paddings por defecto */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo base para el body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ece2e2; /* o el color de fondo que prefieras */
+}
+
+/* Encabezado */
+header, #encabezado {
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Quitar márgenes entre secciones si las hay */
+.secciones {
+    margin: 0;
+    padding: 0;
+}

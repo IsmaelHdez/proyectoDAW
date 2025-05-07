@@ -1,4 +1,9 @@
 /* Estilo para la sección "Nuestro objetivo" */
+body {
+  margin: 0;
+  padding: 0;    
+}
+
 section {
     padding: 60px 20px;
   }

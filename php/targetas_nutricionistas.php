@@ -12,7 +12,7 @@ $nutricionistas = obtener_nutricionista($con);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutricionistas</title>
+    <title>Nutrigo</title>
     <link rel="stylesheet" href="../CSS/targetas.css">
 </head>
 <body>

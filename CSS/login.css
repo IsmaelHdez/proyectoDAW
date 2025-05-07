@@ -1,4 +1,19 @@
 /* Estructura general */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image:
+        linear-gradient(rgba(236, 226, 226, 0.6), rgba(236, 226, 226, 0.6)),
+        url("https://res.cloudinary.com/dup8qzlzv/image/upload/v1742936606/consulta_nutricionista.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+
 #elementos {
     display: flex;
     flex-direction: row;
@@ -16,24 +31,15 @@
     width: 55%;
 }
 
-#imagen img {
-    width: 100%;
-    opacity: 0.3; /* Opacidad del 30% */
-    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
-    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
-    background-color: white; /* Asegura que el fondo sea blanco */
-}
-
 /* Estilos para el contenedor de login */
 #login {
-    width: 30%; 
+    width: 30%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px; /* Padding para el contenedor */
-    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño */
-    /* Sin altura fija, se adapta al contenido */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* Estilo para el formulario */
@@ -44,25 +50,25 @@
     display: flex;
     flex-direction: column;
     font-family: Arial, sans-serif;
-    gap: 15px; /* Espaciado entre los elementos del formulario */
+    gap: 15px;
 }
 
-/* Estilo para el título */
+/* TÍTULO PRINCIPAL */
 #formulario_login h1 {
     text-align: center;
     font-size: 2.5em;
     margin-bottom: 20px;
-    color: #4CAF50;
+    color: #4C7305; /* COLOR: título principal */
 }
 
-/* Estilos para las etiquetas de los campos de formulario */
+/* Etiquetas del formulario */
 label {
     font-size: 1.1em;
     margin-bottom: 8px;
     color: #333;
 }
 
-/* Estilos para los campos de entrada */
+/* CAMPOS DE TEXTO */
 input[type="text"], input[type="password"], input[type="email"] {
     width: 100%;
     padding: 12px;
@@ -73,7 +79,7 @@ input[type="text"], input[type="password"], input[type="email"] {
     font-size: 1em;
 }
 
-/* Estilo para el campo de subir foto */
+/* CAMPO SUBIR FOTO */
 input[type="file"] {
     padding: 12px;
     margin-bottom: 15px;
@@ -85,8 +91,9 @@ input[type="file"] {
     cursor: pointer;
 }
 
+/* BOTÓN DE ARCHIVO */
 input[type="file"]::file-selector-button {
-    background-color: #4CAF50;
+    background-color: #4C7305; /* COLOR: botón archivo */
     color: white;
     padding: 10px;
     border: none;
@@ -96,10 +103,10 @@ input[type="file"]::file-selector-button {
 }
 
 input[type="file"]::file-selector-button:hover {
-    background-color: #45a049;
+    background-color: #A5D615; /* COLOR: hover archivo */
 }
 
-/* Estilos para el desplegable (select) */
+/* SELECT */
 select {
     width: 100%;
     padding: 12px;
@@ -119,17 +126,17 @@ select option {
 }
 
 select:focus {
-    border-color: #4CAF50;
+    border-color: #4C7305; /* COLOR: borde activo */
     outline: none;
 }
 
 select:hover {
-    border-color: #45a049;
+    border-color: #A5D615; /* COLOR: hover select */
 }
 
-/* Estilo para el botón de enviar */
+/* BOTÓN DE ENVIAR */
 input[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #4C7305; /* COLOR: botón */
     color: white;
     border: none;
     padding: 12px;
@@ -137,28 +144,32 @@ input[type="submit"] {
     font-size: 1.1em;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 input[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #A5D615; /* COLOR: hover botón */
+    color: white;
 }
 
-/* Enlace para redirección */
+/* LINK (crear cuenta, etc.) */
 a {
     display: block;
     text-align: center;
     margin-top: 15px;
     text-decoration: none;
     font-size: 1em;
-    color: #4CAF50;
+    color: #4C7305; /* COLOR: link normal */
+    transition: color 0.3s ease;
 }
 
 a:hover {
     text-decoration: underline;
+    color: #A5D615; /* COLOR: hover link */
+    background-color: transparent;
 }
 
-/* Media query para adaptabilidad */
+/* RESPONSIVE */
 @media (max-width: 768px) {
     #elementos {
         flex-direction: column;

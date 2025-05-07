@@ -1,6 +1,6 @@
 <?php
 $host = "localhost"; 
 $user = "root";      
-$pass = "1234";      
+$pass = "";      
 $db_name = "nutrigo";
 ?>

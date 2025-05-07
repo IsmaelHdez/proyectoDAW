@@ -29,6 +29,7 @@ apellido varchar(50),
 email varchar(60),
 tipo int,
 sesion varchar(255),
+foto varchar(255),
 id_nutricionista int,
 foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
 
@@ -74,6 +75,8 @@ create table objetivos_paciente (
     foreign key (id_nutricionista) references nutricionista(id_nutricionista),
     unique (id_paciente) );
 
+
+
 create table citas(
 id_citas int primary key auto_increment,
 fecha date not null,
@@ -97,6 +100,10 @@ INSERT INTO opciones (tipo) VALUES
 ('Nutricionista especializado en fertilidad y embarazo'),
 ('Nutricionista renal');
 
+
+INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES
+('2025-05-10', '10:00:00', 1, 1),
+('2025-05-17', '10:00:00', 1, 1);
 
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin",
  "$2y$10$HOKoILE97x0Om4f5IIuE1u.cv1vm3NTfPUtr0zNncNwEQwga5vFeS",

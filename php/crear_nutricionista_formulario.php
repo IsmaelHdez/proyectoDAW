@@ -15,9 +15,6 @@ $con = conexion();
 </head>
 <body>
     <div id="elementos">
-        <div id="imagen">
-            <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742936606/consulta_nutricionista.jpg" alt="">
-        </div>
         <div id="login">
             <div id="formulario_login">
                 <h1>Registrar Nutricionista</h1>
