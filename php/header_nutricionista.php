@@ -39,6 +39,7 @@ if ($tipo == 3) {
         <img id="logo" src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo">
         
         <div class="enlaces">
+            <a href="#que_comer">Que comer</a>
             <a href="cabecera.php?id=1">Nuestro objetivo</a>
             <a href="cabecera.php?id=2">Quienes somos</a>
             <a href="cabecera.php?id=3">Servicios</a>

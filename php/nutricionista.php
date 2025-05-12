@@ -5,6 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require("conexion.php");
+require("header_alta.php");
+require("footer.html");
 $con = conexion();
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
 
@@ -636,4 +638,6 @@ echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:
    </div>
 
 </body>
+<?php require("../html/footer.html"); ?>
+
 </html>

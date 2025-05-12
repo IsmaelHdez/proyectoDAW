@@ -754,6 +754,17 @@ function introducir_medidas($con, $usuario, $fecha, $altura, $peso, $grasa, $mus
     }
 }
 
+function eliminar_medicion($con, $id_paciente, $id_progreso) {
+    $stmt = mysqli_prepare($con, "DELETE FROM medidas_paciente WHERE id_progreso = ? AND id_paciente = ?");
+    mysqli_stmt_bind_param($stmt, "ii", $id_progreso, $id_paciente);
+    mysqli_stmt_execute($stmt);
+
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $filas_afectadas > 0; // Devuelve true si se eliminó correctamente
+}
+
 
 
 
@@ -775,20 +786,6 @@ function obtener_medidas_paciente($con, $usuario) {
     return $medidas;
 }
 
-
-// Función para modificar medidas corporales
-function modificar_medidas($con, $usuario, $altura, $peso, $grasa, $musculo) {
-    mysqli_query($con, "UPDATE medidas_paciente SET altura = '$altura', peso = '$peso', grasa_corporal = '$grasa', musculo = '$musculo' 
-        WHERE id_paciente = (SELECT id_paciente FROM paciente WHERE usuario = '$usuario') ORDER BY fecha_registro DESC LIMIT 1");
-}
-
-// Función para comparar medidas con los objetivos
-function comparar_medidas_objetivos($con, $usuario) {
-    $resultado = mysqli_query($con, "SELECT m.altura, m.peso, m.grasa_corporal, m.musculo, o.objetivo_peso, o.objetivo_grasa_corporal, o.objetivo_musculo 
-        FROM medidas_paciente m JOIN objetivos_paciente o ON m.id_paciente = o.id_paciente 
-        WHERE m.id_paciente = (SELECT id_paciente FROM paciente WHERE usuario = '$usuario') ORDER BY m.fecha_registro DESC LIMIT 1");
-    return mysqli_fetch_assoc($resultado);
-}
 
 // Función para mostrar el menú semanal
 function mostrar_menu_semanal($con, $usuario) {
@@ -821,27 +818,6 @@ function mostrar_citas_paciente($con, $usuario) {
 
     return $citas;
 }
-
-
-function crear_cita_paciente($con, $usuario, $fecha, $hora) {
-    unset($_SESSION['mensaje_cita']);
-    $id_paciente_query = mysqli_query($con, "SELECT id_paciente, id_nutricionista FROM paciente WHERE usuario = '$usuario'");
-    $datos_paciente = mysqli_fetch_assoc($id_paciente_query);
-    if (!$datos_paciente || !$datos_paciente['id_nutricionista']) {
-        $_SESSION['mensaje_cita'] = "No se encontró un nutricionista asignado.";
-        return;
-    }
-    $id_paciente = $datos_paciente['id_paciente'];
-    $id_nutricionista = $datos_paciente['id_nutricionista'];
-    mysqli_query($con, "INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES ('$fecha', '$hora', '$id_paciente', '$id_nutricionista')");
-}
-
-function modificar_cita_paciente($con, $usuario, $id_cita, $nueva_fecha, $nueva_hora) {
-    $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
-    $id_paciente = mysqli_fetch_assoc($id_paciente_query)['id_paciente'];
-    mysqli_query($con, "UPDATE citas SET fecha = '$nueva_fecha', hora = '$nueva_hora' WHERE id_citas = '$id_cita' AND paciente = '$id_paciente'");
-}
-
 
 function borrar_cita_paciente($con, $usuario, $fecha, $hora) {
     $id_paciente_query = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$usuario'");
