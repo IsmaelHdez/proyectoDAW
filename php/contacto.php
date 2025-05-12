@@ -14,14 +14,11 @@ $con = conexion();
 </head>
 <body>
 
-    <header>
-        <h2>Contáctanos</h2>
-        <p>Estamos aquí para ayudarte. Completa el formulario y nos pondremos en contacto contigo.</p>
-    </header>
+    <h2>Contáctanos</h2>
+    <h3>Estamos aquí para ayudarte. Completa el formulario y nos pondremos en contacto contigo.</h3>
 
     <div class="container">
         <section class="form-section">
-            <h3>Formulario de Contacto</h3>
             <form action="#" method="post">
                 <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" required />
