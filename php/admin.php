@@ -1,6 +1,6 @@
 <?php
 require("conexion.php");
-require("header_alta.php");
+require("header_admin.php");
 $con = conexion();
 
 // Verifica si no se ha iniciado una sesión; si no, la inicia
@@ -154,34 +154,10 @@ if (isset($_POST['eliminar_paciente'])) {
 <link rel="stylesheet" href="../CSS/admin.css">
 <script src="../js/logout.js" defer></script>
 <script src="../js/validacion_admin.js" defer></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 <title>Nutrigo</title>
 </head>
 <body>
-    <nav class="menu-lateral">
-    <div class="logo">
-    <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo" >
-    </div>
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_nutricionista">Nutricionistas</button>
-        <ul id="submenu_nutricionista" class="submenu">
-            <li onclick="mostrarSeccion('buscador_nutricionista','contenedor_tabla_nutricionista')">Buscar por apellido</li>
-            <li onclick="mostrarSeccion('crear_nutricionista','contenedor_tabla_nutricionista')">Creación</li>
-            <li onclick="mostrarSeccion('modificar_nutricionista','contenedor_tabla_nutricionista')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_nutri','contenedor_tabla_nutricionista')">Eliminación</li>
-        </ul>
-    </div>
-    
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
-        <ul id="submenu_pacientes" class="submenu">
-            <li onclick="mostrarSeccion('buscador_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
-            <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
-            <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_paci','contenedor_tabla_paciente')">Eliminación</li>
-        </ul>
-    </div>
-</nav>
 <?php
     echo  '<div id="div_nutricionista" >
            <h2>Listado de clientes/nutricionistas</h2>
