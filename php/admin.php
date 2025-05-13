@@ -1,7 +1,6 @@
 <?php
 require("conexion.php");
 require("header_alta.php");
-require("footer.html");
 $con = conexion();
 
 // Verifica si no se ha iniciado una sesión; si no, la inicia

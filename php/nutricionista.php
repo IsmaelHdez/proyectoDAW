@@ -1,19 +1,15 @@
 <?php
-
 // Verifica si no se ha iniciado una sesión; si no, la inicia
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require("conexion.php");
-require("header_alta.php");
-require("footer.html");
+require("header_nutricionista.php");
 $con = conexion();
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
-
 if($_SESSION["tipo"] != 1){
     header("Location: index.php");
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,64 +18,12 @@ if($_SESSION["tipo"] != 1){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/logout.js" defer></script>
     <script src="../js/validacion_nutricionista.js" defer></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="../CSS/admin.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <link rel="stylesheet" href="../CSS/nutricionista.css">
     <title>Nutrigo</title>
 </head>
 <body>
 <?php
-    $resultado = mostrar_panel_nutricionista($con);
-    $fila = mysqli_fetch_assoc($resultado);
-    echo "<button id='toggle-panel'>👤 {$fila['usuario']}</button>";
-    echo "<div id='side-panel'>";
-    echo "<button id='close-panel'>✖</button>";
-    if($fila['foto'] == null){
-        echo "<img src='https://res.cloudinary.com/dup8qzlzv/image/upload/v1744743726/sin_foto_hjvtev.jpg' alt='Foto de perfil' width='140' height='140'>";
-    }else{
-        echo "<img src='{$fila['foto']}' alt='Foto de perfil' width='140' height='140'>";
-    }
-    echo "<p><strong>Nombre:</strong> <span id='user-name'>{$fila['nombre']} {$fila['apellido']}</span></p>";
-    echo "<p><strong>Email:</strong> <span id='user-email'>{$fila['email']}</span></p>";
-?>
-</div>
-<nav class="menu-lateral">
-    <div class="logo">
-        <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo" >
-    </div>
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_pacientes">Pacientes</button>
-        <ul id="submenu_pacientes" class="submenu">
-            <li onclick="mostrarSeccion('buscador_paciente','contenedor_tabla_paciente')">Buscar por apellido</li>
-            <li onclick="mostrarSeccion('crear_paciente','contenedor_tabla_paciente')">Creación</li>
-            <li onclick="mostrarSeccion('modificar_paciente','contenedor_tabla_paciente')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_paciente','contenedor_tabla_paciente')">Eliminación</li>
-        </ul>
-    </div>
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_recetas">Recetas</button>
-        <ul id="submenu_recetas" class="submenu">
-            <li onclick="mostrarSeccion('crear_receta','tabla_contenedor_recetas')">Creación</li>
-            <li onclick="mostrarSeccion('modificar_receta','tabla_contenedor_recetas')">Modificación</li>
-            <li onclick="mostrarSeccion('borrar_receta','tabla_contenedor_recetas')">Eliminación</li>
-        </ul>
-    </div>
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_calendario">Calendario</button>
-        <ul id="submenu_calendario" class="submenu">
-            <li onclick="mostrarSeccion('asignar_calendario','tabla_calendario')">Asignar receta al calendario</li>
-        </ul>
-    </div>
-    <div class="menu-item">
-        <button class="menu-btn" data-target="#submenu_citas">Citas</button>
-        <ul id="submenu_citas" class="submenu">
-            <li onclick="mostrarSeccion('crear_cita','tabla_citas')">Creación</li>
-            <li onclick="mostrarSeccion('borrar_cita','tabla_citas')">Eliminación</li>
-        </ul>
-    </div>
-</nav>
-<?php
-
-
 //formulario para crear paciente
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
     $nuevo_usuario = $_POST["usuario_paciente"];
@@ -632,12 +576,6 @@ echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:
            </div>
            </div>';
 ?> 
-
-  <div id="boton_logout">   
-    <button id="cerrarSesion">Cerrar sesión</button>
-   </div>
-
 </body>
 <?php require("../html/footer.html"); ?>
-
 </html>

@@ -75,7 +75,7 @@ input[type="submit"] {
 
 /* Estilos para el botón de enviar */
 input[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #4C7305;
     color: white;
     border: none;
     padding: 12px;
@@ -213,7 +213,7 @@ tbody tr:hover {
 }
 
 .menu-btn:hover {
-    background-color: #45a049;
+    background-color: #A5D615;
 }
 
 .submenu {
@@ -388,7 +388,7 @@ tbody tr:hover {
 
 .perfil_contenedor {
     display: flex;
-    align-items: stretch; /* Antes estaba en center */
+    align-items: stretch;
 }
 
 .perfil_foto {
