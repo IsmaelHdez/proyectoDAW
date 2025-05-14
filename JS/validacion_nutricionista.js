@@ -276,6 +276,7 @@ document.getElementById("formulario_mod_receta").addEventListener("submit", func
     }
 });
 /*************************************************************************************************/
+
 function mostrarSeccion(id, tipo) {
     let secciones = document.getElementsByClassName("seccion");
 
@@ -293,25 +294,35 @@ function mostrarSeccion(id, tipo) {
     }
 
     if (tipo === "contenedor_tabla_paciente") {
+        document.getElementById("ficha_nutricionista").style.display = "none";
         document.getElementById("div_pacientes").style.display = "block";
         document.getElementById("div_recetas").style.display = "none";
         document.getElementById("div_calendario").style.display = "none";
         document.getElementById("div_citas").style.display = "none";
     } else if (tipo === "tabla_contenedor_recetas") {
+        document.getElementById("ficha_nutricionista").style.display = "none";
         document.getElementById("div_pacientes").style.display = "none";
         document.getElementById("div_recetas").style.display = "block";
         document.getElementById("div_calendario").style.display = "none";
         document.getElementById("div_citas").style.display = "none";
     } else if (tipo === "tabla_calendario") {
+        document.getElementById("ficha_nutricionista").style.display = "none";
         document.getElementById("div_pacientes").style.display = "none";
         document.getElementById("div_recetas").style.display = "none";
         document.getElementById("div_calendario").style.display = "block";
         document.getElementById("div_citas").style.display = "none";
     } else if (tipo === "tabla_citas") {
+        document.getElementById("ficha_nutricionista").style.display = "none";
         document.getElementById("div_pacientes").style.display = "none";
         document.getElementById("div_recetas").style.display = "none";
         document.getElementById("div_calendario").style.display = "none";
         document.getElementById("div_citas").style.display = "block";
+    } else if (tipo === "ficha_nutricionista") {
+        document.getElementById("ficha_nutricionista").style.display = "block";
+        document.getElementById("div_pacientes").style.display = "none";
+        document.getElementById("div_recetas").style.display = "none";
+        document.getElementById("div_calendario").style.display = "none";
+        document.getElementById("div_citas").style.display = "none";
     }
 
     // Guardar la sección activa en localStorage
@@ -327,12 +338,12 @@ document.addEventListener("DOMContentLoaded", function () {
         mostrarSeccion(seccionGuardada,tablaGuardada); // Mostrar la sección guardada
     } else {
         mostrarSeccion("crear_paciente","contenedor_tabla_paciente");
-        document.getElementById("div_pacientes").style.display = "block";
-        document.getElementById("div_recetas").style.display = "none";
-        document.getElementById("div_calendario").style.display = "none";
-        document.getElementById("div_citas").style.display = "none";
     }
 });
+
+function mostrarFormulario() {
+    document.getElementById('formulario_modificar_ficha').style.display = 'block';
+}
 
 //función para abrir menú
 $(document).ready(function(){

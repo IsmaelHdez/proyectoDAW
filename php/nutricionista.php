@@ -3,9 +3,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require("conexion.php");
+
 require("header_nutricionista.php");
-$con = conexion();
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
 if($_SESSION["tipo"] != 1){
     header("Location: index.php");
@@ -17,13 +16,42 @@ if($_SESSION["tipo"] != 1){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/logout.js" defer></script>
-    <script src="../js/validacion_nutricionista.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="../js/validacion_nutricionista.js" defer></script>
     <link rel="stylesheet" href="../CSS/nutricionista.css">
     <title>Nutrigo</title>
 </head>
 <body>
 <?php
+
+// Manejo de actualización de datos del nutricionista
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar"])) {
+    $nuevo_nombre = $_POST["nombre"];
+    $nuevo_apellido = $_POST["apellido"];
+    $nuevo_email = $_POST["email"];
+    $usuario = $_SESSION['usuario'];
+    $nueva_pass = !empty($_POST["pass"]) ? password_hash($_POST["pass"], PASSWORD_DEFAULT) : null;
+    $nueva_foto = null;
+
+    var_dump($_POST["nombre"]);
+    var_dump($_POST["apellido"]);
+    var_dump($_POST["email"]);
+    var_dump($_POST["usuario"]);
+
+    if (isset($_FILES["nueva_foto"]) && $_FILES["nueva_foto"]["size"] > 0) {
+        if (!empty($datos_paciente["foto"])) {
+            eliminar_imagen_cloudinary($datos_paciente["foto"]);
+        }
+
+        $nueva_foto = subir_imagen_cloudinary($_FILES["nueva_foto"]["tmp_name"]);
+    }
+
+    modificar_nutricionista_cloudinary($con, $nuevo_nombre, $nuevo_apellido, $nuevo_email, $usuario, $nueva_pass, $nueva_foto,$_SESSION['id_nutricionista']);
+
+    header("Location: nutricionista.php");
+    exit();
+}
+
 //formulario para crear paciente
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_paciente"])) {
     $nuevo_usuario = $_POST["usuario_paciente"];
@@ -174,7 +202,61 @@ if(isset($_POST['ver_calendario'])){
         exit;
     }
   }
-  
+
+//Tabla con datos del usuario
+?>
+<div id="ficha_nutricionista" class="seccion">
+    <h2>Ficha del Nutricionista</h2>
+
+    <div class="perfil_contenedor">
+        <div class="perfil_foto">
+            <?php if (!empty($datos["foto"])): ?>
+                <img src="<?= $datos["foto"] ?>" alt="Foto de perfil" width="150" height="150" style="display : block; margin : 5px auto;">
+            <?php else: ?>
+                <p>No tienes foto de perfil.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="perfil_datos">
+            <table border="1">
+                <tr><th>Dato</th><th>Valor</th></tr>
+                <tr><td>Nombre</td><td><?= htmlspecialchars($datos['nombre']) ?></td></tr>
+                <tr><td>Apellido</td><td><?= htmlspecialchars($datos['apellido']) ?></td></tr>
+                <tr><td>Email</td><td><?= htmlspecialchars($datos['email']) ?></td></tr>
+                <tr><td>Usuario</td><td><?= htmlspecialchars($datos['usuario']) ?></td></tr>
+            </table>
+                    <?php if(isset($_SESSION['mensaje_nutricionista'])){
+                        echo $_SESSION['mensaje_nutricionista']; 
+    } ?>
+
+            <input type="submit" value="Modificar Datos" onclick="mostrarFormulario()" class="modificar-btn">
+
+            <div id="formulario_modificar_ficha" style="display: none;">
+                
+                <form action="nutricionista.php" method="POST" enctype="multipart/form-data">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" name="nombre" value="<?= $datos['nombre'] ?>" required>
+
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" name="apellido" value="<?= $datos['apellido'] ?>" required>
+
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" name="email" value="<?= $datos['email'] ?>" required>
+
+                    <label for="pass">Nueva Contraseña (opcional):</label>
+                    <input type="password" name="pass">
+
+                    <label for="nueva_foto">Foto de perfil:</label>
+                    <input type="file" name="nueva_foto" accept="image/*">
+
+                    <input type="submit" name="modificar" value="Guardar Cambios" class="modificar-btn">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+ <?php    
+
 //Tabla con los pacientes
     echo '<div id="div_pacientes">
           <div id="contenedor_tabla_paciente" class="seccion">
@@ -307,9 +389,9 @@ echo '<div id="borrar_paciente" class="seccion">
 
  //Tabla de recetas
  echo '<div id="div_recetas" >
-       <h2>Tus recetas (ración/450 grs)</h2>
        <div id="tabla_contenedor_recetas" class="seccion">
-       <div id="tabla_recetas">';
+       <div id="tabla_recetas">
+       <h2>Tus recetas (ración/450 grs)</h2>';
         $resultado = listar_recetas_usuario($con);
         if(mysqli_num_rows($resultado)==0){
            echo "<h5>No hay recetas disponibles.</h5>";
@@ -503,9 +585,9 @@ echo '<div id="asignar_calendario" class="seccion">
 
 //tabla de citas por nutricionistas
 echo '<div id="div_citas" >
-      <h2>Tu listado de citas</h2>
       <div id="tabla_citas" class="seccion">
-      <div id="tabla_cita">';
+      <div id="tabla_cita">
+      <h2>Tu listado de citas</h2>';
        $resultado = obtener_tabla_citas_nutricionista($con);
        if(mysqli_num_rows($resultado)==0){
          echo "<h5>No tienes citas disponibles.</h5>";
@@ -575,7 +657,12 @@ echo '<label for="borrar_hora_cita" name="borrar_hora_cita">Hora de la cita (hh:
     echo '</form>
            </div>
            </div>';
-?> 
+?>
+<script>
+    function mostrarFormulario() {
+    document.getElementById('formulario_modificar_ficha').style.display = 'block';
+}
+</script> 
 </body>
 <?php require("../html/footer.html"); ?>
 </html>

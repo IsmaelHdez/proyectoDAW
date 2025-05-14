@@ -364,13 +364,21 @@ function crear_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuar
   function modificar_nutricionista_cloudinary($con, $nombre, $apellido, $email, $usuario, $pass = null, $foto = null, $busqueda) {
     unset($_SESSION['mensaje_nutricionista']);
 
-    $query = "update nutricionista set  usuario = '$usuario' ,pass ='$pass' ,nombre = '$nombre', apellido = '$apellido', email = '$email'";
+    $query = "UPDATE nutricionista SET 
+                usuario = '$usuario',
+                nombre = '$nombre',
+                apellido = '$apellido',
+                email = '$email'";
 
-    if ($foto) {
+    if (!is_null($pass)) {
+        $query .= ", pass = '$pass'";
+    }
+
+    if (!is_null($foto)) {
         $query .= ", foto = '$foto'";
     }
 
-    $query .= " where usuario = '$busqueda'";
+    $query .= " WHERE id_nutricionista = '$busqueda'";
 
     if (mysqli_query($con, $query)) {
         $_SESSION['mensaje_nutricionista'] = "<h5 class='mensaje'>Se ha modificado el nutricionista $usuario </h5><h5> con nombre completo : $nombre $apellido </h5><h5> y email : $email.</h5>";
@@ -477,6 +485,14 @@ function crear_paciente_cloudinary($con, $nombre, $apellido, $email, $usuario, $
 
 
 /*************************FUNCIONES DE NUTRICIONISTA.PHP********************************************** */
+
+// Función para obtener datos del nutricionista
+function ver_datos_nutricionista($con, $id) {
+    $query = "SELECT usuario, nombre, apellido, email FROM nutricionista WHERE id_nutricionista = '$id'";
+
+    $resultado = mysqli_query($con, $query);
+    return mysqli_fetch_assoc($resultado);
+}
 
 //funcion para mostrar panel con el usuario registrado
 function mostrar_panel_nutricionista($con) {

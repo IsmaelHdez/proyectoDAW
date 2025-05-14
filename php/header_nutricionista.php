@@ -2,6 +2,7 @@
 require_once("conexion.php");
 
 $con = conexion();
+$_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
 
 $perfil = usuario_perfil($con);
 $nombre = $perfil['nombre'];
@@ -10,6 +11,10 @@ $tipo = $perfil['tipo'];
 $foto = $perfil['foto'];
 
 $direccion = "";
+
+$resultado = mostrar_panel_nutricionista($con , $_SESSION['id_nutricionista']);
+$datos = mysqli_fetch_assoc($resultado);
+$foto_url = (!empty($foto)) ? $foto : "https://res.cloudinary.com/dup8qzlzv/image/upload/v1744743726/sin_foto_hjvtev.jpg";
 
 if ($tipo == 1) {
     $direccion = "nutricionista.php";
@@ -71,9 +76,9 @@ if ($tipo == 3) {
         </div>
 
         <div id="perfil">
-            <img src="<?php echo $foto; ?>" alt="Foto de perfil">
+            <img src="<?php echo $foto_url; ?>" alt="Foto de perfil">
             <div class="perfil-opciones">
-                <a href="<?php echo $direccion; ?>"><?php echo $nombre . " " . $apellido; ?></a>
+                <a onclick="mostrarSeccion('ficha_nutricionista','ficha_nutricionista')"><?php echo $datos['usuario']; ?></a>
                 <a id="cerrarSesion">Cerrar sesión</a>
             </div>
         </div>
