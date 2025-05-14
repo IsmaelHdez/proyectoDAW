@@ -85,10 +85,6 @@ input[type="time"], input[type="file"], select {
     font-size: 1em;
 }
 
-input[type="submit"] {
-    margin-top: 30px; /* Espacio entre el campo de archivo y el botón de envío */
-}
-
 /* Estilos para el botón de enviar */
 input[type="submit"] {
     background-color: #4C7305;
@@ -101,7 +97,9 @@ input[type="submit"] {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    margin-top: 30px;
 }
+
 
 input[type="submit"]:hover {
     background-color: #A5D615;
@@ -113,6 +111,10 @@ footer {
     margin-top: 30px;
     font-size: 1em;
     color: #777;
+}
+
+.perfil-datos{
+    width : 70%;
 }
 
 /* Estilos para tablas */
