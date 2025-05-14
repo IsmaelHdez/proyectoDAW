@@ -1,6 +1,8 @@
 <?php
 session_start();
-include 'conexion.php';
+require("conexion.php");
+require("header_paciente.php");
+
 
 // Asegurar que solo los pacientes puedan acceder
 if (!isset($_SESSION["tipo"]) || $_SESSION["tipo"] != 2) {
@@ -58,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["añadir_medida"])) {
 
 
 
-
 // ----------------------------------------  REFERENTE A MENÚ SEMANAL -------------------------------------------------------//
 $menu_semanal = mostrar_menu_semanal($con, $usuario);
 $comidas = ['Desayuno', 'Almuerzo', 'Cena'];
@@ -77,28 +78,6 @@ foreach ($menu_semanal as $fila) {
 
 // ----------------------------------------  REFERENTE A GESTIÓN DE CITAS  -------------------------------------------------------//
 $citas = mostrar_citas_paciente($con, $usuario);
-
-
-// Manejo de crear nueva cita
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_cita"])) {
-    $fecha = $_POST["nueva_fecha"];
-    $hora = $_POST["nueva_hora"];
-    crear_cita_paciente($con, $usuario, $fecha, $hora);
-    header("Location: paciente.php");
-    exit();
-}
-
-
-
-// Manejo de modificar cita existente
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar_cita"])) {
-    $id_cita = $_POST["id_cita"];
-    $nueva_fecha = $_POST["fecha"];
-    $nueva_hora = $_POST["hora"];
-    modificar_cita_paciente($con, $usuario, $id_cita, $nueva_fecha, $nueva_hora);
-    header("Location: paciente.php");
-    exit();
-}
 
 
 // Manejo de eliminar cita existente
@@ -127,81 +106,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
 </head>
 
 <body>
-    <div class="contenedor">
-        <header class="header">
-            <div class="header-left">
-                <button id="toggle-panel">👤 <?php echo $datos_paciente['usuario']; ?></button>
-                <div id="side-panel">
-                    <button id="close-panel">✖</button>
-                    <!-- Mostrar foto de perfil -->
-                    <?php if ($datos_paciente['foto'] == null) { ?>
-                        <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1744743726/sin_foto_hjvtev.jpg" alt="Foto de perfil" width="140" height="140">
-                    <?php } else { ?>
-                        <img src="<?php echo $datos_paciente['foto']; ?>" alt="Foto de perfil" width="140" height="140">
-                    <?php } ?>
-                    <!-- Información del paciente -->
-                    <p><strong>Nombre:</strong> <?php echo $datos_paciente['nombre'] . " " . $datos_paciente['apellido']; ?></p>
-                    <p><strong>Email:</strong> <?php echo $datos_paciente['email']; ?></p>
-                </div>
-            </div>
-        </header>
-
-        <nav class="menu-lateral">
-            <div class="logo">
-                <img src="https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/logo_csilnx.png" alt="logo">
-            </div>
-            <div class="menu-item">
-                <button class="menu-btn" onclick="mostrarSeccion('ficha_paciente')">Ficha de Paciente</button>
-            </div>
-            <div class="menu-item">
-                <button class="menu-btn" onclick="mostrarSeccion('mediciones_paciente')">Mediciones</button>
-            </div>
-            <div class="menu-item">
-                <button class="menu-btn" onclick="mostrarSeccion('menu_semanal')">Menú Semanal</button>
-            </div>
-            <div class="menu-item">
-                <button class="menu-btn" onclick="mostrarSeccion('gestion_citas')">Citas</button>
-            </div>
-            <div class="menu-item">
-                <button class="menu-btn" id="cerrarSesion">Cerrar sesión</button>
-            </div>
-        </nav>
 
         <div class="contenido">
             <div id="ficha_paciente" class="seccion active">
                 <h2>Ficha del Paciente</h2>
-                <?php if (!empty($datos_paciente["foto"])): ?>
-                    <img src="<?= $datos_paciente["foto"] ?>" alt="Foto de perfil" width="150" height="150">
-                <?php else: ?>
-                    <p>No tienes foto de perfil.</p>
-                <?php endif; ?>
-                <table border="1">
-                    <tr><th>Dato</th><th>Valor</th></tr>
-                    <tr><td>Nombre</td><td><?php echo htmlspecialchars($datos_paciente['nombre']); ?></td></tr>
-                    <tr><td>Apellido</td><td><?php echo htmlspecialchars($datos_paciente['apellido']); ?></td></tr>
-                    <tr><td>Email</td><td><?php echo htmlspecialchars($datos_paciente['email']); ?></td></tr>
-                    <tr><td>Usuario</td><td><?php echo htmlspecialchars($datos_paciente['usuario']); ?></td></tr>
-                    <tr><td>Contraseña</td><td>********</td></tr>
-                    <tr><td>Nutricionista</td><td><?php echo htmlspecialchars($datos_paciente['nombre_nutricionista']); ?></td></tr>
-                </table>
-                <button onclick="mostrarFormulario()" style="text-align: right; margin-top: 10px;">Modificar Datos</button>
-                
-                <div id="formulario_modificar_ficha" style="display: none;">
-                    <h3>Modificar Datos</h3>
-                    <form action="paciente.php" method="POST" enctype="multipart/form-data">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" name="nombre" value="<?= $datos_paciente['nombre'] ?>" required>
-                        <label for="apellido">Apellido:</label>
-                        <input type="text" name="apellido" value="<?= $datos_paciente['apellido'] ?>" required>
-                        <label for="email">Correo Electrónico:</label>
-                        <input type="email" name="email" value="<?= $datos_paciente['email'] ?>" required>
-                        <label for="pass">Nueva Contraseña (opcional):</label>
-                        <input type="password" name="pass">
-                        <label for="nueva_foto">Foto de perfil:</label>
-                        <input type="file" name="nueva_foto" accept="image/*">
-                        <button type="submit" name="modificar">Guardar Cambios</button>
-                    </form>
-                </div>
+
+                <div class="perfil_contenedor">
+                    <div class="perfil_foto">
+                        <?php if (!empty($datos_paciente["foto"])): ?>
+                            <img src="<?= $datos_paciente["foto"] ?>" alt="Foto de perfil" width="150" height="150">
+                        <?php else: ?>
+                            <p>No tienes foto de perfil.</p>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="perfil_datos">
+                        <table border="1">
+                            <tr><th>Dato</th><th>Valor</th></tr>
+                            <tr><td>Nombre</td><td><?= htmlspecialchars($datos_paciente['nombre']) ?></td></tr>
+                            <tr><td>Apellido</td><td><?= htmlspecialchars($datos_paciente['apellido']) ?></td></tr>
+                            <tr><td>Email</td><td><?= htmlspecialchars($datos_paciente['email']) ?></td></tr>
+                            <tr><td>Usuario</td><td><?= htmlspecialchars($datos_paciente['usuario']) ?></td></tr>
+                            <tr><td>Contraseña</td><td>********</td></tr>
+                            <tr><td>Nutricionista</td><td><?= htmlspecialchars($datos_paciente['nombre_nutricionista']) ?></td></tr>
+                        </table>
+
+                        <button onclick="mostrarFormulario()" class="modificar-btn">Modificar Datos</button>
+
+                        <div id="formulario_modificar_ficha" style="display: none;">
+                            
+                            <form action="paciente.php" method="POST" enctype="multipart/form-data">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" name="nombre" value="<?= $datos_paciente['nombre'] ?>" required>
+
+                                <label for="apellido">Apellido:</label>
+                                <input type="text" name="apellido" value="<?= $datos_paciente['apellido'] ?>" required>
+
+                                <label for="email">Correo Electrónico:</label>
+                                <input type="email" name="email" value="<?= $datos_paciente['email'] ?>" required>
+
+                                <label for="pass">Nueva Contraseña (opcional):</label>
+                                <input type="password" name="pass">
+
+                                <label for="nueva_foto">Foto de perfil:</label>
+                                <input type="file" name="nueva_foto" accept="image/*">
+
+                                <input type="submit" name="modificar" value="Guardar Cambios" class="modificar-btn">
+                            </form>
+                        </div>
+                    </div>
+                </div>     
+
             </div>
 
             <div id="mediciones_paciente" class="seccion">
@@ -210,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
                     <thead>                   
                         <tr>
                             <th>Fecha Registro</th>
-                            <th>Altura (cm)</th>
+                            <th>Altura (m)</th>
                             <th>Peso (kg)</th>
                             <th>Grasa Corporal (%)</th>
                             <th>Músculo (%)</th>
@@ -229,14 +184,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
                             echo "<td>" . htmlspecialchars($medida['musculo']) . "</td>";
                             echo "<td>" . htmlspecialchars($medida['imc']) . "</td>";
                             echo "<td>
-                                <button onclick='modificarMedicion()'>Modificar</button>
-                                <button onclick='eliminarMedicion()'>Eliminar</button>
+                                <button class='accion-tbn' onclick='eliminarMedicion()'>Eliminar</button>
                                 </td>";
                             echo "</tr>";
                         }?>
                     </tbody>
                 </table>      
-                <button onclick="añadirMedicion()">Añadir</button>
+                <button class="boton-añadir" onclick="añadirMedicion()">Añadir</button>
 
                 <div id="formulario_añadir_medicion" style="display: none;">
                     <h3>Añadir Medicion</h3>
@@ -295,7 +249,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
                         <tr>
                             <th>Día</th>
                             <th>Hora</th>
-                            <th>Acciones</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -311,7 +265,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
                                         </td>
                                         <td>
                                             <input type="hidden" name="id_cita" value="<?= htmlspecialchars($cita['id_citas']) ?>">
-                                            <button type="button" onclick="mostrarFormularioModificar('<?= $cita['id_citas'] ?>', '<?= $cita['fecha'] ?>', '<?= $cita['hora'] ?>')">Modificar</button>
                                             <button type="submit" name="eliminar_cita" onclick="return confirm('¿Eliminar esta cita?')">Eliminar</button>
                                         </td>
                                     </tr>
@@ -321,34 +274,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
                             <tr><td colspan="3">No tienes citas registradas.</td></tr>
                         <?php endif; ?>
                     </tbody>
-                </table>                
-                <button type="button" onclick="mostrarFormularioNuevaCita()" style="margin-top: 20px;">Sacar nueva cita</button>
-
-                <div id="formulario_editar_cita" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc; max-width: 400px;">
-                    <h3>Modificar cita</h3>
-                    <form method="POST">
-                        <input type="hidden" name="id_cita" id="editar_id_cita">
-                        <label for="editar_fecha">Fecha:</label>
-                        <input type="date" name="fecha" id="editar_fecha" required><br><br>
-                        <label for="editar_hora">Hora:</label>
-                        <input type="time" name="hora" id="editar_hora" required><br><br>
-                        <button type="submit" name="modificar_cita">Modificar</button>
-                    </form>
-                </div>
-
-                <div id="formulario_nueva_cita" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc; max-width: 400px;">
-                    <h3>Nueva cita</h3>
-                    <form method="POST">
-                        <label for="nueva_fecha">Fecha:</label>
-                        <input type="date" name="nueva_fecha" required><br><br>
-                        <label for="nueva_hora">Hora:</label>
-                        <input type="time" name="nueva_hora" required><br><br>
-                        <button type="submit" name="crear_cita">Aceptar</button>
-                    </form>
-                </div>
+                </table>
             </div>
         </div>
     </div>
 </body>
+<?php require("../html/footer.html"); ?>
 </html>
 

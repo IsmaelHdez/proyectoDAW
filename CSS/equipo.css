@@ -2,17 +2,19 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f7fa;
+    font-family: Arial, sans-serif;
 }
 
-header {
+.equipo-container {
     text-align: center;
-    padding: 30px 20px;
+    padding: 40px 20px;
 }
 
-h2 {
+.titulo-equipo {
     font-size: 2.5rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+    color: #4C7305;
 }
 
 .container {
@@ -43,12 +45,13 @@ section:hover {
 
 h3, h4 {
     margin: 0;
-    padding-right: 20px;
     font-weight: normal;
+    text-align: center;
 }
 
 h3 {
     font-size: 1.8rem;
+    color: #4C7305;
     margin-bottom: 10px;
 }
 
@@ -62,6 +65,7 @@ p {
     margin-bottom: 15px;
     line-height: 1.6;
     color: #2c3e50;
+    text-align: left;
 }
 
 .imagen_perfil {

@@ -112,6 +112,10 @@ INSERT INTO opciones (tipo) VALUES
 ('Nutricionista renal');
 
 
+INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES
+('2025-05-10', '10:00:00', 1, 1),
+('2025-05-17', '10:00:00', 1, 1);
+
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin",
  "$2y$10$HOKoILE97x0Om4f5IIuE1u.cv1vm3NTfPUtr0zNncNwEQwga5vFeS",
  "admin", "admin", "admin@gmail", 3);
@@ -181,5 +185,5 @@ INSERT INTO receta (nombre, ingredientes, calorias, id_nutricionista) VALUES
  select * from medidas_paciente where id_paciente = 1;
  
  SELECT n.nombre, n.apellido, n.email, n.tipo, o.tipo FROM nutricionista n, opciones o WHERE n.opcion = o.id_opcion ORDER BY id_nutricionista DESC LIMIT 4;
- drop table noticias;
+ 
  drop database nutrigo;
