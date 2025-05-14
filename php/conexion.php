@@ -220,17 +220,7 @@ function obtener_noticias($con){
     return $resultado;
 }
 
-/*function obtener_noticia_pagina($url){
-    $url = str_replace("?dl=0", "?raw=1", $url);
 
-    // Obtener contenido del archivo remoto
-    $contenido = file_get_contents($url);
-
-    if ($contenido !== false) {
-        return $contenido;
-    }
-}
-*/
 
 /*************************GESTIÓN DE IMÁGENES********************************************** */
 
