@@ -11,8 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if($_SESSION["tipo"] != 3){
     header("Location: index.php");
     }
-    
-
+   
 //formulario para crear nutricionista
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_nutricionista"])) {
     $nuevo_usuario = $_POST["usuario_nutricionista"];
