@@ -29,8 +29,8 @@ apellido varchar(50),
 email varchar(60),
 tipo int,
 sesion varchar(255),
-foto varchar(255),
 id_nutricionista int,
+foto varchar(255),
 foreign key(id_nutricionista) references nutricionista(id_nutricionista) );
 
 create table receta(
@@ -75,8 +75,6 @@ create table objetivos_paciente (
     foreign key (id_nutricionista) references nutricionista(id_nutricionista),
     unique (id_paciente) );
 
-
-
 create table citas(
 id_citas int primary key auto_increment,
 fecha date not null,
@@ -85,6 +83,19 @@ paciente int,
 nutricionista int,
 foreign key (paciente) references paciente(id_paciente),
 foreign key (nutricionista) references nutricionista(id_nutricionista));
+
+create table noticias(
+id_noticia int primary key auto_increment,
+titulo varchar(255),
+subtitulo varchar(255),
+noticia varchar(255),
+foto varchar(255)
+);
+
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Beneficios del aguacate', 'Descubre los beneficios del aguacate...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/aguacate_nahybr.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Impacto de los alimentos ultraprocesados en la salud intestinal', 'La importancia de la salud intestinal...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/alimento_procesado_cxtpn5.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Vitamina C y su papel clave en el refuerzo del sistema inmunológico', 'La vitamina C mejora nuestro sistema inmune...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/vitamina_zqjztr.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Dietas ricas en grasas saludables podrían mejorar la función cerebral, según estudio', 'No todas las grasas son malas...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/grasas_tlsrh7.jpg');
 
 INSERT INTO opciones (tipo) VALUES
 ('Nutricionista clínico'),
@@ -100,10 +111,6 @@ INSERT INTO opciones (tipo) VALUES
 ('Nutricionista especializado en fertilidad y embarazo'),
 ('Nutricionista renal');
 
-
-INSERT INTO citas (fecha, hora, paciente, nutricionista) VALUES
-('2025-05-10', '10:00:00', 1, 1),
-('2025-05-17', '10:00:00', 1, 1);
 
  insert into nutricionista(usuario, pass, nombre, apellido, email, tipo) values ("admin",
  "$2y$10$HOKoILE97x0Om4f5IIuE1u.cv1vm3NTfPUtr0zNncNwEQwga5vFeS",
@@ -174,5 +181,5 @@ INSERT INTO receta (nombre, ingredientes, calorias, id_nutricionista) VALUES
  select * from medidas_paciente where id_paciente = 1;
  
  SELECT n.nombre, n.apellido, n.email, n.tipo, o.tipo FROM nutricionista n, opciones o WHERE n.opcion = o.id_opcion ORDER BY id_nutricionista DESC LIMIT 4;
- 
+ drop table noticias;
  drop database nutrigo;

@@ -10,7 +10,7 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
 }
 
 // Incluye los otros archivos
-require("../html/principal.html");
+require("principal.php");
 require("targetas_nutricionistas.php");
 require("../html/footer.html");
 ?>
