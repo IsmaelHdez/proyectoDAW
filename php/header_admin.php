@@ -2,6 +2,11 @@
 require_once("conexion.php");
 
 $con = conexion();
+$_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
+
+$resultado = mostrar_panel_nutricionista($con , $_SESSION['id_nutricionista']);
+$datos = mysqli_fetch_assoc($resultado);
+$foto_url = (!empty($foto)) ? $foto : "https://res.cloudinary.com/dup8qzlzv/image/upload/v1744743726/sin_foto_hjvtev.jpg";
 
 $perfil = usuario_perfil($con);
 $nombre = $perfil['nombre'];
@@ -59,7 +64,7 @@ if ($tipo == 3) {
         </div>
 
         <div id="perfil">
-            <img src="<?php echo $foto; ?>" alt="Foto de perfil">
+            <img src="<?php echo $foto_url; ?>" alt="Foto de perfil">
             <div class="perfil-opciones">
                 <a href="<?php echo $direccion; ?>"><?php echo $nombre . " " . $apellido; ?></a>
                 <a id="cerrarSesion">Cerrar sesión</a>
