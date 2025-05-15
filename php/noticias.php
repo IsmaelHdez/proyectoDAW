@@ -1,6 +1,13 @@
 <?php
 require_once("conexion.php");
 
+// Incluye el header adecuado según si la variable $_SESSION['usuario'] tiene contenido
+if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
+    require("header_alta.php");
+} else {
+    require("../html/header.html");
+}
+
 function obtener_noticia_pagina($url){
     // Cambiar dominio de dropbox para obtener contenido raw directamente
     if (strpos($url, "dropbox.com") !== false) {
@@ -18,5 +25,7 @@ if (isset($_GET['url'])) {
 } else {
     $contenido = "URL no especificada.";
 }
+
+require("../html/footer.html");
 ?>
 

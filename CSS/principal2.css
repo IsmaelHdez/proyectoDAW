@@ -64,6 +64,7 @@ body {
 .imagen_separador {
   width: 100%;
   overflow: hidden;
+  margin-top: 50px;
 }
 
 .imagen_separador img {
