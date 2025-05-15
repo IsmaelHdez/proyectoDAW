@@ -233,7 +233,7 @@ if(isset($_POST['ver_calendario'])){
 
             <div id="formulario_modificar_ficha" style="display: none;">
                 
-                <form action="nutricionista.php" method="POST" enctype="multipart/form-data">
+                <form action="nutricionista.php" id="formulario_ficha" method="POST" enctype="multipart/form-data">
                     <label for="nombre">Nombre:</label>
                     <input type="text" name="nombre" value="<?= $datos['nombre'] ?>" required>
 

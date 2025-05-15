@@ -201,6 +201,7 @@ if (isset($_POST['buscar_nutricionista'])) {
                 echo "<p><b>Nombre: </b>" . htmlspecialchars($fila['nombre']) . "</p>";
                 echo "<p><b>Email: </b>" . htmlspecialchars($fila['email']) . "</p>";
                 echo "<p><b>Usuario: </b>" . htmlspecialchars($fila['usuario']) . "</p>";
+                echo "-----------------------------------------------------</p>";
 
             }
         } else {
@@ -422,10 +423,7 @@ echo '<div id="borrar_paci" class="seccion">
         </div>
         </div>';
 
-echo        '<div id="boton_logout">   
-        <button id="cerrarSesion">Cerrar sesión</button>
-             </div>
-            </body>
+echo        '</body>
                 </html>';
  
 ?>
