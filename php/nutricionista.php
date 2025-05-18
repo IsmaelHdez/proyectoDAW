@@ -33,11 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["modificar"])) {
     $nueva_pass = !empty($_POST["pass"]) ? password_hash($_POST["pass"], PASSWORD_DEFAULT) : null;
     $nueva_foto = null;
 
-    var_dump($_POST["nombre"]);
-    var_dump($_POST["apellido"]);
-    var_dump($_POST["email"]);
-    var_dump($_POST["usuario"]);
-
     if (isset($_FILES["nueva_foto"]) && $_FILES["nueva_foto"]["size"] > 0) {
         if (!empty($datos_paciente["foto"])) {
             eliminar_imagen_cloudinary($datos_paciente["foto"]);
@@ -187,6 +182,7 @@ if(isset($_POST['asignar_calendario'])){
         $receta = $_POST['asignar_receta_calendario'];
         $comida = $_POST['asignar_comida_calendario'];
         crear_receta_calendario($con , $paciente , $dia , $receta , $comida);
+        $_SESSION['menu'] = obtener_calendario($con, $_SESSION['calendario']);
         header('Location:nutricionista.php#div_calendario');
         exit;
     }
@@ -260,8 +256,8 @@ if(isset($_POST['ver_calendario'])){
 //Tabla con los pacientes
     echo '<div id="div_pacientes">
           <div id="contenedor_tabla_paciente" class="seccion">
-          <div id="tabla_paciente">
-          <h2>Listado de pacientes</h2>';
+          <h2>Listado de pacientes</h2>
+          <div id="tabla_paciente">';
     $resultado = obtener_pacientes_nutricionista($con);
       if(mysqli_num_rows($resultado)==0){
         echo "<h2>No se encuentran usuarios.</h2>";
@@ -390,8 +386,8 @@ echo '<div id="borrar_paciente" class="seccion">
  //Tabla de recetas
  echo '<div id="div_recetas" >
        <div id="tabla_contenedor_recetas" class="seccion">
-       <div id="tabla_recetas">
-       <h2>Tus recetas (ración/450 grs)</h2>';
+       <h2>Tus recetas (ración/450 grs)</h2>
+       <div id="tabla_recetas">';
         $resultado = listar_recetas_usuario($con);
         if(mysqli_num_rows($resultado)==0){
            echo "<h5>No hay recetas disponibles.</h5>";
@@ -586,8 +582,8 @@ echo '<div id="asignar_calendario" class="seccion">
 //tabla de citas por nutricionistas
 echo '<div id="div_citas" >
       <div id="tabla_citas" class="seccion">
-      <div id="tabla_cita">
-      <h2>Tu listado de citas</h2>';
+      <h2>Tu listado de citas</h2>
+      <div id="tabla_cita">';
        $resultado = obtener_tabla_citas_nutricionista($con);
        if(mysqli_num_rows($resultado)==0){
          echo "<h5>No tienes citas disponibles.</h5>";

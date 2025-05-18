@@ -557,23 +557,40 @@ function listar_recetas_nutricionista($con){
 }
 
 //función que obtiene la tabla con el calendario de recetas
-function obtener_calendario($con , $paciente){
+function obtener_calendario($con, $paciente) {
     $_SESSION['calendario'] = $paciente;
-    $consulta_paciente = mysqli_query($con , "select id_paciente from paciente where usuario = '$paciente'");
+
+    $consulta_paciente = mysqli_query($con, "SELECT id_paciente FROM paciente WHERE usuario = '$paciente'");
     $fila = mysqli_fetch_assoc($consulta_paciente);
-    $id_paciente = $fila['id_paciente'];
-    $resultado = mysqli_query($con,"SELECT m.dia_semana, m.comida, r.nombre AS receta_nombre 
-            FROM menu_semanal m
-            JOIN receta r ON m.id_receta = r.id_receta
-            WHERE m.id_paciente = '$id_paciente' 
-            ORDER BY FIELD(dia_semana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'),
-                     FIELD(comida, 'Desayuno', 'Almuerzo', 'Cena');");
-    $menu = [];
-    while ($fila = $resultado->fetch_assoc()) {
-        $menu[$fila['dia_semana']][$fila['comida']] = $fila['receta_nombre'];
+
+    if (!$fila) {
+        return []; // ← ← ← retorna array vacío si no existe el paciente
     }
-    return $menu;          
+
+    $id_paciente = $fila['id_paciente'];
+
+    $resultado = mysqli_query($con, "
+        SELECT m.dia_semana, m.comida, r.nombre AS receta_nombre 
+        FROM menu_semanal m
+        JOIN receta r ON m.id_receta = r.id_receta
+        WHERE m.id_paciente = '$id_paciente'
+        ORDER BY FIELD(m.dia_semana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'),
+                 FIELD(m.comida, 'Desayuno', 'Almuerzo', 'Cena')
+    ");
+
+    $menu = [];
+
+    while ($fila = $resultado->fetch_assoc()) {
+        $dia = trim($fila['dia_semana']);
+        $comida = trim($fila['comida']);
+        $receta = $fila['receta_nombre'];
+        $menu[$dia][$comida] = $receta;
+    }
+
+    return $menu; // ← ← ← RETORNAR SIEMPRE EL ARRAY
 }
+
+
 
 //función que añade receta al calendario
 function crear_receta_calendario($con , $paciente , $dia , $receta , $comida){
