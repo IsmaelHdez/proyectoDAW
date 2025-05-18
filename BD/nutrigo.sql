@@ -93,9 +93,9 @@ foto varchar(255)
 );
 
 insert into noticias (titulo,subtitulo,noticia,foto) values ('Beneficios del aguacate', 'Descubre los beneficios del aguacate...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/aguacate_nahybr.jpg');
-insert into noticias (titulo,subtitulo,noticia,foto) values ('Impacto de los alimentos ultraprocesados en la salud intestinal', 'La importancia de la salud intestinal...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/alimento_procesado_cxtpn5.jpg');
-insert into noticias (titulo,subtitulo,noticia,foto) values ('Vitamina C y su papel clave en el refuerzo del sistema inmunológico', 'La vitamina C mejora nuestro sistema inmune...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/vitamina_zqjztr.jpg');
-insert into noticias (titulo,subtitulo,noticia,foto) values ('Dietas ricas en grasas saludables podrían mejorar la función cerebral, según estudio', 'No todas las grasas son malas...', 'https://www.dropbox.com/scl/fi/7n3dv75tlki26yvubit33/Beneficios_aguacate.txt?rlkey=d6tb2o67ui0im8y5lf8h91ogo&st=ydyfm3i3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/grasas_tlsrh7.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Impacto de los alimentos ultraprocesados en la salud intestinal', 'La importancia de la salud intestinal...', 'https://www.dropbox.com/scl/fi/awrv5d0kp2dhxr8rm9nsi/alimentos-ultraprocesados.txt?rlkey=0eljuysn22vcjfwkf2fv6t58r&st=5mk08gk3&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/alimento_procesado_cxtpn5.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Vitamina C y su papel clave en el refuerzo del sistema inmunológico', 'La vitamina C mejora nuestro sistema inmune...', 'https://www.dropbox.com/scl/fi/teb0efatb1zpvs4to2roz/Vitamina-C.txt?rlkey=24m4bqsli3maov0j2ojsirt1t&st=bfnnv35f&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/vitamina_zqjztr.jpg');
+insert into noticias (titulo,subtitulo,noticia,foto) values ('Dietas ricas en grasas saludables podrían mejorar la función cerebral, según estudio', 'No todas las grasas son malas...', 'https://www.dropbox.com/scl/fi/jmhgiaey4a77ritub8y23/Dietas-grasas.txt?rlkey=ts2ubdk8xho3ee7rzrlcp0cfr&st=f2pk9m7s&dl=0', 'https://res.cloudinary.com/dup8qzlzv/image/upload/v1742377568/grasas_tlsrh7.jpg');
 
 INSERT INTO opciones (tipo) VALUES
 ('Nutricionista clínico'),
@@ -187,5 +187,5 @@ INSERT INTO receta (nombre, ingredientes, calorias, id_nutricionista) VALUES
  
  
  SELECT n.nombre, n.apellido, n.email, n.tipo, o.tipo FROM nutricionista n, opciones o WHERE n.opcion = o.id_opcion ORDER BY id_nutricionista DESC LIMIT 4;
- 
+ drop table noticias;
  drop database nutrigo;
