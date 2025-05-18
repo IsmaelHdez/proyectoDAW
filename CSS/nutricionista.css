@@ -268,3 +268,67 @@ tbody tr:hover {
     cursor: pointer;
     color: #555;
   }
+
+ @media (max-width: 880px) {
+    #encabezado {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        height: auto;
+        padding: 10px 0;
+    }
+
+    #encabezado img {
+        position: static;
+        flex: 0 0 20%;
+        height: 60px;
+        margin-left: 10px;
+    }
+
+    .enlaces {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        flex: 0 0 50%;
+        gap: 10px;
+        justify-content: flex-start;
+        font-size: 16px;
+        margin-top: 50px;
+    }
+
+    .dropdown {
+        flex: 1 1 45%; /* Dos por fila */
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .dropdown-toggle {
+        width: 100%;
+        padding: 6px 8px;
+        background-color: #4C7305;
+        color: white;
+        border: 1px solid #A5D615;
+        border-radius: 5px;
+        text-align: center;
+        
+    }
+
+#perfil {
+    position: static;
+    flex: 0 0 30%;
+    margin-top: 0; /* Elimina la bajada */
+    align-self: flex-start; /* Lo sube al tope del header */
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+    #perfil img {
+        transform: none;
+        width: 60px;
+        height: 60px;
+    }
+
+    .perfil-opciones{
+        width : 70%;
+    }
+}

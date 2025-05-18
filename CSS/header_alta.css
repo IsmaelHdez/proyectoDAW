@@ -63,3 +63,32 @@
     text-decoration: none;
     font-weight: bold;
 }
+
+@media (max-width: 880px) {
+    .enlaces {
+        position: static; /* Quita el posicionamiento absoluto para permitir flexbox normal */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        margin-top: 10px;
+        gap: 20px;
+    }
+
+    .dropdown {
+        flex: 1 1 60%; /* Aproximadamente dos por fila */
+        display: flex;
+        justify-content: center;
+    }
+
+    .dropdown-toggle {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        background-color: #4C7305;
+        color: white;
+        border: 1px solid #A5D615;
+        border-radius: 5px;
+        text-align: center;
+    }
+}
