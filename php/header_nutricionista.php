@@ -35,7 +35,8 @@ if ($tipo == 3) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../CSS/header_alta_nutricionista.css">
-    <link rel="stylesheet" href="../CSS/global.css">    
+    <link rel="stylesheet" href="../CSS/global.css">  
+    <script src="../js/header.js" defer></script>
     <title>Nutrigo</title>
 </head>
 <body>
