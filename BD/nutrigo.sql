@@ -18,7 +18,7 @@ foto varchar(255),
 opcion int,
 foreign key(opcion) references opciones(id_opcion));
 
-
+select * from nutricionista;
 
 create table paciente(
 id_paciente int primary key auto_increment,
