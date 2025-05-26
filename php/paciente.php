@@ -10,6 +10,14 @@ if (!isset($_SESSION["tipo"]) || $_SESSION["tipo"] != 2) {
     exit();
 }
 
+// Incluye el header adecuado según si la variable $_SESSION['usuario'] tiene contenido
+if (isset($_COOKIE['token']) && isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
+    $token = $_COOKIE['token'];
+    $usuario = $_SESSION['usuario'];
+    $tipo = $_SESSION['tipo'];
+    validar_token($token, $usuario, $tipo);
+}
+
 $con = conexion();
 $usuario = $_SESSION["usuario"];
 

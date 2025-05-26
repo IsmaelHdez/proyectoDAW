@@ -11,6 +11,14 @@ if (session_status() === PHP_SESSION_NONE) {
 if($_SESSION["tipo"] != 3){
     header("Location: index.php");
     }
+
+// Inicia sesion con token
+if (isset($_COOKIE['token']) && isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
+    $token = $_COOKIE['token'];
+    $usuario = $_SESSION['usuario'];
+    $tipo = $_SESSION['tipo'];
+    validar_token($token, $usuario, $tipo);
+}
    
 //formulario para crear nutricionista
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["crear_nutricionista"])) {

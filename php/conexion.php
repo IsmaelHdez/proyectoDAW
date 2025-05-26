@@ -16,6 +16,7 @@ function conexion(){
 
     return $con;
 }
+
 // No tocar esta funcion consultarlo con Ismael antes :)
 function validar_usuario($con, $usuario, $pass){
     // Consulta para verificar si el nombre de usuario y la contraseña son correctos
@@ -49,23 +50,13 @@ function validar_token($token, $usuario, $tipo){
     $con = conexion();
     mysqli_query($con, "UPDATE nutricionista SET sesion = '$token' WHERE usuario = '$usuario' AND tipo = 1 OR tipo = 3;");
     mysqli_query($con, "UPDATE paciente SET sesion = '$token' WHERE usuario = '$usuario' AND tipo = 2;");
-    $resultado = mysqli_query($con, "SELECT usuario, tipo FROM nutricionista WHERE sesion = '$token' UNION ALL SELECT usuario, tipo FROM paciente WHERE sesion = '$token';");
-    if (mysqli_num_rows($resultado) > 0) {         
-            if ($tipo == 3) {
-                header("Location: ../php/admin.php");
-            }
-
-            if ($tipo == 1) {
-                header("Location: ../php/nutricionista.php");
-            }
-
-            if ($tipo == 2) {
-                header("Location: ../php/paciente.php");
-            }            
-    } 
 }
 
 function borrar_sesion(){
+    $con = conexion();
+    $usuario = $_SESSION['usuario'];
+    mysqli_query($con, "UPDATE nutricionista SET sesion = null WHERE usuario = '$usuario' AND tipo = 1 OR tipo = 3;");
+    mysqli_query($con, "UPDATE paciente SET sesion = null WHERE usuario = '$usuario' AND tipo = 2;");
     setcookie("token", "", time() - 3600, "/");
     session_destroy();
 }

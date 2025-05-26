@@ -4,6 +4,16 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require("conexion.php");
+
+// Incluye el header adecuado según si la variable $_SESSION['usuario'] tiene contenido
+if (isset($_COOKIE['token']) && isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
+    $token = $_COOKIE['token'];
+    $usuario = $_SESSION['usuario'];
+    $tipo = $_SESSION['tipo'];
+    validar_token($token, $usuario, $tipo);
+}
+
 require("header_nutricionista.php");
 $_SESSION['id_nutricionista'] =(int) obtener_datos_nutricionista($con);
 if($_SESSION["tipo"] != 1){
