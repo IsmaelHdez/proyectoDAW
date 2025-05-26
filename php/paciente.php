@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar_cita"])) {
 <body>
 
         <div class="contenido">
-            <div id="ficha_paciente" class="seccion active">
+            <div id="ficha_paciente" class="seccion active" style="display:block;">
                 <h2>Ficha del Paciente</h2>
 
                 <div class="perfil_contenedor">
